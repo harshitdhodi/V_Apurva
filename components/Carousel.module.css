@@ -1,0 +1,66 @@
+.daysOneFont {
+  font-family: 'Days One', sans-serif;
+  color: #1f2937; /* text-gray-800 */
+  text-align: center;
+}
+
+/* Responsive text sizes */
+.daysOneFont h1,
+.daysOneFont p {
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem;
+}
+
+@media (min-width: 640px) {
+  .daysOneFont h1,
+  .daysOneFont p {
+    font-size: 2.25rem; /* sm:text-4xl */
+    line-height: 2.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .daysOneFont h1,
+  .daysOneFont p {
+    font-size: 3rem; /* md:text-5xl */
+    line-height: 1;
+    text-align: left; /* md:text-left */
+  }
+}
+
+@media (min-width: 1280px) {
+  .daysOneFont h1,
+  .daysOneFont p {
+    font-size: 3.5625rem; /* xl:text-[57px] */
+    padding-right: 5rem; /* xl:pr-20 */
+    width: 100%; /* xl:w-full */
+  }
+}
+
+/* Button styles */
+.inquiryButton {
+  background-color: #bf2e2e;
+  color: white;
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 500; /* font-medium */
+  padding: 1rem; /* p-4 */
+  border-radius: 0.25rem; /* rounded */
+}
+
+.inquiryButton:hover {
+  background-color: #cd1d1d; /* hover:bg-[#cd1d1d] */
+}
+
+/* Content container */
+.contentContainer {
+  padding: 1rem; /* p-4 */
+}
+
+@media (min-width: 1024px) {
+  .contentContainer {
+    width: 50%; /* lg:w-1/2 */
+    display: flex; /* xl:flex */
+    flex-direction: column; /* xl:flex-col */
+    justify-content: center; /* xl:justify-center */
+  }
+}
