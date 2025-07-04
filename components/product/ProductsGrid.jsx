@@ -45,7 +45,7 @@ const ProductSlider = () => {
         // Fetch headings and products simultaneously
         const [headingResponse, productsResponse] = await Promise.all([
           fetch('/api/pageHeading/heading?pageType=product'),
-          fetch('/api/product/getActiveProducts')
+          fetch('/api/product/getActiveProductList')
         ]);
 
         if (headingResponse.ok) {
@@ -183,13 +183,14 @@ const ProductSlider = () => {
                     {/* Product Image */}
                     <div className=" h-40 sm:h-48 md:h-52 overflow-hidden relative">
                       <Link href={`/${product.slug || '#'}`}>
-                        <Image
+                      <Image
                           src={product.photo?.[0] ? `/api/image/download/${product.photo[0]}` : '/placeholder-image.jpg'}
                           alt={product.alt || product.title || 'Product'}
                           title={product.imgTitle || product.title || 'Product'}
-                          fill
+                          width={500}
+                          height={500}
                           className="object-contain group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        
                         />
                       </Link>
                     </div>

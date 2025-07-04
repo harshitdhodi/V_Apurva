@@ -36,7 +36,7 @@ function BlogPage() {
   const fetchBlog = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/news/getLatestActiveNews`);
+      const response = await axios.get(`/api/news/getActiveNewsList`);
       const data = response.data?.data || [];
       setBlogs(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -86,15 +86,16 @@ function BlogPage() {
               <div key={index} className="relative border rounded-lg overflow-hidden group hover:shadow-lg">
                 <div className='overflow-hidden'>
                   <Link href={`/${post?.slug || ''}`}>
-                    <div className="relative w-full h-48">
+                    <div className="relative  w-full h-48">
                       <Image
                         src={post?.photo?.[0] ? `/api/image/download/${post.photo[0]}` : '/placeholder-image.jpg'}
                         alt={post?.alt?.[0] || post?.title || 'Blog post image'}
                         title={post?.imgTitle?.[0] || post?.title || ''}
-                        fill
-                        className="object-cover group-hover:scale-110 duration-300 rounded-t-lg"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        priority={index < 4} // Only preload first 4 images
+                        width={800}
+                        height={300}
+                        loading="lazy"
+                        className="object-fill md:object-contain group-hover:scale-110 duration-300 "
+                       
                       />
                     </div>
                   </Link>

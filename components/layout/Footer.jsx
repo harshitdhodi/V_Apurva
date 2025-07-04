@@ -55,10 +55,10 @@ const Footer = () => {
                                         src={`/api/logo/download/${whitelogo.photo}`}
                                         alt={whitelogo.alt || "Logo"}
                                         title={whitelogo.imgTitle || "Company Logo"}
-                                        fill
+                                        width={200}
+                                        height={100}
                                         className="object-contain"
-                                        sizes="(max-width: 768px) 50vw, 150px"
-                                        priority
+                                        loading="lazy"
                                     />
                                 </div>
                             ) : (
@@ -154,7 +154,6 @@ const Footer = () => {
                                     src={footerData.location || ""}
                                     className='border-0 w-full h-full rounded-md'
                                     allowFullScreen
-                                    loading="lazy"
                                     referrerPolicy="no-referrer-when-downgrade"
                                     title="Company Location"
                                 ></iframe>
@@ -205,7 +204,7 @@ const Footer = () => {
                 {/* Copyright */}
                 <div className="text-gray-500 font-semibold mt-8 text-center pt-10">
                     <p>
-                        Copyright {currentYear} © Apurva Chemicals Pvt. Ltd. All Rights Reserved.
+                        Copyright {currentYear}  Apurva Chemicals Pvt. Ltd. All Rights Reserved.
                         <br className="sm:hidden" />
                         <span className="hidden sm:inline"> </span>
                         Designed & Developed by{' '}
