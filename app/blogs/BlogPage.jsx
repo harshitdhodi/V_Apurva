@@ -1,31 +1,18 @@
+// src/app/blogs/BlogClient.jsx (Client Component)
 'use client';
 
-import { useEffect, useMemo, Suspense } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { makeStore } from '@/redux/store';
-import { setBlogs, setCategories, setBanners, setSearchQuery, setSelectedCategory } from '@/redux/slices/blogSlice';
+import { useState, useMemo } from 'react';
 import { Search, UserCircle } from 'lucide-react';
-import Link from 'next/link'; // Add this import
-import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/layout/Footer';
+import Image from 'next/image';
 
-// Lazy load heavy components
-const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: true });
-const Footer = dynamic(() => import('@/components/layout/Footer'), { ssr: false });
-  
-// Client-side only component
-function BlogContent({ initialData }) {
-  const dispatch = useDispatch();
-  const { blogs = [], categories = [], banners = [], searchQuery = '', selectedCategory = 'All' } = 
-    useSelector((state) => state.blog) || {};
+export default function BlogClient({ initialData }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Initialize with server data
-  useEffect(() => {
-    if (initialData) {
-      dispatch(setBlogs(initialData.blogs || []));
-      dispatch(setCategories(initialData.categories || []));
-      dispatch(setBanners(initialData.banners || []));
-    }
-  }, [initialData, dispatch]);
+  const { blogs = [], categories = [], banners = [] } = initialData || {};
 
   const filteredBlogs = useMemo(() => {
     return (blogs || []).filter(blog => {
@@ -39,8 +26,8 @@ function BlogContent({ initialData }) {
 
   if (!blogs || blogs.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
-        <div className="text-center" suppressHydrationWarning>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
           <h2 className="text-2xl font-semibold mb-4">No blog posts found</h2>
           <p>Please check back later or try refreshing the page.</p>
         </div>
@@ -50,7 +37,7 @@ function BlogContent({ initialData }) {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <main className="bg-white min-h-screen">
         {/* Banner Section */}
         <div>
@@ -79,7 +66,7 @@ function BlogContent({ initialData }) {
           ))}
         </div>
 
-        {/* Rest of your JSX */}
+        {/* Content Section */}
         <div className="container mx-auto px-4 py-8">
           {/* Search and filter section */}
           <div className="mb-8">
@@ -88,8 +75,8 @@ function BlogContent({ initialData }) {
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
-                onChange={(e) => dispatch(setSearchQuery(e.target.value))}
-                className="w-full px-4 py-2 pl-10 pr-4 border rounded-lg"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 pl-10 pr-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             </div>
@@ -98,9 +85,11 @@ function BlogContent({ initialData }) {
           {/* Categories */}
           <div className="flex flex-wrap gap-2 mb-8">
             <button
-              onClick={() => dispatch(setSelectedCategory('All'))}
-              className={`px-4 py-2 rounded-full ${
-                selectedCategory === 'All' ? 'bg-[#bf2e2e] text-white' : 'bg-gray-100'
+              onClick={() => setSelectedCategory('All')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                selectedCategory === 'All' 
+                  ? 'bg-[#bf2e2e] text-white' 
+                  : 'bg-gray-100 hover:bg-gray-200'
               }`}
             >
               All
@@ -108,9 +97,11 @@ function BlogContent({ initialData }) {
             {categories.map((category) => (
               <button
                 key={category._id}
-                onClick={() => dispatch(setSelectedCategory(category._id))}
-                className={`px-4 py-2 rounded-full shadow-md ${
-                  selectedCategory === category._id ? 'bg-[#bf2e2e] text-white' : 'bg-gray-100  text-[#bf2e2e]'
+                onClick={() => setSelectedCategory(category._id)}
+                className={`px-4 py-2 rounded-full shadow-md transition-colors ${
+                  selectedCategory === category._id 
+                    ? 'bg-[#bf2e2e] text-white' 
+                    : 'bg-gray-100 text-[#bf2e2e] hover:bg-gray-200'
                 }`}
               >
                 {category.category}
@@ -121,13 +112,15 @@ function BlogContent({ initialData }) {
           {/* Blog posts grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {filteredBlogs.map((post) => (
-              <div key={post._id} className="border rounded-lg overflow-hidden shadow-md">
+              <article key={post._id} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
                 <div className="h-48 overflow-hidden">
                   <Link href={`/${post.slug}`}>
-                    <img
+                    <Image
                       src={`/api/image/download/${post.photo?.[0]}`}
                       alt={post.alt?.[0] || post.title}
-                      className="w-full h-full object-fill hover:scale-105 transition-transform duration-300"
+                      width={500}
+                      height={500}
+                      className="object-cover hover:scale-105 transition-transform duration-300"
                     />
                   </Link>
                 </div>
@@ -136,23 +129,26 @@ function BlogContent({ initialData }) {
                     <UserCircle className="text-gray-400" size={24} />
                     <div>
                       <p className="font-sm text-gray-600">{post.postedBy || 'Admin'}</p>
-                      <p className="text-sm text-gray-500">
+                      <time className="text-sm text-gray-500">
                         {new Date(post.date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric'
                         })}
-                      </p>
+                      </time>
                     </div>
                   </div>
                   <h3 className="text-xl font-semibold mb-2">
-                    <Link href={`/${post.slug}`} className="hover:text-[#bf2e2e] text-black text-lg">
+                    <Link 
+                      href={`/${post.slug}`} 
+                      className="hover:text-[#bf2e2e] text-black text-lg transition-colors"
+                    >
                       {post.title}
                     </Link>
                   </h3>
                   <Link
                     href={`/${post.slug}`}
-                    className="inline-flex items-center text-[#bf2e2e] font-medium mt-4"
+                    className="inline-flex items-center text-[#bf2e2e] font-medium mt-4 hover:underline"
                   >
                     Read more
                     <svg
@@ -171,25 +167,20 @@ function BlogContent({ initialData }) {
                     </svg>
                   </Link>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
+
+          {/* No results message */}
+          {filteredBlogs.length === 0 && (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">No posts found</h3>
+              <p className="text-gray-500">Try adjusting your search or category filter.</p>
+            </div>
+          )}
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
-  );
-}
-
-// Main component that wraps with Redux Provider
-export default function BlogPage({ initialData }) {
-  const store = useMemo(() => makeStore(), []);
-  
-  return (
-    <Provider store={store}>
-      <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-        <BlogContent initialData={initialData} />
-      </Suspense>
-    </Provider>
   );
 }
