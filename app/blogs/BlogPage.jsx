@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 // Lazy load heavy components
 const Navbar = dynamic(() => import('@/components/Navbar'), { ssr: true });
 const Footer = dynamic(() => import('@/components/layout/Footer'), { ssr: false });
-
+  
 // Client-side only component
 function BlogContent({ initialData }) {
   const dispatch = useDispatch();
