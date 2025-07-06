@@ -67,7 +67,6 @@ function Navbar() {
     const fetchMenuListings = async () => {
         try {
             const response = await axios.get('/api/menu/getMenulisting');
-            console.log(response.data);
             if (response.data && typeof response.data === 'object') {
                 setMenuListings(response.data.menuListings || []);
             } else {
@@ -96,7 +95,7 @@ function Navbar() {
     const fetchProductCategories = async () => {
         try {
             const response = await axios.get('/api/product/getCategoryAndPhoto');
-            console.log(response.data.data);
+           
             setProductCategories(response.data.data || []);
         } catch (error) {
             console.error('Error fetching product categories:', error);

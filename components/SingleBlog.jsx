@@ -1,12 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaRegFolder } from 'react-icons/fa6';
+import { Folder, Calendar, ArrowRight } from 'lucide-react';
 import Slider from 'react-slick';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from './Navbar';
 import Footer from './layout/Footer';
+import { usePathname } from 'next/navigation';
+
+// Import Slick CSS
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const HTMLContent = ({ html, className = "" }) => {
   const style = `
@@ -78,10 +83,12 @@ const HTMLContent = ({ html, className = "" }) => {
   );
 }
 
-export default function SingleBlog({slug}) {
+export default function SingleBlog() {
   const [blogData, setBlogData] = useState(null);
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+  const slug = pathname.split('/').pop();
 
   // Fetch latest news for the slider
   const fetchNews = async () => {
@@ -138,6 +145,13 @@ export default function SingleBlog({slug}) {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 2500,
+    arrows: false,
+    vertical: false, // Ensure horizontal sliding
+    adaptiveHeight: true,
+    dotsClass: "slick-dots custom-dots",
+    customPaging: (i) => (
+      <div className="w-3 h-3 bg-gray-300 rounded-full hover:bg-[#bf2e2e] transition-colors"></div>
+    ),
   };
 
   // Generate meta description from details if no metaDescription is provided
@@ -153,12 +167,106 @@ export default function SingleBlog({slug}) {
 
   return (
     <>
-    <Navbar />
+      <style jsx global>{`
+        .slick-slider {
+          position: relative;
+          display: block;
+          box-sizing: border-box;
+          user-select: none;
+          touch-action: pan-y;
+          -webkit-tap-highlight-color: transparent;
+        }
+        
+        .slick-list {
+          position: relative;
+          display: block;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+        }
+        
+        .slick-track {
+          position: relative;
+          top: 0;
+          left: 0;
+          display: flex;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        
+        .slick-slide {
+          display: none;
+          float: left;
+          height: 100%;
+          min-height: 1px;
+        }
+        
+        .slick-slide.slick-active {
+          display: block;
+        }
+        
+        .slick-initialized .slick-slide {
+          display: block;
+        }
+        
+        .custom-dots {
+          bottom: -40px !important;
+          text-align: center;
+        }
+        
+        .custom-dots li {
+          margin: 0 4px;
+          display: inline-block;
+          position: relative;
+          cursor: pointer;
+        }
+        
+        .custom-dots li.slick-active div {
+          background-color: #bf2e2e !important;
+        }
+        
+        .slick-dots {
+          position: absolute;
+          bottom: -25px;
+          display: block;
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+          text-align: center;
+        }
+        
+        .slick-dots li {
+          position: relative;
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin: 0 5px;
+          padding: 0;
+          cursor: pointer;
+        }
+        
+        .slick-dots li button {
+          font-size: 0;
+          line-height: 0;
+          display: block;
+          width: 20px;
+          height: 20px;
+          padding: 5px;
+          cursor: pointer;
+          color: transparent;
+          border: 0;
+          outline: none;
+          background: transparent;
+        }
+      `}</style>
+      
+      <Navbar />
       <div
         className="relative bg-cover bg-white bg-center bg-no-repeat"
         style={{ backgroundImage: `url(/api/image/download/${blogData.photo})` }}
       >
-        <div className="flex flex-col   justify-center items-center h-[40vh] md:h-[30vh] mb-10">
+        <div className="flex flex-col justify-center items-center h-[40vh] md:h-[30vh] mb-10">
           <h1 className="font-bold text-[#bf2e2e] sm:text-2xl md:text-3xl text-xl z-10 text-center">
             {blogData.title}
           </h1>
@@ -166,7 +274,7 @@ export default function SingleBlog({slug}) {
             <Link href="/blogs" className="hover:text-[#bf2e2e] text-gray-100">
               Blog
             </Link>
-            <span className="hover:text-[#bf2e2e] text-gray-100 ">/</span>
+            <span className="hover:text-[#bf2e2e] text-gray-100">/</span>
             <p className="hover:text-[#bf2e2e] text-gray-100 cursor-pointer">{blogData.title}</p>
           </div>
           <div className="absolute inset-0 bg-black opacity-40 z-1"></div>
@@ -199,37 +307,52 @@ export default function SingleBlog({slug}) {
             <div className="p-5 py-10">
               <p className="text-2xl font-semibold text-[#bf2e2e] mb-6 font-montserrat">Latest Post</p>
               <hr className="border-4 rounded w-1/6 border-[#bf2e2e] my-4" />
-              <Slider {...settings}>
-                {news.map((post) => (
-                  <div key={post.id} className="p-4 w-full md:w-full">
-                    <div className="relative">
-                      <Link href={`/${post.slug}`}>
-                        <Image
-                          src={`/api/image/download/${post.photo[0]}`}
-                          width={400}
-                          height={300}
-                          alt={post.alt?.[0] || 'Latest post image'}
-                          title={post.imgTitle?.[0] || post.title}
-                          className="rounded w-full object-cover"
-                        />
-                      </Link>
-                      <p className="flex items-center gap-2 bottom-0 absolute bg-[#bf2e2e] text-white p-2 md:px-4 rounded font-nunito">
-                        <FaRegFolder />
-                        {post.category}
-                      </p>
-                    </div>
-                    <div className="pt-5 space-y-3">
-                      <p className="text-gray-500 font-nunito">{post.date}</p>
-                      <Link
-                        href={`/${post.slug}`}
-                        className="text-gray-800 font-medium text-lg pr-4 font-montserrat"
-                      >
-                        {post.title}
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </Slider>
+              
+              {news.length > 0 ? (
+                <div className="slider-container">
+                  <Slider {...settings}>
+                    {news.map((post) => (
+                      <div key={post.id}>
+                        <div className="p-2">
+                          <div className="relative mb-4">
+                            <Link href={`/${post.slug}`}>
+                              <Image
+                                src={`/api/image/download/${post.photo[0] || post.photo}`}
+                                width={400}
+                                height={300}
+                                alt={post.alt?.[0] || 'Latest post image'}
+                                title={post.imgTitle?.[0] || post.title}
+                                className="rounded w-full object-cover h-48"
+                              />
+                            </Link>
+                            <div className="absolute bottom-2 left-2 bg-[#bf2e2e] text-white px-3 py-1 rounded text-sm font-nunito flex items-center gap-1">
+                              <Folder className="w-3 h-3" />
+                              {post.category}
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 text-gray-500 font-nunito text-sm">
+                              <Calendar className="w-4 h-4" />
+                              {post.date}
+                            </div>
+                            <Link
+                              href={`/${post.slug}`}
+                              className="text-gray-800 font-medium text-lg font-montserrat hover:text-[#bf2e2e] transition-colors flex items-start gap-2 group"
+                            >
+                              <span className="flex-1 line-clamp-2">{post.title}</span>
+                              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform flex-shrink-0 mt-1" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </Slider>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  No latest posts available
+                </div>
+              )}
             </div>
           </div>
         </div>
