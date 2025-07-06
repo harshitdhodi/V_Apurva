@@ -108,7 +108,8 @@ const contentStyles = `
   }
 `;
 
-export default function ProductDetail({ slugs }) {
+export default function ProductDetail() {
+ 
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -122,8 +123,8 @@ export default function ProductDetail({ slugs }) {
 
   const pathname = usePathname();
   const descriptionRef = useRef(null);
-  const slug = slugs;
-
+  const slug = pathname.split('/').pop();
+  console.log("slug", slug);
   useEffect(() => {
     setIsMounted(true);
     if (slug) {

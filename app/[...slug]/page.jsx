@@ -12,7 +12,7 @@ const SingleBlog = dynamic(() => import('@/components/SingleBlog'), { ssr: false
 const Simple404Page = dynamic(() => import('../404/page'), { ssr: false });
 
 // Simulate axios for API calls
-const fetchSlugs = async (slug) => {
+const fetchSlugs = async () => {
   try {
     const response = await fetch(`/api/dynamicSlug/getAllSlugs`, {
       method: 'GET',
@@ -43,12 +43,14 @@ export default function SlugPage() {
     
     const getPageType = async () => {
       try {
-        const response = await fetchSlugs(slug);
+        const response = await fetchSlugs();
         if (!isMounted) return;
         
         const { productSlugs, productCategorySlugs, newsSlugs, newsCategorySlugs } = response.data;
+        console.log("productSlugs",productSlugs);
+        
         const slugString = Array.isArray(slug) ? slug.join('/') : slug;
-
+console.log("slugString",slugString);
         // Filter out null values from newsCategorySlugs
         const validNewsCategorySlugs = newsCategorySlugs.filter(slug => slug !== null);
 
