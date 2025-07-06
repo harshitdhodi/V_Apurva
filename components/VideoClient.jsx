@@ -11,7 +11,7 @@ const VideoClient = ({ data }) => {
     const pathname = usePathname();
 
   return (
-    <div className="flex justify-center relative -top-20 items-center md:py-16 bg-gray-100 min-h-[300px]">
+    <div className="flex justify-center relative items-center md:py-16 bg-gray-100 min-h-[300px]">
       <div className="p-4 md:px-20 w-full max-w-8xl">
         <div className="xl:flex xl:gap-10">
           <div className="flex justify-center items-center xl:w-1/2">

@@ -67,14 +67,17 @@ export default function ProductSliderClient({ products }) {
           {products.map((product, index) => (
             <div
               key={product._id || index}
-              className={`flex-shrink-0 px-2 sm:px-3 ${
-                itemsPerView === 1 ? "w-full" : itemsPerView === 2 ? "w-1/2" : itemsPerView === 3 ? "w-1/3" : "w-1/4"
-              }`}
+              className={`flex-shrink-0 px-2 sm:px-3 ${itemsPerView === 1 ? "w-full" : itemsPerView === 2 ? "w-1/2" : itemsPerView === 3 ? "w-1/3" : "w-1/4"
+                }`}
             >
               <div className="bg-white shadow-lg rounded-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300 h-full">
                 {/* Product Image */}
                 <div className="h-40 sm:h-48 md:h-52 overflow-hidden relative">
-                  <Link href={`/${product.slug || "#"}`}>
+                  <Link
+                    href={`/${product.slug || "#"}`}
+                    data-no-bis="true"
+                    suppressHydrationWarning
+                  >
                     <Image
                       src={product.photo?.[0] ? `/api/image/download/${product.photo[0]}` : "/placeholder-image.jpg"}
                       alt={product.alt || product.title || "Product"}
@@ -82,12 +85,14 @@ export default function ProductSliderClient({ products }) {
                       width={500}
                       height={500}
                       className="object-contain group-hover:scale-105 transition-transform duration-300"
+                      data-no-bis="true"
+                      suppressHydrationWarning
                     />
                   </Link>
                 </div>
                 {/* Product Info */}
                 <div className="p-3 sm:p-4 flex flex-col min-h-[80px] sm:min-h-[100px]">
-                  <Link href={`/${product.slug || "#"}`} className="block flex-grow">
+                  <Link href={`/${product.slug || "#"}`} className="block flex-grow" data-no-bis="true">
                     <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 hover:text-[#cd1d1d] transition-colors duration-200 line-clamp-2 leading-tight">
                       {product.title || "Untitled Product"}
                     </h3>
@@ -97,6 +102,7 @@ export default function ProductSliderClient({ products }) {
                     <Link
                       href={`/${product.slug || "#"}`}
                       className="text-[#bf2e2e] font-medium text-xs sm:text-sm hover:text-[#cd1d1d] transition-colors duration-200 flex items-center gap-1"
+                      data-no-bis="true"
                     >
                       READ MORE <ArrowRight size={12} className="sm:w-4 sm:h-4" />
                     </Link>
@@ -136,11 +142,10 @@ export default function ProductSliderClient({ products }) {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${
-                Math.floor(currentIndex / itemsPerView) === index
+              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${Math.floor(currentIndex / itemsPerView) === index
                   ? "bg-blue-600 scale-110"
                   : "bg-gray-300 hover:bg-gray-400"
-              }`}
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
