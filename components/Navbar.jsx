@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+
 // Import components
 import MobileMenu from './MobileMenu';
 import DesktopMenu from './DesktopMenu';

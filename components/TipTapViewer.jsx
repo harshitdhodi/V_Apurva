@@ -1,51 +1,74 @@
-"use client";
-import { useEffect, useRef, useState } from 'react';
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Placeholder } from '@tiptap/extension-placeholder';
+"use client"
 
-const TipTapViewer = ({ value, className }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const containerRef = useRef(null);
+import { useState, useEffect, useRef } from "react"
+import { useEditor, EditorContent } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import { Placeholder } from "@tiptap/extension-placeholder"
+
+export default function TipTapViewerClient({ value, className }) {
+  const [isVisible, setIsVisible] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+  const containerRef = useRef(null)
 
   const editor = useEditor({
     extensions: [
       StarterKit,
       Placeholder.configure({
-        placeholder: 'No content available',
+        placeholder: "No content available",
       }),
     ],
-    content: value || '',
+    content: value || "",
     editable: false,
     editorProps: {
       attributes: {
-        class: `prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none ${className || ''}`,
+        class: `prose max-w-none prose-sm sm:prose-base lg:prose-lg xl:prose-xl text-gray-800 focus:outline-none ${className || ""}`,
       },
     },
-  });
+    immediatelyRender: false, // Fix SSR hydration mismatch
+  })
+
+  // Handle client-side mounting
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !isMounted) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
+          setIsVisible(true)
+          observer.disconnect()
         }
       },
-      { threshold: 0.1 }
-    );
+      { threshold: 0.1 },
+    )
 
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
+    observer.observe(containerRef.current)
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current)
+      }
+    }
+  }, [isMounted])
+
+  // Don't render editor content until mounted and visible
+  if (!isMounted) {
+    return (
+      <div ref={containerRef} className={`${className || ""}`}>
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div ref={containerRef} className={className || ''}>
-      {isVisible && <EditorContent editor={editor} />}
+    <div ref={containerRef} className={`${className || ""}`}>
+      {isVisible && editor && <EditorContent editor={editor} />}
     </div>
-  );
-};
-
-export default TipTapViewer;
+  )
+}
