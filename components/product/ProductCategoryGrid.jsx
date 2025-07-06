@@ -22,6 +22,7 @@ const TipTapViewer = ({ value, className }) => {
     editable: false,
     editorProps: {
       attributes: {
+        immediatelyRender: false, // ✅ fixes SSR hydration warning
         class: `prose max-w-none prose-sm sm:prose-base lg:prose-lg xl:prose-xl text-gray-800 focus:outline-none ${className || ''}`,
       },
     },
