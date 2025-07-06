@@ -91,8 +91,8 @@ function BlogPage() {
                         src={post?.photo?.[0] ? `/api/image/download/${post.photo[0]}` : '/placeholder-image.jpg'}
                         alt={post?.alt?.[0] || post?.title || 'Blog post image'}
                         title={post?.imgTitle?.[0] || post?.title || ''}
-                        width={800}
-                        height={300}
+                        width={378}
+                        height={270}
                         loading="lazy"
                         className="object-fill md:object-contain group-hover:scale-110 duration-300 "
                        

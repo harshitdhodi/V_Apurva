@@ -16,6 +16,8 @@ const Footer = () => {
     const [headerData, setHeaderData] = useState({});
     const [whitelogo, setWhiteLogo] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [mapInView, setMapInView] = useState(false);
+    const mapRef = React.useRef(null);
     const currentYear = new Date().getFullYear();
 
     useEffect(() => {
@@ -39,6 +41,34 @@ const Footer = () => {
 
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (!footerData.location) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setMapInView(true);
+                    observer.disconnect();
+                }
+            },
+            {
+                root: null,
+                rootMargin: '200px',
+                threshold: 0.1
+            }
+        );
+
+        if (mapRef.current) {
+            observer.observe(mapRef.current);
+        }
+
+        return () => {
+            if (mapRef.current) {
+                observer.unobserve(mapRef.current);
+            }
+        };
+    }, [footerData.location]);
 
     return (
         <footer className="bg-gray-100 text-gray-800 pt-12 pb-8 lg:px-5 xl:px-10">
@@ -149,14 +179,21 @@ const Footer = () => {
                         {loading ? (
                             <Skeleton className="h-40 w-full rounded-md" />
                         ) : (
-                            <div className="aspect-video">
-                                <iframe
-                                    src={footerData.location || ""}
-                                    className='border-0 w-full h-full rounded-md'
-                                    allowFullScreen
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                    title="Company Location"
-                                ></iframe>
+                            <div className="aspect-video" ref={mapRef}>
+                                {mapInView ? (
+                                    <iframe
+                                        src={footerData.location || ""}
+                                        className='border-0 w-full h-full rounded-md'
+                                        allowFullScreen
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        title="Company Location"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-gray-200 rounded-md flex items-center justify-center">
+                                        <p className="text-gray-500">Loading map...</p>
+                                    </div>
+                                )}
                             </div>
                         )}
                         <div className='flex justify-between items-center space-x-4 float-end max-w-5xl text-gray-500 mt-6 text-sm space-y-2'>

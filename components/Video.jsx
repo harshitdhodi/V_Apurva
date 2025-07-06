@@ -91,6 +91,16 @@ const VideoComponent = () => {
         }
         const data = await response.json();
         setPageContent(data);
+        
+        // Preload LCP image in the document head
+        if (data?.photo?.[0]) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = `/api/image/download/${data.photo[0]}`;
+          link.fetchPriority = 'high';
+          document.head.appendChild(link);
+        }
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(err.message);
@@ -137,15 +147,18 @@ const VideoComponent = () => {
         <div className="xl:flex xl:gap-10">
           <div className="flex justify-center items-center xl:w-1/2">
             {pageContent?.photo?.[0] ? (
-              <div className="relative">
+              <div className="relative w-[600px]">
                 <StaticImage
                   src={`/api/image/download/${pageContent.photo[0]}`}
                   alt={pageContent.alt?.[0] || "Video thumbnail"}
                   title={pageContent.imgTitle?.[0] || ""}
-                  className="md:w-auto md:h-auto md:max-w-full rounded-lg"
-                  width={600}
-                  height={400}
+                  className="w-full h-auto rounded-lg"
+                  width={1200}
+                  height={800}
                   priority={true}
+                  fetchPriority="high"
+                  quality={85}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
 
                 {/* Static play button - links to video instead of modal */}
@@ -199,7 +212,7 @@ const VideoComponent = () => {
           <div className="py-5 space-y-10 xl:w-1/2">
             <div className="mt-5">
               <p
-                className="text-3xl sm:text-4xl md:px-0 font-bold md:text-[40px] text-gray-800 mt-4 md:text-left"
+                className="text-3xl sm:text-4xl md:px-0 font-bold md:text-[40px] text-gray-800 mt-4 md:text-start"
                 style={{ fontFamily: '"Days One", sans-serif' }}
               >
                 {pageContent.subheading}
@@ -209,7 +222,7 @@ const VideoComponent = () => {
                 className={
                   pathname === "/about-us"
                     ? "justify-center mt-8 text-black"
-                    : "justify-center sm:my-8 -ml-4 text-black"
+                    : "justify-center sm:my-8 text-black"
                 }
               />
             </div>

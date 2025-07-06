@@ -1,116 +1,69 @@
-'use client';
+// This is a server component - no 'use client' directive
+import Head from 'next/head';
+import ClientAboutUs from './ClientAboutUs';
 
-import { Suspense, useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import React from 'react';
-
-// Client-only wrapper
-const ClientOnly = ({ children }) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
-};
-
-// Error boundary
-class ErrorBoundary extends React.Component {
-  state = { hasError: false };
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.error('Error caught by error boundary:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center p-6">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
-            <p className="text-gray-600">Please refresh the page or try again later.</p>
-          </div>
-        </div>
-      );
+// This function runs on the server side
+export async function generateMetadata() {
+  try {
+    // Use absolute URL for server-side fetch
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/meta?slug=about-us`, {
+      next: { revalidate: 3600 } // Revalidate every hour
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success || !data.data) {
+      return {
+        title: 'About Us',
+        description: 'Learn more about our company and values',
+      };
     }
-
-    return this.props.children;
+    
+    const meta = data.data;
+    
+    return {
+      title: meta.metaTitle || 'About Us',
+      description: meta.metaDescription || 'Learn more about our company and values',
+      keywords: meta.metaKeyword || '',
+      metadataBase: new URL('https://v-apurva-a8cl.vercel.app'),
+      alternates: {
+        canonical: '/about-us',
+      },
+      other: {
+        'http-equiv': 'x-ua-compatible',
+        content: 'ie=edge',
+      },
+      openGraph: {
+        title: meta.metaTitle || 'About Us',
+        description: meta.metaDescription || 'Learn more about our company and values',
+        url: 'https://v-apurva-a8cl.vercel.app/about-us',
+        siteName: 'V-Apurva',
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: meta.metaTitle || 'About Us',
+        description: meta.metaDescription || 'Learn more about our company and values',
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: 'About Us',
+      description: 'Learn more about our company and values',
+    };
   }
 }
 
-// Dynamic imports
-const Navbar = dynamic(() => import('../../components/Navbar'), { ssr: false });
-const AboutImg = dynamic(() => import('../../components/AboutImg'), {
-  ssr: false,
-  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse"></div>,
-});
-const Video = dynamic(() => import('../../components/Video'), {
-  ssr: false,
-  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse"></div>,
-});
-const OurPeople = dynamic(() => import('../../components/OurPeople'), {
-  ssr: false,
-  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse"></div>,
-});
-const PackagingType = dynamic(() => import('../../components/PackagingType'), {
-  ssr: false,
-  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse"></div>,
-});
-const Partners = dynamic(() => import('../../components/Partners'), {
-  ssr: false,
-  loading: () => <div className="h-[400px] bg-gray-100 animate-pulse"></div>,
-});
-const OurProcess = dynamic(() => import('../../components/ourprocess/OurProcess'), {
-  ssr: false,
-  loading: () => <div className="h-[600px] bg-gray-100 animate-pulse"></div>,
-});
-const Footer = dynamic(() => import('../../components/layout/Footer'), {
-  ssr: false,
-  loading: () => <div className="h-20 bg-gray-100"></div>,
-});
-
-const AboutUsPage = () => {
+export default function AboutUsPage() {
   return (
-    <ErrorBoundary>
-      <ClientOnly>
-        <div className="flex flex-col min-h-screen">
-          <Suspense
-            fallback={
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-              </div>
-            }
-          >
-            <Navbar />
-            <main className="flex-grow">
-              <AboutImg />
-              <div className="pt-20">
-                <Video />
-              </div>
-              <OurPeople />
-              <PackagingType />
-              <OurProcess />
-              <Partners />
-            </main>
-            <Footer />
-          </Suspense>
-        </div>
-      </ClientOnly>
-    </ErrorBoundary>
+    <>
+      <Head>
+        <title>About Us</title>
+      </Head>
+      <ClientAboutUs />
+    </>
   );
-};
-
-export default AboutUsPage;
+}

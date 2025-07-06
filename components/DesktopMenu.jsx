@@ -6,9 +6,9 @@ import { Grip ,ArrowDown } from 'lucide-react';
 import Link from 'next/link';
 
 function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setShowInquiryForm, productCategories = [], isLoading = false }) {
-    console.log(productCategories);
+
     const logoUrl = colorlogo?.photo ? `/api/logo/download/${colorlogo.photo}` : '';
-    console.log(menuItems);
+
 
     // Ensure productCategories is always an array
     const safeProductCategories = Array.isArray(productCategories) ? productCategories : [];

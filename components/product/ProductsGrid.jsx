@@ -261,19 +261,6 @@ const ProductSlider = () => {
           </div>
         )}
 
-        
-
-        {/* Play/Pause Control - Hidden on mobile for cleaner UI */}
-        {/* {products.length > itemsPerView && (
-          <div className="hidden sm:flex justify-center mt-4">
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-sm font-medium transition-colors duration-200"
-            >
-              {isPlaying ? 'Pause' : 'Play'}
-            </button>
-          </div>
-        )} */}
       </div>
     </div>
   );
