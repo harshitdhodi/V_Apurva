@@ -12,8 +12,6 @@ import Link from 'next/link';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
-import Navbar from '../Navbar';
-import Footer from '../layout/Footer';
 
 // TipTapViewer component for rendering rich text
 const TipTapViewer = ({ value, className }) => {
@@ -284,7 +282,6 @@ export default function ProductDetail() {
             </div>
           ) : (
             <div className="w-full bg-white">
-              <Navbar />
               <div className="max-w-8xl bg-white mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 {/* Breadcrumb */}
                 <nav className="flex items-center text-sm text-gray-500 mb-8">
@@ -366,7 +363,6 @@ export default function ProductDetail() {
                   </div>
                 )}
               </div>
-              <Footer />
             </div>
           )}
         </div>

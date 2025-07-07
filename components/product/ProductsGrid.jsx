@@ -7,7 +7,6 @@ async function getProductData() {
   try {
     const [headingResponse, productsResponse] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pageHeading/heading?pageType=product`, {
-        
         next: { revalidate: 3600 },
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product/getActiveProductList`, {

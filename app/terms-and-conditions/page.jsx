@@ -1,13 +1,6 @@
-'use client';
-
-import React from 'react';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/layout/Footer';
-
 const TermsAndConditions = () => {
   return (
     <>
-      <Navbar />
       <div className="bg-gray-50 min-h-screen">
         <div className="max-w-4xl mx-auto p-6 bg-white my-6 shadow-lg rounded-lg">
           <h1 className="text-3xl font-bold mb-6 text-[#bf2e2e] font-montserrat">Terms and Conditions</h1>
@@ -71,7 +64,6 @@ const TermsAndConditions = () => {
           </section>
         </div>
       </div>
-      <Footer />
     </>
   );
 };
