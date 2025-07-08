@@ -1,9 +1,10 @@
+// app/components/ClientCarousel.jsx (Client Component)
 "use client"
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import gsap from "gsap"
+import gsap from 'gsap'
 
 // Simple HTML content renderer component
 const HTMLContent = ({ html, className = "" }) => {
@@ -12,7 +13,6 @@ const HTMLContent = ({ html, className = "" }) => {
 
 export default function ClientCarousel({ banners }) {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [animationKey, setAnimationKey] = useState(0)
   const [showInquiryForm, setShowInquiryForm] = useState(false)
   const slideRefs = useRef([])
   const textRefs = useRef([])
@@ -44,41 +44,35 @@ export default function ClientCarousel({ banners }) {
     return () => clearInterval(slideInterval)
   }, [banners.length])
 
-  // Trigger animation when slide changes
-  useEffect(() => {
-    if (banners.length > 0) {
-      setAnimationKey((prev) => prev + 1)
-    }
-  }, [currentSlide, banners.length])
-
-  // GSAP animations
+  // GSAP animations - same as previous component
   useEffect(() => {
     if (banners.length > 0) {
       // Animate text from below
       gsap.fromTo(
         textRefs.current[currentSlide],
         { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+        { y: 0, opacity: 1, duration: 1, ease: 'power3.out' }
       )
+      
       // Animate main image from the right
       gsap.fromTo(
         imgRefs.current[currentSlide],
         { x: 50 },
-        { x: 0, duration: 5, ease: "power3.out" }
+        { x: 0, duration: 5, ease: 'power3.out' }
       )
+      
       // Animate small image from the right
-      if (smallImgRefs.current[currentSlide]) {
-        gsap.fromTo(
-          smallImgRefs.current[currentSlide],
-          { x: 50 },
-          { x: 0, duration: 4, ease: "power3.out" }
-        )
-      }
+      gsap.fromTo(
+        smallImgRefs.current[currentSlide],
+        { x: 50 },
+        { x: 0, duration: 4, ease: 'power3.out' }
+      )
+      
       // Animate buttons from below
       gsap.fromTo(
         buttonRefs.current[currentSlide],
         { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 2, ease: "power3.out", stagger: 0.2 }
+        { y: 0, opacity: 1, duration: 2, ease: 'power3.out', stagger: 0.2 }
       )
     }
   }, [currentSlide, banners.length])
@@ -88,10 +82,10 @@ export default function ClientCarousel({ banners }) {
       {banners.map((slide, index) => (
         <div
           key={index}
-          className={`transition-all duration-1000 ease-in-out ${
+          className={`transition-opacity duration-2000 ease-in-out ${
             index === currentSlide
               ? "opacity-100 transform scale-100 z-10"
-              : "opacity-0 transform scale-95 z-0 absolute"
+              : "opacity-0 transform scale-0 z-0 absolute"
           }`}
           ref={(el) => (slideRefs.current[index] = el)}
         >
@@ -101,8 +95,7 @@ export default function ClientCarousel({ banners }) {
               <div className="flex flex-col items-center justify-center relative">
                 {slide?.photo?.[0] ? (
                   <div
-                    className={`relative w-[90%] sm:w-[70%] lg:w-[450px] lg:h-[500px] xl:w-[500px] xl:h-[600px]`}
-                    key={`img-${animationKey}`}
+                    className="relative w-[90%] sm:w-[70%] lg:w-[450px] lg:h-[500px] xl:w-[500px] xl:h-[600px]"
                     ref={(el) => (imgRefs.current[index] = el)}
                   >
                     <Image
@@ -124,8 +117,7 @@ export default function ClientCarousel({ banners }) {
                 {/* Secondary Image */}
                 {slide?.photo?.[1] && (
                   <div
-                    className={`relative mt-4 lg:mt-0 lg:absolute lg:-right-5 lg:top-10 xl:top-56 xl:left-[360px] w-[50%] sm:w-[40%] lg:w-[200px] lg:h-[200px] xl:w-[250px] xl:h-[250px]`}
-                    key={`small-img-${animationKey}`}
+                    className="relative mt-4 lg:mt-0 lg:absolute lg:-right-5 lg:top-10 xl:top-56 xl:left-[360px] w-[50%] sm:w-[40%] lg:w-[200px] lg:h-[200px] xl:w-[250px] xl:h-[250px]"
                     ref={(el) => (smallImgRefs.current[index] = el)}
                   >
                     <Image
@@ -144,13 +136,10 @@ export default function ClientCarousel({ banners }) {
             </div>
 
             {/* Text Content */}
-            <div
-              className="w-full lg:w-[70%] xl:flex xl:flex-col xl:justify-center p-4"
-              ref={(el) => (textRefs.current[index] = el)}
-            >
+            <div className="w-full lg:w-[70%] xl:flex xl:flex-col xl:justify-center p-4">
               <div
-                className={`sm:space-y-4 space-y-2 py-5 pt-4 lg:pl-10`}
-                key={`text-${animationKey}`}
+                className="sm:space-y-4 space-y-2 py-5 pt-4 lg:pl-10"
+                ref={(el) => (textRefs.current[index] = el)}
               >
                 {index === 0 ? (
                   <h1 className="text-2xl sm:text-3xl md:text-4xl xl:text-[57px] font-['Days One',sans-serif] font-bold text-gray-800 text-center lg:text-left">
@@ -167,8 +156,7 @@ export default function ClientCarousel({ banners }) {
               </div>
 
               <div
-                className={`flex gap-2 mb-12 md:mb-0 justify-start items-start py-4 lg:pl-10 flex-row md:gap-6`}
-                key={`buttons-${animationKey}`}
+                className="flex gap-2 mb-12 md:mb-0 justify-start items-start py-4 lg:pl-10 flex-row md:gap-6"
                 ref={(el) => (buttonRefs.current[index] = el)}
               >
                 <button
