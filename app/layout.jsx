@@ -7,18 +7,40 @@ import NavbarServer from "@/components/NavbarServer"
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
-  title: 'Apurva Chemicals',
-  description: 'Apurva Chemicals is a trusted dye intermediate manufacturer. We offer high-purity products, bulk supply options, and consistent quality for global clients.',
-  metadataBase: new URL('https://v-apurva-a8cl.vercel.app'),
-  alternates: {
-    canonical: '/',
-  },
-  other: {
-    'http-equiv': 'x-ua-compatible',
-    content: 'ie=edge',
-  },
-};
+export async function generateMetadata() {
+  const favicon = await getFaviconPath();
+  return {
+    title: 'Apurva Chemicals',
+    description: 'Apurva Chemicals is a trusted dye intermediate manufacturer. We offer high-purity products, bulk supply options, and consistent quality for global clients.',
+    metadataBase: new URL('https://v-apurva-a8cl.vercel.app'),
+    alternates: {
+      canonical: '/',
+    },
+    icons: {
+      icon: favicon || '/favicon.ico',
+    },
+    other: {
+      'http-equiv': 'x-ua-compatible',
+      content: 'ie=edge',
+    },
+  };
+}
+
+async function getFaviconPath() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/getfavicon`, {
+      next: { revalidate: 3600 },
+    });
+    if (!response.ok) throw new Error("Failed to fetch favicon");
+    const data = await response.json();
+    const filename = data?.photo;
+    console.log("filename", filename);
+    return filename ? `${process.env.NEXT_PUBLIC_API_URL}/api/logo/download/${filename}` : null; 
+  } catch (error) {
+    console.error("Error fetching favicon:", error);
+    return null;
+  }
+}
 
 // Server-side data fetching functions (same as before)
 async function getHeaderData() {
