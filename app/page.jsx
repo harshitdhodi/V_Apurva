@@ -6,6 +6,7 @@ import BlogPage from "@/components/blog/BlogPage"
 
 import LoadingSpinner from "@/components/home/LoadingSpinner"
 import { getMetadataBySlug } from '@/lib/getMetadata';
+import WhyChooseUs from "@/components/WhyChooseus"
 
 // Adding metadata to the page
 export async function generateMetadata() {
@@ -42,6 +43,9 @@ export default async function Home() {
         </Suspense>
         <Suspense fallback={<LoadingSpinner />}>
           <Video />
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner/>}>
+          <WhyChooseUs/>
         </Suspense>
         <Suspense fallback={<LoadingSpinner />}>
           <ProductsGrid />

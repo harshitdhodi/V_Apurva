@@ -30,15 +30,16 @@ const VideoClient = ({ data }) => {
                 />
                 {/* Static play button - links to video instead of modal */}
                 {data.video && (
-                  <div className="absolute bottom-10 sm:bottom-24 md:bottom-10 md:inset-0 md:flex md:justify-center md:items-center">
+                  <div className="absolute inset-0 flex justify-center items-center">
                     <Link
                       href={data.video}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="cursor-pointer text-white bg-[#bf2e2e] hover:bg-secondary p-5 xl:p-10 rounded-full flex justify-center items-center md:text-xl transition-all duration-200 hover:scale-105"
+                      className="group relative z-10 bg-[#bf2e2e] cursor-pointer text-white animate-pulse bg-primary hover:bg-secondary p-5 xl:p-10 rounded-full flex justify-center items-center md:text-xl"
                       aria-label="Play video"
                     >
                       <svg
+                        className="w-8 h-8 md:w-10 md:h-10 group-hover:animate-ping-slow"
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"

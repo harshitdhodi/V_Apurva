@@ -47,7 +47,7 @@ function MobileMenu({
                     src={`/api/logo/download/${colorlogo.photo}`} 
                     alt={colorlogo.alt} 
                     title={colorlogo.imgTitle} 
-                    className='lg:w-1/2 w-[30%] lg:h-[70%] h-[50%]'
+                    className='lg:w-1/2 lg:h-[70%] h-[50%]'
                 />
             </a>
             <div className='flex gap-8 justify-center items-center'>
@@ -167,7 +167,7 @@ function MobileMenu({
                             <a href={linkedinlink} target='_blank' className="text-gray-400 hover:text-blue-500"><Instagram /></a>
                             <a href={youtubelink} target='_blank' className="text-gray-400 hover:text-blue-500"><Youtube /></a>
                         </div>
-                    </div>
+                    </div>  
                 </div>
             )}
         </div>
