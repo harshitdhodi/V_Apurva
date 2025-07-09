@@ -202,7 +202,7 @@ function ProductSlider({ products, heading, subheading }) {
             <div className="py-4 lg:flex lg:items-center lg:justify-between gap-2">
               <p className="text-3xl sm:text-4xl text-gray-800 font-daysOne font-semibold text-center md:text-left">{subheading}</p>
               <p className="py-3 text-gray-500 font-semibold flex flex-wrap gap-2">
-                <Link href="/dye-intermidiate" className="flex items-center gap-2 text-primary font-semibold text-[#bf2e2e]">
+                <Link href="/dye-intermediate" className="flex items-center gap-2 text-primary font-semibold text-[#bf2e2e]">
                   View all <FaArrowRight />
                 </Link>
               </p>

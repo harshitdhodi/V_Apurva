@@ -64,7 +64,7 @@ function ErrorDisplay({ message }) {
 // Data fetching function
 async function fetchWhyChooseUsData() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
     
     const [headingsResponse, dataResponse] = await Promise.all([
       fetch(`${baseUrl}/api/pageHeading/heading?pageType=whychooseus`, {
