@@ -162,7 +162,7 @@ async function WhyChooseUsContent() {
 // Main server component
 export default function WhyChooseUs() {
   return (
-    <section className="bg-black text-white flex justify-center items-center mb-16 lg:h-[750px]">
+    <section className="bg-black text-white flex justify-center items-center lg:h-[750px]">
       <div className="max-w-6xl mx-auto">
         <Suspense fallback={<LoadingContent />}>
           <WhyChooseUsContent />
