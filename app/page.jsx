@@ -1,58 +1,59 @@
-'use server';
+import { Suspense } from "react"
+import Carousel from "@/components/home/Carousel"
+import Video from "@/components/Video"
+import ProductsGrid from "@/components/product/ProductsGrid"
+import BlogPage from "@/components/blog/BlogPage"
 
-import HomeContent from './HomeContent';
+import LoadingSpinner from "@/components/home/LoadingSpinner"
+import { getMetadataBySlug } from '@/lib/getMetadata';
+import WhyChooseUs from "@/components/WhyChooseus"
 
-// This function runs on the server side to generate metadata
+// Adding metadata to the page
 export async function generateMetadata() {
+  return await getMetadataBySlug('/');
+}
+
+// Server-side data fetching functions
+async function getBanners() {
   try {
-    // Use absolute URL for server-side fetch
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/meta?slug=/`, {
-      next: { revalidate: 3600 } // Revalidate every hour
-    });
-    
-    const data = await response.json();
-    
-    if (!data.success || !data.data) {
-      return {
-        title: 'Home',
-        description: 'Welcome to our homepage',
-      };
-    }
-    
-    const meta = data.data;
-    
-    return {
-      title: meta.metaTitle || 'Home',
-      description: meta.metaDescription || 'Welcome to our homepage',
-      keywords: meta.metaKeyword || '',
-      metadataBase: new URL('https://v-apurva-a8cl.vercel.app'),
-      alternates: {
-        canonical: '/',
-      },
-      openGraph: {
-        title: meta.metaTitle || 'Home',
-        description: meta.metaDescription || 'Welcome to our homepage',
-        url: 'https://v-apurva-a8cl.vercel.app',
-        siteName: 'V-Apurva',
-        locale: 'en_US',
-        type: 'website',
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: meta.metaTitle || 'Home',
-        description: meta.metaDescription || 'Welcome to our homepage',
-      },
-    };
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/getBannersBySectionHome`, {
+      
+      next: { revalidate: 1800 },
+    })
+    if (!response.ok) throw new Error("Failed to fetch banners")
+    const data = await response.json()
+    return data.data || []
   } catch (error) {
-    console.error('Error generating metadata:', error);
-    return {
-      title: 'Home',
-      description: 'Welcome to our homepage',
-    };
+    console.error("Error fetching banners:", error)
+    return []
   }
 }
 
 export default async function Home() {
-  return <HomeContent />;
+  // Fetch all data in parallel on the server
+  const [ banners ] = await Promise.all([
+    getBanners(),
+  ])
+
+  return (
+    <div className="min-h-screen">
+      <main>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Carousel banners={banners} />
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Video />
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner/>}>
+          <WhyChooseUs/>
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner />}>
+          <ProductsGrid />
+        </Suspense>
+        <Suspense fallback={<LoadingSpinner />}>
+          <BlogPage />
+        </Suspense>
+      </main>
+    </div>
+  )
 }

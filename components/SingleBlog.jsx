@@ -5,8 +5,6 @@ import { Folder, Calendar, ArrowRight } from 'lucide-react';
 import Slider from 'react-slick';
 import Link from 'next/link';
 import Image from 'next/image';
-import Navbar from './Navbar';
-import Footer from './layout/Footer';
 import { usePathname } from 'next/navigation';
 
 // Import Slick CSS
@@ -261,7 +259,6 @@ export default function SingleBlog() {
         }
       `}</style>
       
-      <Navbar />
       <div
         className="relative bg-cover bg-white bg-center bg-no-repeat"
         style={{ backgroundImage: `url(/api/image/download/${blogData.photo})` }}
@@ -358,7 +355,6 @@ export default function SingleBlog() {
         </div>
       </div>
 
-      <Footer />
     </>
   );
 }

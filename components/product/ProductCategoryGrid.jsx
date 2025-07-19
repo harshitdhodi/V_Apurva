@@ -11,6 +11,10 @@ import Image from 'next/image';
 
 // TipTapViewer component for rendering rich text
 const TipTapViewer = ({ value, className }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const containerRef = useRef(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -25,12 +29,51 @@ const TipTapViewer = ({ value, className }) => {
         class: `prose max-w-none prose-sm sm:prose-base lg:prose-lg xl:prose-xl text-gray-800 focus:outline-none ${className || ''}`,
       },
     },
-    immediatelyRender: !!value,
+    immediatelyRender: false, // Always set to false for SSR compatibility
   });
 
+  // Handle client-side mounting
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!containerRef.current || !isMounted) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, [isMounted]);
+
+  // Don't render editor content until mounted and visible
+  if (!isMounted) {
+    return (
+      <div ref={containerRef} className={`${className || ''}`}>
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`${className || ''}`}>
-      {editor && <EditorContent editor={editor} />}
+    <div ref={containerRef} className={`${className || ''}`}>
+      {isVisible && editor && <EditorContent editor={editor} />}
     </div>
   );
 };

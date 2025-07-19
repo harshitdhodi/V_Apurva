@@ -1,10 +1,9 @@
+"use client"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FileText, TestTube, Microscope, Heart, Dna, FlaskConical, ArrowRight } from 'lucide-react';
-import Footer from './layout/Footer';
-import Navbar from './Navbar';
 
 // Safe HTML content renderer
 const HTMLContent = ({ html, className = "" }) => {
@@ -169,7 +168,6 @@ function ProductCategoryGrid() {
 
   return (
     <>
-      <Navbar />
       <div className="pb-14">
         <style>
           {
@@ -241,7 +239,8 @@ function ProductCategoryGrid() {
             )}
           </div>
         )}
-      </div><Footer /></>
+      </div>
+      </>
   );
 }
 
