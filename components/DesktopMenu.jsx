@@ -47,7 +47,7 @@ function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setSh
             <div className='flex items-center w-full bg-white font-semibold'>
                 <a href="/" className='w-[20%] h-24 flex justify-center items-center px-4'>
                     {logoUrl && (
-                        <div className="relative w-52 h-24">
+                        <div className="relative w-56 h-24">
                             <Image
                                 src={logoUrl}
                                 alt={colorlogo?.alt || 'Company Logo'}

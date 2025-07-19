@@ -19,14 +19,19 @@ function FeatureCard({ icon, title, description }) {
   return (
     <div className="flex flex-col justify-center items-center md:items-start p-6">
       <div className="bg-white rounded-full p-6 w-fit mb-8 transition-all duration-1000">
-        <img
+        {/* <img
           className="text-5xl text-primary transition-all duration-1000 w-[2cm]"
           src={`/api/image/download/${icon}`}
           alt={title}
           loading="lazy"
-        />
+        /> */}
+        <video  className="w-[2.3cm] object-cover transition-all duration-1000"
+  src={`/api/image/video/${icon}`}
+  autoPlay
+  muted
+  loop ></video>
       </div>
-      <h3 className="text-2xl mb-4 text-white font-daysOne text-center md:text-left">
+      <h3 className="text-2xl mb-4 font-bold text-white font-daysOne text-center md:text-left">
         {title}
       </h3>
       {parsedDescription && (
@@ -64,7 +69,7 @@ function ErrorDisplay({ message }) {
 // Data fetching function
 async function fetchWhyChooseUsData() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
     
     const [headingsResponse, dataResponse] = await Promise.all([
       fetch(`${baseUrl}/api/pageHeading/heading?pageType=whychooseus`, {
@@ -94,7 +99,7 @@ async function fetchWhyChooseUsData() {
 
     const { heading = "Why Choose Us", subheading = "Discover What Makes Us Different" } = headingsData || {};
     const items = Array.isArray(responseData?.data) ? responseData.data : [];
-
+console.log("items",items)
     return {
       heading,
       subheading,
@@ -133,10 +138,10 @@ async function WhyChooseUsContent() {
 
   return (
     <>
-        <h2 className="md:text-[20px] font-bold text-primary text-center mb-6 uppercase text-[#bf2e2e]">
+        <h2 className="md:text-[20px] font-bold font-daysOne text-primary text-center mb-6 uppercase text-[#bf2e2e]">
           {data.heading}
         </h2>
-        <h2 className="text-3xl sm:text-4xl font-daysOne text-center mb-12 capitalize">
+        <h2 className="text-3xl sm:text-4xl font-bold font-daysOne text-center mb-8 capitalize">
           {data.subheading}
         </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -162,7 +167,7 @@ async function WhyChooseUsContent() {
 // Main server component
 export default function WhyChooseUs() {
   return (
-    <section className="bg-black text-white flex justify-center items-center mb-16 lg:h-[750px]">
+    <section className="bg-black text-white flex justify-center items-center lg:h-[750px]">
       <div className="max-w-6xl mx-auto">
         <Suspense fallback={<LoadingContent />}>
           <WhyChooseUsContent />

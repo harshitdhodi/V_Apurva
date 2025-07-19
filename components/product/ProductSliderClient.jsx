@@ -1,156 +1,251 @@
 "use client"
+import { FaArrowRight } from "react-icons/fa"
+import { GrDocumentTest } from "react-icons/gr"
+import { LuTestTube } from "react-icons/lu"
+import { GrTest } from "react-icons/gr"
+import { FaBacterium } from "react-icons/fa"
+import { GiHeartOrgan } from "react-icons/gi"
+import { GiDna2 } from "react-icons/gi"
+import { SiMicrogenetics } from "react-icons/si"
+import { RiTestTubeLine } from "react-icons/ri"
+import  Link  from "next/link"
+import Slider from "react-slick"
+import "slick-carousel/slick/slick.css"
+import "slick-carousel/slick/slick-theme.css"
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
 
-import { useState, useEffect } from "react"
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
+// Color map for icons
+const colorMap = {
+  GrDocumentTest: {
+    bgColor: "bg-blue-100",
+    textColor: "text-blue-600",
+    hoverBgColor: "group-hover:bg-blue-500",
+    hoverTextColor: "group-hover:text-white",
+  },
+  LuTestTube: {
+    bgColor: "bg-red-100",
+    textColor: "text-red-600",
+    hoverBgColor: "group-hover:bg-red-500",
+    hoverTextColor: "group-hover:text-white",
+  },
+  GrTest: {
+    bgColor: "bg-teal-100",
+    textColor: "text-teal-600",
+    hoverBgColor: "group-hover:bg-teal-500",
+    hoverTextColor: "group-hover:text-white",
+  },
+  FaBacterium: {
+    bgColor: "bg-green-100",
+    textColor: "text-green-600",
+    hoverBgColor: "group-hover:bg-green-500",
+    hoverTextColor: "group-hover:text-white",
+  },
+  GiHeartOrgan: {
+    bgColor: "bg-red-100",
+    textColor: "text-red-600",
+    hoverBgColor: "group-hover:bg-red-500",
+    hoverTextColor: "group-hover:text-white",
+  },
+  GiDna2: {
+    bgColor: "bg-purple-100",
+    textColor: "text-purple-600",
+    hoverBgColor: "group-hover:bg-purple-500",
+    hoverTextColor: "group-hover:text-white",
+  },
+  SiMicrogenetics: {
+    bgColor: "bg-pink-100",
+    textColor: "text-pink-600",
+    hoverBgColor: "group-hover:bg-pink-500",
+    hoverTextColor: "group-hover:text-white",
+  },
+  RiTestTubeLine: {
+    bgColor: "bg-orange-100",
+    textColor: "text-orange-600",
+    hoverBgColor: "group-hover:bg-orange-500",
+    hoverTextColor: "group-hover:text-white",
+  },
+}
 
-export default function ProductSliderClient({ products }) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(true)
-  const [itemsPerView, setItemsPerView] = useState(4)
+const CustomPrevArrow = (props) => (
+  <div
+    className="flex absolute -left-2 md:-left-10 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer text-white bg-[#0f0f0f54] hover:bg-[#0f0f0f85] rounded-full h-8 w-8 justify-center items-center"
+    onClick={props.onClick}
+  >
+    <IoIosArrowBack size={25} />
+  </div>
+)
 
-  // Responsive items per view
-  useEffect(() => {
-    const updateItemsPerView = () => {
-      if (window.innerWidth < 640) {
-        setItemsPerView(1)
-      } else if (window.innerWidth < 768) {
-        setItemsPerView(2)
-      } else if (window.innerWidth < 1024) {
-        setItemsPerView(3)
-      } else {
-        setItemsPerView(4)
-      }
-    }
+const CustomNextArrow = (props) => (
+  <div
+    className="flex absolute -right-2 md:-right-10 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer text-white bg-[#0f0f0f54] hover:bg-[#0f0f0f85] rounded-full h-8 w-8 justify-center items-center"
+    onClick={props.onClick}
+  >
+    <IoIosArrowForward size={25} />
+  </div>
+)
 
-    updateItemsPerView()
-    window.addEventListener("resize", updateItemsPerView)
-    return () => window.removeEventListener("resize", updateItemsPerView)
-  }, [])
-
-  // Reset currentIndex when itemsPerView changes
-  useEffect(() => {
-    setCurrentIndex(0)
-  }, [itemsPerView])
-
-  // Auto play functionality
-  useEffect(() => {
-    if (!isPlaying || products.length <= itemsPerView) return
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex >= products.length - itemsPerView ? 0 : prevIndex + 1))
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [isPlaying, products.length, itemsPerView])
-
-  const goToPrevious = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? Math.max(0, products.length - itemsPerView) : Math.max(0, prevIndex - 1),
-    )
-  }
-
-  const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex >= products.length - itemsPerView ? 0 : prevIndex + 1))
-  }
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index * itemsPerView)
+// Service card component
+function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
+  const iconName = Icon.displayName || Icon.name
+  const colors = colorMap[iconName] || {
+    bgColor: "bg-gray-100",
+    textColor: "text-gray-600",
+    hoverBgColor: "group-hover:bg-gray-200",
+    hoverTextColor: "group-hover:text-white",
   }
 
   return (
-    <div className="relative" onMouseEnter={() => setIsPlaying(false)} onMouseLeave={() => setIsPlaying(true)}>
-      <div className="overflow-hidden rounded-lg">
-        <div
-          className="flex transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
-        >
-          {products.map((product, index) => (
-            <div
-              key={product._id || index}
-              className={`flex-shrink-0 px-2 sm:px-3 ${itemsPerView === 1 ? "w-full" : itemsPerView === 2 ? "w-1/2" : itemsPerView === 3 ? "w-1/3" : "w-1/4"
-                }`}
-            >
-              <div className="bg-white shadow-lg rounded-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300 h-full">
-                {/* Product Image */}
-                <div className="h-40 sm:h-48 md:h-52 overflow-hidden relative">
-                  <Link
-                    href={`/${product.slug || "#"}`}
-                    data-no-bis="true"
-                    suppressHydrationWarning
-                  >
-                    <Image
-                      src={product.photo?.[0] ? `/api/image/download/${product.photo[0]}` : "/placeholder-image.jpg"}
-                      alt={product.alt || product.title || "Product"}
-                      title={product.imgTitle || product.title || "Product"}
-                      width={500}
-                      height={500}
-                      className="object-contain group-hover:scale-105 transition-transform duration-300"
-                      data-no-bis="true"
-                      suppressHydrationWarning
-                    />
-                  </Link>
-                </div>
-                {/* Product Info */}
-                <div className="p-3 sm:p-4 flex flex-col min-h-[80px] sm:min-h-[100px]">
-                  <Link href={`/${product.slug || "#"}`} className="block flex-grow" data-no-bis="true">
-                    <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-800 hover:text-[#cd1d1d] transition-colors duration-200 line-clamp-2 leading-tight">
-                      {product.title || "Untitled Product"}
-                    </h3>
-                  </Link>
-
-                  <div className="mt-2 sm:mt-3 flex justify-end">
-                    <Link
-                      href={`/${product.slug || "#"}`}
-                      className="text-[#bf2e2e] font-medium text-xs sm:text-sm hover:text-[#cd1d1d] transition-colors duration-200 flex items-center gap-1"
-                      data-no-bis="true"
-                    >
-                      READ MORE <ArrowRight size={12} className="sm:w-4 sm:h-4" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+    <div className={`bg-white shadow-lg group h-[10cm]`}>
+      <div className="overflow-hidden">
+        <Link href={`/${slug}`}>
+          <img
+            src={imageSrc || "/placeholder.svg"}
+            alt={alt}
+            title={imgTitle}
+            className="w-full h-56 object-cover transform group-hover:scale-125 bg-gray-100 transition duration-500"
+          />
+        </Link>
+      </div>
+      <div className="py-8 px-4 items-start justify-center flex flex-col gap-2 flex-wrap md:flex-nowrap">
+        <div className="flex items-center w-full gap-4">
+          <div
+            className={`flex justify-center items-center ${colors.bgColor} ${colors.hoverBgColor} rounded-full p-4 h-fit`}
+          >
+            <Icon className={`${colors.textColor} ${colors.hoverTextColor} transition duration-300 text-[18px]`} />
+          </div>
+          <Link href={`/${slug}`} className={`text-[16px] md:text-[18px] font-bold text-gray-800`}>
+            {title}
+          </Link>
+        </div>
+        <div className="flex w-full justify-end">
+          <Link href={`/${slug}`} className={`text-primary font-medium flex items-center text-[14px] text-[#bf2e2e]`}>
+            READ MORE <FaArrowRight className="ml-2" />
+          </Link>
         </div>
       </div>
-
-      {/* Navigation Arrows */}
-      {products.length > itemsPerView && (
-        <>
-          <button
-            onClick={goToPrevious}
-            className="hidden sm:block absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full p-1.5 sm:p-2 shadow-md transition-all duration-200 z-10"
-            aria-label="Previous products"
-          >
-            <ChevronLeft size={16} className="sm:w-5 sm:h-5" />
-          </button>
-
-          <button
-            onClick={goToNext}
-            className="hidden sm:block absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full p-1.5 sm:p-2 shadow-md transition-all duration-200 z-10"
-            aria-label="Next products"
-          >
-            <ChevronRight size={16} className="sm:w-5 sm:h-5" />
-          </button>
-        </>
-      )}
-
-      {/* Dots Indicator */}
-      {products.length > itemsPerView && (
-        <div className="flex justify-center mt-4 sm:mt-6 space-x-1 sm:space-x-2">
-          {Array.from({ length: Math.ceil(products.length / itemsPerView) }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${Math.floor(currentIndex / itemsPerView) === index
-                  ? "bg-blue-600 scale-110"
-                  : "bg-gray-300 hover:bg-gray-400"
-                }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   )
 }
+
+// Client component for the slider
+function ProductSlider({ products, heading, subheading }) {
+  // Map icons based on product type or id
+  const iconMap = [
+    GrDocumentTest,
+    LuTestTube,
+    GrTest,
+    FaBacterium,
+    GiHeartOrgan,
+    GiDna2,
+    SiMicrogenetics,
+    RiTestTubeLine,
+  ]
+
+  // Slider settings
+  const settings = {
+    infinite: true,
+    speed: 1000,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    nextArrow: <CustomNextArrow />,
+    prevArrow: <CustomPrevArrow />,
+    responsive: [
+      {
+        breakpoint: 320,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 1440,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 2760,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+          dots: true,
+        },
+      },
+    ],
+  }
+
+  return (
+    <div className="flex justify-center items-center overflow-hidden bg-white mt-9">
+      <div className="w-[90%] lg:mb-16">
+        {typeof window !== "undefined" && window.location.pathname !== "/product" && (
+          <>
+            <div>
+              <p className="text-primary text-[#bf2e2e] md:text-[20px] font-bold uppercase text-center md:text-left">{heading}</p>
+            </div>
+            <div className="py-4 lg:flex lg:items-center lg:justify-between gap-2">
+              <p className="text-3xl sm:text-4xl text-gray-800 font-daysOne font-semibold text-center md:text-left">{subheading}</p>
+              <p className="py-3 text-gray-500 font-semibold flex flex-wrap gap-2">
+                <Link href="/dye-intermediate" className="flex items-center gap-2 text-primary font-semibold text-[#bf2e2e]">
+                  View all <FaArrowRight />
+                </Link>
+              </p>
+            </div>
+          </>
+        )}
+
+        <style>{`
+                    .slick-dots {
+                        bottom: -50px;
+                        z-index: 10;
+                    }
+                    .slick-dots li button:before {
+                        font-size: 15px;
+                        color: #b91c1c;
+                    }
+                    .slick-dots li.slick-active button:before {
+                        color: red;
+                    }
+                    .slider-container {
+                        overflow: visible;
+                        padding-bottom: 50px;
+                    }
+                `}</style>
+
+        <Slider {...settings}>
+          {Array.isArray(products) &&
+            products.map((item, index) => (
+              <div key={item._id || index} className="px-2 mb-4 relative">
+                <ServiceCard
+                  imageSrc={`/api/image/download/${item.photo?.[0]}`}
+                  icon={iconMap[index % iconMap.length]}
+                  title={item.title || ""}
+                  imgTitle={item.imgTitle || ""}
+                  alt={item.alt || ""}
+                  slug={item.slug || ""}
+                />
+              </div>
+            ))}
+        </Slider>
+      </div>
+    </div>
+  )
+}
+
+export default ProductSlider

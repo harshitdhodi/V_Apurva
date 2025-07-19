@@ -74,7 +74,7 @@ const ServiceCard = ({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) => {
           </Link>
         </div>
         <div className="flex w-full justify-end">
-          <Link href={`/${slug}`} className="text-primary font-medium flex items-center text-[14px] hover:underline">
+          <Link href={`/${slug}`} className="text-[#bf2e2e] font-medium flex items-center text-[14px] hover:underline">
             READ MORE <ArrowRight className="ml-2 w-4 h-4" />
           </Link>
         </div>
@@ -87,9 +87,9 @@ export const RelatedProducts = ({ products = [], iconMap = [FileText, TestTube2,
   if (!products.length) return null;
 
   return (
-    <div className="my-16 mx-2 md:mx-20">
-      <h2 className="text-2xl font-bold mb-4 border-b-2 border-primary pb-2 inline-block">
-        Related Products
+    <div className="my-16 mx-2 md:mx-auto max-w-8xl lg:mr-5">
+      <h2 className="text-2xl font-bold mb-4 text-black pb-2 inline-block">
+        __Related Products
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-8">
         {products.map((product, index) => (

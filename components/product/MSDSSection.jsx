@@ -52,7 +52,7 @@ const MSDSSection = ({ msds, specs, name }) => {
       <div className="flex flex-wrap gap-4 mb-3">
        
           <button 
-            className="flex items-center px-4 py-2 bg-white text-black shadow-md hover:bg-red-700 hover:text-white transition-colors duration-200"
+            className="flex items-center cursor-pointer px-4 py-2 bg-white text-black shadow-md hover:bg-red-700 hover:text-white transition-colors duration-200"
             onClick={() => openPdf('specs')}
           >
             <FileText className="w-4 h-4 mr-2" />
@@ -61,7 +61,7 @@ const MSDSSection = ({ msds, specs, name }) => {
        
        
           <button 
-            className="flex items-center px-4 py-2 text-black bg-white hover:text-white shadow-md hover:bg-red-700 transition-colors duration-200"
+            className="flex items-center cursor-pointer  px-4 py-2 text-black bg-white hover:text-white shadow-md hover:bg-red-700 transition-colors duration-200"
             onClick={() => openPdf('msds')}
           >
             <FileText className="w-4 h-4 mr-2" />
@@ -70,13 +70,13 @@ const MSDSSection = ({ msds, specs, name }) => {
        
         <button
           onClick={handleInquiryClick}
-          className="px-4 py-2 bg-red-700 text-white transition-colors duration-200 flex items-center justify-center hover:bg-red-800"
+          className="px-4 py-2 bg-red-700 cursor-pointer  text-white transition-colors duration-200 flex items-center justify-center hover:bg-red-800"
         >
           Inquiry Now
         </button>
         <button
           onClick={handleWhatsAppClick}
-          className="inline-flex items-center text-green-500 hover:opacity-80 transition-opacity p-2"
+          className="inline-flex items-center cursor-pointer  text-green-500 hover:opacity-80 transition-opacity p-2"
           aria-label="Contact via WhatsApp"
         >
           <MessageSquare className="w-8 h-8" />

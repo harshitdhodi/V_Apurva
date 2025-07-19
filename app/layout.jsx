@@ -34,7 +34,6 @@ async function getFaviconPath() {
     if (!response.ok) throw new Error("Failed to fetch favicon");
     const data = await response.json();
     const filename = data?.photo;
-    console.log("filename", filename);
     return filename ? `${process.env.NEXT_PUBLIC_API_URL}/api/logo/download/${filename}` : null; 
   } catch (error) {
     console.error("Error fetching favicon:", error);
