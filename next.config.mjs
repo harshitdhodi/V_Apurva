@@ -46,7 +46,7 @@ const nextConfig = {
         destination:
           process.env.NODE_ENV === 'production'
             ? 'https://www.apurvachemicals.com/api/:path*'
-            : 'http://localhost:3058/api/:path*',
+            : 'http://localhost:3000/api/:path*',
       },
     ];
   },
