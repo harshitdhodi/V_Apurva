@@ -2,7 +2,7 @@
 import { MetadataRoute } from 'next'
 import axios from 'axios'
 
-const BASE_URL = "http://localhost:3000/";
+const BASE_URL = "http://localhost:3058/";
 const BLOG_API_URL = `${BASE_URL}api/news/getActiveNews`;
 const CHEMICAL_API_URL = `${BASE_URL}api/product/getProductsByCategory?categorySlug=dye-intermediate`;
 
@@ -31,7 +31,7 @@ async function fetchChemicals() {
 }
 
 export default function sitemap() {
-  const baseUrl = 'http://localhost:3000';
+  const baseUrl = 'http://localhost:3058';
   const currentDate = new Date().toISOString();
   
   return [
