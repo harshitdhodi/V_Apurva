@@ -77,18 +77,18 @@ const VideoClient = ({ data }) => {
           </div>
           <div className="py-5 space-y-10 xl:w-1/2">
             <div className="mt-5">
-              <p
+              <h2
                 className="text-3xl sm:text-4xl md:px-0 font-bold md:text-[40px] text-gray-800 mt-4 md:text-start"
                 style={{ fontFamily: '"Days One", sans-serif' }}
               >
                 {data.subheading}
-              </p> 
+              </h2> 
               <Suspense fallback={<TipTapSkeleton className="justify-center mt-8" />}>
                 <TipTapViewerClient
                   value={data.shortDescription || ""}
                   className={
                     pathname === "/about-us"
-                      ? "justify-center mt-8 text-black"
+                      ? "justify-center mt-8 text-[18px] text-black"
                       : "justify-center sm:my-8 text-black"
                   }
                 />          

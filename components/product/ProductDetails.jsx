@@ -9,78 +9,6 @@ import { RelatedProducts } from '@/components/product/RelatedProducts';
 import MSDSSection from '@/components/product/MSDSSection';
 import { FileText, TestTube2, Dna, HeartPulse, DnaOff, FlaskConical, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Placeholder } from '@tiptap/extension-placeholder';
-
-// TipTapViewer component for rendering rich text
-const TipTapViewer = ({ value, className }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  const containerRef = useRef(null);
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: 'No content available',
-      }),
-    ],
-    content: value || '',
-    editable: false,
-    editorProps: {
-      attributes: {
-        class: `prose max-w-none prose-sm sm:prose-base lg:prose-lg xl:prose-xl text-gray-800 focus:outline-none ${className || ''}`,
-      },
-    },
-    immediatelyRender: false, // Always set to false for SSR compatibility
-  });
-
-  // Handle client-side mounting
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!containerRef.current || !isMounted) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(containerRef.current);
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
-    };
-  }, [isMounted]);
-
-  // Don't render editor content until mounted and visible
-  if (!isMounted) {
-    return (
-      <div ref={containerRef} className={`${className || ''}`}>
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div ref={containerRef} className={`${className || ''}`}>
-      {isVisible && editor && <EditorContent editor={editor} />}
-    </div>
-  );
-};
 
 const iconMap = [
   FileText,
@@ -92,22 +20,7 @@ const iconMap = [
   TestTube2,
 ];
 
-const contentStyles = `
-  .product-content p {
-    margin-bottom: 1rem;
-    lineHeight: 1.6;
-  }
-  .product-content ul, .product-content ol {
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  .product-content li {
-    margin-bottom: 0.5rem;
-  }
-`;
-
 export default function ProductDetail() {
- 
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -122,7 +35,7 @@ export default function ProductDetail() {
   const pathname = usePathname();
   const descriptionRef = useRef(null);
   const slug = pathname.split('/').pop();
-  console.log("slug", slug);
+
   useEffect(() => {
     setIsMounted(true);
     if (slug) {
@@ -246,7 +159,62 @@ export default function ProductDetail() {
 
   return (
     <>
-      <style jsx global>{contentStyles}</style>
+      <style jsx global>{`
+        .product-content {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+          color: #1f2937;
+          font-size: 1rem;
+          line-height: 1.75;
+        }
+        .product-content p {
+          margin-bottom: 1rem;
+        }
+        .product-content h1 {
+          font-size: 1.875rem;
+          font-weight: 700;
+          margin-bottom: 1rem;
+          color: #1f2937;
+        }
+        .product-content h2 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          margin-bottom: 0.75rem;
+          color: #1f2937;
+        }
+        .product-content h3 {
+          font-size: 1.25rem;
+          font-weight: 500;
+          margin-bottom: 0.5rem;
+          color: #1f2937;
+        }
+       .product-content ul {
+  list-style-type: disc !important;
+  margin-left: 6%;
+  margin-bottom: 1rem;
+}
+.product-content ol {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+        .product-content li {
+          margin-bottom: 0.5rem;
+        }
+        .product-content a {
+          color: #bf2e2e;
+          text-decoration: underline;
+          transition: color 0.2s ease;
+        }
+        .product-content a:hover {
+          color: #991b1b;
+        }
+        .product-content strong {
+          font-weight: 600;
+        }
+        .product-content em {
+          font-style: italic;
+        }
+      `}</style>
       {isMounted && (
         <>
           <title>{product?.productData.metatitle ? `${product.productData.metatitle} | Your Company Name` : 'Product Detail | Your Company Name'}</title>
@@ -281,8 +249,8 @@ export default function ProductDetail() {
               Loading...
             </div>
           ) : (
-            <div className="w-full bg-white">
-              <div className="max-w-8xl bg-white mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="w-full  bg-white">
+              <div className="max-w-8xl lg:pl-16 bg-white mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 {/* Breadcrumb */}
                 <nav className="flex items-center text-sm text-gray-500 mb-8">
                   <Link href="/" className="hover:text-[#bf2e2e]">
@@ -297,14 +265,14 @@ export default function ProductDetail() {
                 </nav>
 
                 {/* Product Grid */}
-                <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+                <div className="flex flex-col md:flex-row gap-8 lg:gap-20">
                   {/* Product Images */}
                   <div className="md:w-1/3 w-full">
                     <ProductImages images={formatImageUrls(product?.productData.photo)} />
                   </div>
 
                   {/* Product Details */}
-                  <div className="md:w-1/2 w-full">
+                  <div className="md:w-[60%] w-full">
                     <h1 className="text-2xl border-b-2 w-fit border-red-700 font-bold text-[#bf2e2e] mb-6">
                       {product?.productData.title}
                     </h1>
@@ -327,17 +295,17 @@ export default function ProductDetail() {
 
                 {/* Product Description */}
                 {product?.productData.details && (
-                  <div ref={descriptionRef} className="mt-8 mx-auto w-[90%] md:w-[87%]">
+                  <div ref={descriptionRef} className="mt-8 lg:-ml-3 mx-auto w-[90%] md:w-full ">
                     <div className="bg-gray-100 p-5 rounded-lg">
                       <span className="text-xl font-bold text-red-700">Description:</span>
                       <div className="mt-3">
-                        <TipTapViewer
-                          value={
-                            showFullContent
+                        <div
+                          className="product-content"
+                          dangerouslySetInnerHTML={{
+                            __html: showFullContent
                               ? product.productData.details
                               : getPartialContent(product.productData.details)
-                          }
-                          className="product-content"
+                          }}
                         />
                         {product.productData.details.length > 300 && (
                           <button
@@ -354,8 +322,8 @@ export default function ProductDetail() {
 
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (
-                  <div className="mt-16 mx-7 md:mx-0">
-                    <h2 className="text-2xl font-bold mb-8">Related Products</h2>
+                  <div className="mt-16 mx-7 w-full md:mx-0">
+                    {/* <h2 className="text-2xl font-bold mb-8">Related Products</h2> */}
                     <RelatedProducts
                       products={relatedProducts}
                       iconMap={iconMap}
