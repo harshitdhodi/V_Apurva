@@ -9,7 +9,7 @@ export async function GET() {
     await connectDB();
 
     const news = await News.find({ status: 'active' })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .limit(4)
       .select('-details -metatitle -metadescription -metakeywords -metacanonical -metalanguage -metaschema -otherMeta -msds -spec -url -priority -lastmod -changeFreq -createdAt -updatedAt')
       .lean();
