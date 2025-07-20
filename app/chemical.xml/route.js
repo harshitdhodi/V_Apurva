@@ -18,7 +18,7 @@ async function fetchChemicals() {
 }
 
 export async function GET() {
-  const baseUrl = 'http://localhost:3023';
+  const baseUrl = 'https://www.apurvachemicals.com';
   const chemicals = await fetchChemicals();
   console.log("Chemicals", chemicals);
   const fields = chemicals
