@@ -1,4 +1,5 @@
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import ClientLayout from './client-layout';
 import Footer from "@/components/layout/Footer"
@@ -163,7 +164,7 @@ export default async function RootLayout({ children }) {
 
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://v-apurva-a8cl.vercel.app" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
@@ -171,8 +172,20 @@ export default async function RootLayout({ children }) {
         <link rel="dns-prefetch" href="//v-apurva-a8cl.vercel.app" />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-LD63FPNG0X"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LD63FPNG0X');
+          `}
+        </Script>
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={inter.className}>
         <NavbarServer
                 headerData={headerData}
                 footerData={footerData}
