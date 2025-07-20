@@ -7,13 +7,13 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3000',
+        port: '3023',
         pathname: '/api/image/**',
       },
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3000',
+        port: '3023',
         pathname: '/api/logo/**',
       }
     ],
@@ -39,12 +39,17 @@ const nextConfig = {
         source: '/api/logo/:path*',
         destination: '/api/logo/:path*',
       },
+      // Handle msds requests
+      {
+        source: '/api/image/msds/view/:path*',
+        destination: '/api/image/msds/view/:path*',
+      },
       // Fallback for other API routes
       {
         source: '/api/:path*',
         destination: process.env.NODE_ENV === 'production' 
           ? 'https://www.apurvachemicals.com/api/:path*' 
-          : 'http://localhost:3000/api/:path*',
+          : 'http://localhost:3023/api/:path*',
       },
     ];
   },
@@ -59,6 +64,11 @@ const nextConfig = {
     }
     return config;
   },
+  
+  // Set the default port for development
+  env: {
+    PORT: '3023'
+  }
 };
 
 export default nextConfig;
