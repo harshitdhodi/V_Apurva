@@ -11,7 +11,8 @@ export async function GET() {
     await connectDB();
 
     // Find all news records where the status is 'active' using lean() for better performance
-    const activeNews = await News.find({ status: 'active' }).lean();
+    const activeNews = await News.find({ status: 'active' })
+    .sort({ createdAt: -1 }).lean();
 
     // Map over active news items to include category names and product names
     const activeNewsWithDetails = await Promise.all(
