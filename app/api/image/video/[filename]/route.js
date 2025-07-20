@@ -9,7 +9,7 @@ export async function GET(request, { params }) {
       return new NextResponse('Filename is required', { status: 400 });
     }
     
-    const videoUrl = `https://www.apurvachemicals.com/api/image/video/${filename}`;
+    const videoUrl = `https://status.rndtd.com/api/image/video/${filename}`;
     
     // Fetch the video from the external URL
     const response = await fetch(videoUrl);

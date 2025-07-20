@@ -10,7 +10,7 @@ export async function GET(request, { params }) {
       return new NextResponse('Filename is required', { status: 400 });
     }
     
-    const logoUrl = `https://www.apurvachemicals.com/api/logo/download/${filename}`;
+    const logoUrl = `https://status.rndtd.com/api/logo/download/${filename}`;
     
     // Fetch the logo from the external URL
     const response = await fetch(logoUrl);

@@ -8,7 +8,7 @@ export async function GET(request, { params }) {
       return new NextResponse('Filename is required', { status: 400 });
     }
     
-    const imageUrl = `https://www.apurvachemicals.com/api/image/download/${filename}`;
+    const imageUrl = `https://status.rndtd.com/api/image/download/${filename}`;
     
     let response;
     try {

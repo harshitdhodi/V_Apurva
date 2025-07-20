@@ -35,17 +35,17 @@ const nextConfig = {
       },
       {
         source: '/api/image/:path*',
-        destination: 'https://www.apurvachemicals.com/api/image/:path*',
+        destination: 'https://status.rndtd.com/api/image/:path*',
       },
       {
         source: '/api/logo/:path*',
-        destination: 'https://www.apurvachemicals.com/api/logo/:path*',
+        destination: 'https://status.rndtd.com/api/logo/:path*',
       },
       {
         source: '/api/:path*',
         destination:
           process.env.NODE_ENV === 'production'
-            ? 'https://www.apurvachemicals.com/api/:path*'
+            ? 'https://status.rndtd.com/api/:path*'
             : 'http://localhost:3058/api/:path*',
       },
     ];
