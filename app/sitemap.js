@@ -31,7 +31,7 @@ async function fetchChemicals() {
 }
 
 export default function sitemap() {
-  const baseUrl = 'https://apurvachemicals.com';
+  const baseUrl = 'https://www.apurvachemicals.com';
   const currentDate = new Date().toISOString();
   
   return [
