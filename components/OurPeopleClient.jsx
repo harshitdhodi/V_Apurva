@@ -1,11 +1,19 @@
 // components/OurPeopleClient.js (Client Component)
 "use client"
 import  Image from 'next/image'
+import { useState } from 'react';
 
 import TipTapViewerClient from "./TipTapViewer"
 
 function OurPeopleClient({ data }) {
   const { heading, subheading, description, currentPhoto, altText, imgTitle } = data
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = (e) => {
+    setImageError(true);
+    e.target.onerror = null;
+    e.target.src = '/images/placeholder-image.jpg';
+  };
 
   return (
     <div className="bg-white w-full relative -top-20">
@@ -24,21 +32,18 @@ function OurPeopleClient({ data }) {
         </div>
 
         {/* Image Section - 40% width on large screens */}
-        {currentPhoto && (
+        {(currentPhoto || imageError) && (
           <div className="lg:w-[35%] w-full flex justify-center">
             <div className="relative w-full max-w-[500px] aspect-square">
               <Image
-                src={`/api/logo/download/${currentPhoto}`}
-                alt={altText}
-                title={imgTitle}
+                src={imageError ? '/images/placeholder-image.jpg' : `/api/logo/download/${currentPhoto}`}
+                alt={imageError ? 'Placeholder image' : altText}
+                title={imageError ? 'Placeholder' : imgTitle}
                 className="w-full h-full object-contain rounded-lg"
                 width={500}
                 height={500}
                 priority={false}
-                onError={(e) => {
-                  e.target.onerror = null
-                  e.target.src = '/placeholder-image.jpg'
-                }}
+                onError={handleImageError}
               />
             </div>
           </div>

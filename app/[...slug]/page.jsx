@@ -8,7 +8,8 @@ import Simple404Page from '../404/page';
 // Server-side data fetching
 async function fetchSlugs() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3058';
+
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
     const response = await fetch(`${baseUrl}/api/dynamicSlug/getAllSlugs`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },

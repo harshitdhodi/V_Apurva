@@ -1,6 +1,5 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import ClientLayout from './client-layout';
 import Footer from "@/components/layout/Footer"
 import NavbarServer from "@/components/NavbarServer"
@@ -184,7 +183,6 @@ export default async function RootLayout({ children }) {
         <ClientLayout>
           {children}
         </ClientLayout>
-        <SpeedInsights />
         <Footer />
       </body>
     </html>

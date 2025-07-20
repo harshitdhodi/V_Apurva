@@ -1,7 +1,9 @@
 import { getServerSideSitemap } from 'next-sitemap';
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:3058/";
+
+const BASE_URL = "http://localhost:3023/";
+
 const CHEMICAL_API_URL = `${BASE_URL}api/product/getProductsByCategory?categorySlug=dye-intermediate`;
 
 async function fetchChemicals() {
@@ -16,7 +18,7 @@ async function fetchChemicals() {
 }
 
 export async function GET() {
-  const baseUrl = 'http://localhost:3058';
+  const baseUrl = 'http://localhost:3023';
   const chemicals = await fetchChemicals();
   console.log("Chemicals", chemicals);
   const fields = chemicals
