@@ -93,16 +93,16 @@ const VideoClient = ({ data }) => {
                   }
                 />          
               </Suspense>
-            </div>
-
             {pathname === "/about-us" && (
-              <Suspense fallback={<TipTapSkeleton className="justify-center pt-4" />}>
+              <Suspense fallback={<TipTapSkeleton className="justify-center" />}>
                 <TipTapViewerClient
                   value={data.longDescription || ""}
-                  className="justify-center text-justify pt-4"
+                  className="justify-center text-justify"
                 />
               </Suspense>
             )}
+            </div>
+
 
             {pathname !== "/about-us" && (
               <div className="flex justify-center md:justify-start">
