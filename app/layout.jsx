@@ -12,7 +12,7 @@ export async function generateMetadata() {
   return {
     title: 'Apurva Chemicals',
     description: 'Apurva Chemicals is a trusted dye intermediate manufacturer. We offer high-purity products, bulk supply options, and consistent quality for global clients.',
-    metadataBase: new URL('https://v-apurva-a8cl.vercel.app'),
+    metadataBase: new URL('https://www.apurvachemicals.com'),
     alternates: {
       canonical: '/',
     },
@@ -166,12 +166,13 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <link rel="preconnect" href="https://v-apurva-a8cl.vercel.app" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.apurvachemicals.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="//v-apurva-a8cl.vercel.app" />
+        <link rel="dns-prefetch" href="//www.apurvachemicals.com" />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <meta name="robots" content="index,follow" />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-LD63FPNG0X"
           strategy="afterInteractive"
