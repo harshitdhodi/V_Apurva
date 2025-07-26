@@ -163,7 +163,14 @@ function DesktopMenuItem({ item, productCategories = [] }) {
         if (hasSubItems) {
             e.preventDefault();
             e.stopPropagation();
-            setIsDropdownOpen(!isDropdownOpen);
+            
+            // If it's the Products menu, redirect to dye-intermediate
+            if (isProductsMenu) {
+                window.location.href = '/dye-intermediate';
+            } else {
+                // For other menus with sub-items, toggle the dropdown
+                setIsDropdownOpen(!isDropdownOpen);
+            }
         }
     };
 
@@ -176,7 +183,7 @@ function DesktopMenuItem({ item, productCategories = [] }) {
         >
             <div className="flex items-center">
                 <Link
-                    href={hasSubItems ? '#' : (item.path || '#')}
+                    href={hasSubItems ? '' : (item.path || '')}
                     onClick={handleClick}
                     className={`px-4 py-2 text-md uppercase font-bold text-black hover:text-secondary flex items-center ${
                         isDropdownOpen ? 'text-secondary' : ''
