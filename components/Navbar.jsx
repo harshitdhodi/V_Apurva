@@ -129,7 +129,8 @@ function Navbar() {
     const menuPaths = {
         about: "/about-us",
         contact: "/contact-us",
-        blog: "/blogs"
+        blog: "/blogs",
+        product: "/dye-intermediate"
     };
 
     const menuItems = (menuListings || []).map((item) => {
