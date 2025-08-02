@@ -173,16 +173,70 @@ export default async function RootLayout({ children }) {
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <meta name="robots" content="index,follow" />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-LD63FPNG0X"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
+        
+        {/* Self-hosted GTM script with delayed loading */}
+        <Script id="gtm-script" strategy="lazyOnload">
           {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-LD63FPNG0X');
+            // Create a function to load GTM
+            function loadGTM() {
+              // Create GTM script
+              const gtmScript = document.createElement('script');
+              gtmScript.async = true;
+              gtmScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-LD63FPNG0X';
+              
+              // Add to document
+              document.head.appendChild(gtmScript);
+              
+              // Initialize dataLayer
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-LD63FPNG0X', {
+                'transport_type': 'beacon',
+                'anonymize_ip': true
+              });
+              
+              // Mark as loaded to prevent duplicate loading
+              window.gtmLoaded = true;
+            }
+            
+            // Load GTM after a delay or when the page is fully interactive
+            function handleLoad() {
+              // If GTM is already loaded, do nothing
+              if (window.gtmLoaded) return;
+              
+              // If the page is already interactive, load GTM immediately
+              if (document.readyState === 'interactive' || document.readyState === 'complete') {
+                loadGTM();
+              } else {
+                // Otherwise, wait for the page to be interactive
+                document.addEventListener('readystatechange', function() {
+                  if (document.readyState === 'interactive') {
+                    loadGTM();
+                  }
+                }, { once: true });
+              }
+            }
+            
+            // Start loading GTM after a 2-second delay
+            setTimeout(handleLoad, 2000);
+            
+            // Also load GTM if the user interacts with the page
+            const interactionEvents = ['scroll', 'mousemove', 'keydown', 'touchstart'];
+            const handleInteraction = () => {
+              if (!window.gtmLoaded) {
+                loadGTM();
+                // Remove event listeners after first interaction
+                interactionEvents.forEach(event => {
+                  window.removeEventListener(event, handleInteraction);
+                });
+              }
+            };
+            
+            // Add interaction event listeners
+            interactionEvents.forEach(event => {
+              window.addEventListener(event, handleInteraction, { once: true, passive: true });
+            });
           `}
         </Script>
       </head>
