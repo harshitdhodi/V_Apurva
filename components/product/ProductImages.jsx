@@ -7,61 +7,34 @@ import Image from 'next/image';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-function SampleNextArrow(props) {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={`${className} bg-white/80 hover:bg-white p-2 rounded-full shadow-lg`}
-      style={{ ...style, display: 'flex', right: '10px', zIndex: 1 }}
-      onClick={onClick}
-    >
-      <ChevronRight className="text-gray-800" size={24} />
-    </div>
-  );
+const CustomPrevArrow = (props) => (
+  <div
+    className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer text-white bg-[#0f0f0f54] rounded-full h-8 w-8 flex justify-center items-center"
+    onClick={props.onClick}
+    style={{ ...props.style }}
+  >
+    <ChevronLeft size={25} />
+  </div>
+);
+
+const CustomNextArrow = (props) => (
+  <div
+    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 cursor-pointer text-white bg-[#0f0f0f54] rounded-full h-8 w-8 flex justify-center items-center"
+    onClick={props.onClick}
+    style={{ ...props.style }}
+  >
+    <ChevronRight size={25} />
+  </div>
+);
+
+function getImageUrl(img) {
+  return typeof img === "object" ? img.url : img;
+}
+function getImageAlt(img, index) {
+  return typeof img === "object" ? img.alt : `Product Image ${index + 1}`;
 }
 
-// Add this SamplePrevArrow component if not already present
-function SamplePrevArrow(props) {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={`${className} bg-white/80 hover:bg-white p-2 rounded-full shadow-lg`}
-      style={{ ...style, display: 'flex', left: '10px', zIndex: 1 }}
-      onClick={onClick}
-    >
-      <ChevronLeft className="text-gray-800" size={24} />
-    </div>
-  );
-}
-
-// Make sure to include the main component and default export
-function ProductImages({ images = [] }) {
-  console.log(images);
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const settings = {
-    dots: false,
-    infinite: images.length > 1, // Only enable infinite if there's more than one image
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    nextArrow: images.length > 1 ? <SampleNextArrow /> : null, // Only show arrows if multiple images
-    prevArrow: images.length > 1 ? <SamplePrevArrow /> : null, // Only show arrows if multiple images
-    beforeChange: (current, next) => setCurrentSlide(next),
-    fade: true,
-    autoplay: false, // Disable autoplay to prevent unexpected behavior
-    arrows: images.length > 1, // Only show arrows if multiple images
-    dotsClass: 'slick-dots !bottom-0',
-    appendDots: dots => (
-      <div className="!flex justify-center">
-        <ul className="!m-0 !p-2">{dots}</ul>
-      </div>
-    ),
-    customPaging: i => (
-      <button className="w-2 h-2 rounded-full bg-gray-300 mx-1 focus:outline-none"></button>
-    )
-  };
-
+const ProductImages = ({ images = [] }) => {
   if (!images || images.length === 0) {
     return (
       <div className="w-full h-64 bg-gray-100 flex items-center justify-center">
@@ -70,29 +43,85 @@ function ProductImages({ images = [] }) {
     );
   }
 
+  const [selectedImage, setSelectedImage] = useState(getImageUrl(images[0]));
+  const [sliderRef, setSliderRef] = useState(null);
+
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2500,
+    beforeChange: (current, next) => {
+      setSelectedImage(getImageUrl(images[next]));
+    },
+    nextArrow: <CustomNextArrow />,
+    prevArrow: <CustomPrevArrow />,
+  };
+
+  const handleThumbnailClick = (img) => {
+    const url = getImageUrl(img);
+    setSelectedImage(url);
+    const index = images.findIndex((i) => getImageUrl(i) === url);
+    if (sliderRef && index !== -1) {
+      sliderRef.slickGoTo(index);
+    }
+  };
+
+  if (images.length === 1) {
+    return (
+      <div className="mb-4">
+        <Image
+          src={`/api/image/download/${getImageUrl(images[0])}`}
+          alt={getImageAlt(images[0], 0)}
+          width={800}
+          height={400}
+          className="w-full h-[9cm] bg-gray-100 lg:h-[10cm] object-cover md:rounded-lg"
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full">
-      <Slider {...settings}>
+    <>
+      <Slider {...settings} ref={setSliderRef} className="mb-4">
+        {images.map((img, index) => (
+          <div key={index}>
+            <Image
+              src={`/api/image/download/${getImageUrl(img)}`}
+              alt={getImageAlt(img, index)}
+              width={800}
+              height={400}
+              className="w-full h-[9cm] lg:h-[10cm] object-cover md:rounded-lg"
+              priority={index === 0}
+            />
+          </div>
+        ))}
+      </Slider>
+      <div className="flex justify-center items-center gap-4 md:gap-12 lg:gap-8">
         {images.map((img, index) => {
-          // Handle both object and string image formats
-          const imageUrl = typeof img === 'object' ? img.url : img;
-          const imageAlt = typeof img === 'object' ? img.alt : `Product image ${index + 1}`;
-          
+          const url = getImageUrl(img);
           return (
-            <div key={index} className="relative w-full h-96">
+            <div
+              key={index}
+              className={`border-2 ${selectedImage === url ? "border-blue-500" : "border-gray-400"}`}
+              onClick={() => handleThumbnailClick(img)}
+            >
               <Image
-                src={`/api/image/download/${imageUrl}`}
-                alt={imageAlt}
-                fill
-                className="object-contain"
-                priority={index === 0}
+                src={`/api/image/download/${url}`}
+                alt={`Thumbnail ${index + 1}`}
+                width={160}
+                height={80}
+                className="w-full h-[9cm] bg-gray-100 lg:h-[10cm] object-cover md:rounded-lg"
               />
             </div>
           );
         })}
-      </Slider>
-    </div>
+      </div>
+    </>
   );
-}
+};
 
 export default ProductImages;  // This is the default export

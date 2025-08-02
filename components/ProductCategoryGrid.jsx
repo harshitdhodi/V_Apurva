@@ -1,61 +1,133 @@
+"use client"
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FileText, TestTube, Microscope, Heart, Dna, FlaskConical, ArrowRight } from 'lucide-react';
-import Footer from './layout/Footer';
-import Navbar from './Navbar';
 
-// Safe HTML content renderer
+// Safe HTML content renderer with proper list styling
 const HTMLContent = ({ html, className = "" }) => {
+   const cleanedHtml = (html || "").replace(/<p>(\s|&nbsp;)*<\/p>/gi, "");
+
   return (
-    <div className={`prose max-w-none ${className}`}>
+   <div className={`html-content prose max-w-none ${className}`}>
       <style jsx global>{`
-        .prose h1, 
-        .prose h2, 
-        .prose h3, 
-        .prose h4, 
-        .prose h5, 
-        .prose h6 {
-          color: #1a202c;
-          font-weight: 600;
-          margin: 1.5em 0 0.75em 0;
-          line-height: 1.3;
+        .html-content h1, 
+        .html-content h2, 
+        .html-content h3, 
+        .html-content h4, 
+        .html-content h5, 
+        .html-content h6 {
+          color: #1a202c !important;
+          font-weight: 600 !important;
+          margin: 1.5em 0 0.75em 0 !important;
+          line-height: 1.3 !important;
         }
-        .prose h1 {
-          font-size: 1em;
-          border-bottom: 1px solid #e2e8f0;
-          padding-bottom: 0.3em;
+        .html-content h1 {
+          font-size: 30px !important;
+          border-bottom: 1px solid #e2e8f0 !important;
+          padding-bottom: 0.3em !important;
         }
-        .prose h2 {
-          font-size: 1.5em;
-          border-bottom: 1px solid #edf2f7;
-          padding-bottom: 0.3em;
+        .html-content h2 {
+          font-size: 1.5em !important;
+          border-bottom: 1px solid #edf2f7 !important;
+          padding-bottom: 0.3em !important;
         }
-        .prose h3 {
-          font-size: 1.25em;
+        .html-content h3 {
+          font-size: 1.25em !important;
         }
-        .prose p {
-          margin: 1em 0;
-          line-height: 1.6;
+        .html-content p {
+          margin: 1em 0 !important;
+          line-height: 1.6 !important;
+          color: #374151 !important;
+        }
+        .html-content ul {
+          list-style-type: disc !important;
+          padding-left: 1.5em !important;
+          margin: 1em 0 !important;
+          display: block !important;
+          margin-left:3% !important;
+        }
+        .html-content ol {
+          list-style-type: decimal !important;
+          padding-left: 1.5em !important;
+          margin: 1em 0 !important;
+          display: block !important;
+           margin-left:10% !important;
+        }
+        .html-content li {
+          margin: 0.5em 0 !important;
+          display: list-item !important;
+          padding-left: 0.25em !important;
+          line-height: 1.6 !important;
+          color: #374151 !important;
+        }
+        .html-content ul li::marker {
+          color: #6b7280 !important;
+          font-size: 1em !important;
+        }
+        .html-content ol li::marker {
+          color: #6b7280 !important;
+          font-weight: 600 !important;
+        }
+        .html-content a {
+          color: #3182ce !important;
+          text-decoration: none !important;
+        }
+        .html-content a:hover {
+          text-decoration: underline !important;
+        }
+        .html-content strong {
+          font-weight: 600 !important;
+        }
+        .html-content em {
+          font-style: italic !important;
+        }
+        .html-content blockquote {
+          border-left: 4px solid #e5e7eb !important;
+          padding-left: 1rem !important;
+          margin: 1rem 0 !important;
+          font-style: italic !important;
+          color: #6b7280 !important;
+        }
+        .html-content code {
+          background-color: #f3f4f6 !important;
+          padding: 0.125rem 0.25rem !important;
+          border-radius: 0.25rem !important;
+          font-size: 0.875em !important;
+          color: #dc2626 !important;
+        }
+        .html-content pre {
+          background-color: #f3f4f6 !important;
+          padding: 1rem !important;
+          border-radius: 0.5rem !important;
+          overflow-x: auto !important;
+          margin: 1rem 0 !important;
+        }
+        .html-content table {
+          border-collapse: collapse !important;
+          width: 100% !important;
+          margin: 1rem 0 !important;
+        }
+        .html-content th,
+        .html-content td {
+          border: 1px solid #e5e7eb !important;
+          padding: 0.5rem !important;
+          text-align: left !important;
+        }
+        .html-content th {
+          background-color: #f9fafb !important;
+          font-weight: 600 !important;
         }
         .prose ul, 
         .prose ol {
           padding-left: 1.5em;
           margin: 1em 0;
-        }
-        .prose li {
-          margin: 0.5em 0;
-        }
-        .prose a {
-          color: #3182ce;
-          text-decoration: none;
-        }
-        .prose a:hover {
-          text-decoration: underline;
+          margin-left:10% !important
+          list-style-type: disc;
         }
       `}</style>
-      <div dangerouslySetInnerHTML={{ __html: html || "" }} />
+      <div dangerouslySetInnerHTML={{ __html: cleanedHtml }} />
     </div>
   );
 };
@@ -71,13 +143,38 @@ function ProductCategoryGrid() {
   const slug = params?.slug?.[params.slug.length - 1];
 
   const getPartialContent = (htmlContent = '') => {
-    if (!htmlContent) return '';
-    // Simple HTML truncation (for better results, you might want to use a proper HTML parser)
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlContent;
-    const text = tempDiv.textContent || tempDiv.innerText || '';
-    return text.length > 200 ? text.substring(0, 200) + '...' : text;
-  };
+  if (!htmlContent) return '';
+  // Create a temporary element to extract text content properly
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = htmlContent;
+  const text = tempDiv.textContent || tempDiv.innerText || '';
+
+  // If the content is short enough, return the full HTML
+  if (text.length <= 200) {
+    return htmlContent;
+  }
+
+  // Show first 25% of the content
+  const cutoffLength = Math.floor(text.length * 0.25);
+  const truncatedText = text.slice(0, cutoffLength);
+
+  // Try to find a good breaking point in the HTML
+  const htmlLength = htmlContent.length;
+  const ratio = truncatedText.length / text.length;
+  const approximateHtmlCutoff = Math.floor(htmlLength * ratio);
+
+  // Find the last complete tag before the cutoff
+  let cutoffPoint = approximateHtmlCutoff;
+  while (cutoffPoint > 0 && htmlContent[cutoffPoint] !== '>') {
+    cutoffPoint--;
+  }
+
+  if (cutoffPoint > 0) {
+    return htmlContent.substring(0, cutoffPoint + 1) + '...';
+  }
+
+  return truncatedText + '...';
+};
 
   useEffect(() => {
     let isMounted = true;
@@ -169,7 +266,6 @@ function ProductCategoryGrid() {
 
   return (
     <>
-      <Navbar />
       <div className="pb-14">
         <style>
           {
@@ -216,32 +312,40 @@ function ProductCategoryGrid() {
           )}
         </div>
 
-        {category.description && (
-          <div className="mx-auto w-[95%] m-8">
-            {showFullContent ? (
-              <HTMLContent html={category.description} className="prose text-black max-w-none" />
-            ) : (
-              <div className="prose text-black max-w-none">
-                <HTMLContent html={getPartialContent(category.description)} />
-                <button
-                  className="text-blue-500 mt-2 hover:underline"
-                  onClick={() => setShowFullContent(true)}
-                >
-                  Read More
-                </button>
-              </div>
-            )}
-            {showFullContent && (
-              <button
-                className="text-blue-500 mt-2 hover:underline"
-                onClick={() => setShowFullContent(false)}
-              >
-                Show Less
-              </button>
-            )}
-          </div>
-        )}
-      </div><Footer /></>
+      {category.description && (
+  <div className="mx-auto w-[95%] m-8">
+    <div className="bg-gray-50 p-6 rounded-lg">
+      {showFullContent ? (
+        <>
+
+        
+          <HTMLContent html={category.description} className="text-gray-800" />
+          <button
+            className="text-blue-500 mt-4 hover:underline font-medium"
+            onClick={() => setShowFullContent(false)}
+          >
+            Show Less
+          </button>
+        </>
+      ) : (
+        <>
+          <HTMLContent html={getPartialContent(category.description)} className="text-gray-800" />
+          {/* Show button if content is truncated (i.e., original text is longer than 25%) */}
+          {category.description.replace(/<[^>]+>/g, '').length > Math.floor(category.description.replace(/<[^>]+>/g, '').length * 0.25) && (
+            <button
+              className="text-blue-500 mt-4 hover:underline font-medium"
+              onClick={() => setShowFullContent(true)}
+            >
+              Read More
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  </div>
+)}
+      </div>
+    </>
   );
 }
 

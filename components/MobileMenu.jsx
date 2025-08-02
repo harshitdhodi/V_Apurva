@@ -167,7 +167,7 @@ function MobileMenu({
                             <a href={linkedinlink} target='_blank' className="text-gray-400 hover:text-blue-500"><Instagram /></a>
                             <a href={youtubelink} target='_blank' className="text-gray-400 hover:text-blue-500"><Youtube /></a>
                         </div>
-                    </div>
+                    </div>  
                 </div>
             )}
         </div>

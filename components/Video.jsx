@@ -1,8 +1,3 @@
-import Image from "next/image"
-import Link from "next/link"
-import TipTapViewerClient from "./TipTapViewer"
-import TipTapSkeleton from "./TipTapSkeleton"
-import { Suspense } from "react"
 import VideoClient from "./VideoClient"
 
 // Server-side data fetching

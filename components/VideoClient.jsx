@@ -11,7 +11,7 @@ const VideoClient = ({ data }) => {
     const pathname = usePathname();
 
   return (
-    <div className="flex justify-center relative -top-20 items-center md:py-16 bg-gray-100 min-h-[300px]">
+    <div className="flex justify-center relative items-center md:py-16 bg-gray-100 min-h-[300px]">
       <div className="p-4 md:px-20 w-full max-w-8xl">
         <div className="xl:flex xl:gap-10">
           <div className="flex justify-center items-center xl:w-1/2">
@@ -30,15 +30,16 @@ const VideoClient = ({ data }) => {
                 />
                 {/* Static play button - links to video instead of modal */}
                 {data.video && (
-                  <div className="absolute bottom-10 sm:bottom-24 md:bottom-10 md:inset-0 md:flex md:justify-center md:items-center">
+                  <div className="absolute inset-0 flex justify-center items-center">
                     <Link
                       href={data.video}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="cursor-pointer text-white bg-[#bf2e2e] hover:bg-secondary p-5 xl:p-10 rounded-full flex justify-center items-center md:text-xl transition-all duration-200 hover:scale-105"
+                      className="group relative z-10 bg-[#bf2e2e] cursor-pointer text-white animate-pulse bg-primary hover:bg-secondary p-5 xl:p-10 rounded-full flex justify-center items-center md:text-xl"
                       aria-label="Play video"
                     >
                       <svg
+                        className="w-8 h-8 md:w-10 md:h-10 group-hover:animate-ping-slow"
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"
@@ -76,32 +77,32 @@ const VideoClient = ({ data }) => {
           </div>
           <div className="py-5 space-y-10 xl:w-1/2">
             <div className="mt-5">
-              <p
+              <h2
                 className="text-3xl sm:text-4xl md:px-0 font-bold md:text-[40px] text-gray-800 mt-4 md:text-start"
                 style={{ fontFamily: '"Days One", sans-serif' }}
               >
                 {data.subheading}
-              </p> 
+              </h2> 
               <Suspense fallback={<TipTapSkeleton className="justify-center mt-8" />}>
                 <TipTapViewerClient
                   value={data.shortDescription || ""}
                   className={
                     pathname === "/about-us"
-                      ? "justify-center mt-8 text-black"
+                      ? "justify-center mt-8 text-[18px] text-black"
                       : "justify-center sm:my-8 text-black"
                   }
                 />          
               </Suspense>
-            </div>
-
             {pathname === "/about-us" && (
-              <Suspense fallback={<TipTapSkeleton className="justify-center pt-4" />}>
+              <Suspense fallback={<TipTapSkeleton className="justify-center" />}>
                 <TipTapViewerClient
                   value={data.longDescription || ""}
-                  className="justify-center text-justify pt-4"
+                  className="justify-center text-justify"
                 />
               </Suspense>
             )}
+            </div>
+
 
             {pathname !== "/about-us" && (
               <div className="flex justify-center md:justify-start">
