@@ -155,7 +155,7 @@ export default function ProductDetail() {
   }
 
   const metaDescription = getMetaDescription();
-  const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}${pathname}` : '';
+  const currentUrl = typeof window !== 'undefined' ? `https://www.apurvachemicals.com/${pathname}` : '';
 
   return (
     <>
