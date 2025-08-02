@@ -317,6 +317,8 @@ function ProductCategoryGrid() {
     <div className="bg-gray-50 p-6 rounded-lg">
       {showFullContent ? (
         <>
+
+        
           <HTMLContent html={category.description} className="text-gray-800" />
           <button
             className="text-blue-500 mt-4 hover:underline font-medium"
