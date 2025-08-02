@@ -1,6 +1,6 @@
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import ClientLayout from './client-layout';
 import Footer from "@/components/layout/Footer"
 import NavbarServer from "@/components/NavbarServer"
@@ -12,7 +12,7 @@ export async function generateMetadata() {
   return {
     title: 'Apurva Chemicals',
     description: 'Apurva Chemicals is a trusted dye intermediate manufacturer. We offer high-purity products, bulk supply options, and consistent quality for global clients.',
-    metadataBase: new URL('https://v-apurva-a8cl.vercel.app'),
+    metadataBase: new URL('https://www.apurvachemicals.com'),
     alternates: {
       canonical: '/',
     },
@@ -34,7 +34,7 @@ async function getFaviconPath() {
     if (!response.ok) throw new Error("Failed to fetch favicon");
     const data = await response.json();
     const filename = data?.photo;
-    return filename ? `${process.env.NEXT_PUBLIC_API_URL}/api/logo/download/${filename}` : null; 
+    return filename ? `/api/logo/download/${filename}` : null; 
   } catch (error) {
     console.error("Error fetching favicon:", error);
     return null;
@@ -164,16 +164,29 @@ export default async function RootLayout({ children }) {
 
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
-        <link rel="preconnect" href="https://v-apurva-a8cl.vercel.app" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.apurvachemicals.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="//v-apurva-a8cl.vercel.app" />
+        <link rel="dns-prefetch" href="//www.apurvachemicals.com" />
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <meta name="robots" content="index,follow" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-LD63FPNG0X"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LD63FPNG0X');
+          `}
+        </Script>
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={inter.className}>
         <NavbarServer
                 headerData={headerData}
                 footerData={footerData}
@@ -184,7 +197,6 @@ export default async function RootLayout({ children }) {
         <ClientLayout>
           {children}
         </ClientLayout>
-        <SpeedInsights />
         <Footer />
       </body>
     </html>

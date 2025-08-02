@@ -99,7 +99,7 @@ function ContactUsInquiryForm({ onClose }) {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-opacity duration-300">
             <div className="bg-white p-3 md:p-8 md:rounded-xl shadow-2xl w-full max-w-lg relative">
                 {/* Close Icon at the Top-Right Corner */}
                 <button

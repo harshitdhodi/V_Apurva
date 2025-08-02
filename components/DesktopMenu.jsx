@@ -6,7 +6,7 @@ import { Grip ,ArrowDown } from 'lucide-react';
 import Link from 'next/link';
 
 function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setShowInquiryForm, productCategories = [], isLoading = false }) {
-
+console.log(menuItems)
     const logoUrl = colorlogo?.photo ? `/api/logo/download/${colorlogo.photo}` : '';
 
 
@@ -83,19 +83,20 @@ function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setSh
                                 <DesktopMenuItem
                                     key={index}
                                     item={item}
-                                    handleMenuItemClick={handleMenuItemClick}
                                     productCategories={safeProductCategories}
                                 />
                             ))}
                         </div>
 
                         <div className='flex items-center h-full'>
+                            <Link href="/contact-us">
                             <button
                                 onClick={() => setShowInquiryForm(true)}
                                 className='border border-gray-400 px-8 bg-[#bf2e2e] text-white h-full py-4 uppercase hover:bg-[#cd1d1d] transition-colors duration-300'
                             >
                                 Inquiry Now
                             </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -104,13 +105,15 @@ function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setSh
     );
 }
 
-function DesktopMenuItem({ item, handleMenuItemClick, productCategories = [] }) {
+function DesktopMenuItem({ item, productCategories = [] }) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
     const hoverTimeoutRef = useRef(null);
 
     // Ensure productCategories is always an array
     const safeProductCategories = Array.isArray(productCategories) ? productCategories : [];
+    const isProductsMenu = item.pagename?.toLowerCase().includes('product');
+    const hasSubItems = (item.subItems && item.subItems.length > 0) || (isProductsMenu && safeProductCategories.length > 0);
 
     // Cleanup timeout on unmount
     useEffect(() => {
@@ -139,9 +142,11 @@ function DesktopMenuItem({ item, handleMenuItemClick, productCategories = [] }) 
         if (hoverTimeoutRef.current) {
             clearTimeout(hoverTimeoutRef.current);
         }
-        hoverTimeoutRef.current = setTimeout(() => {
-            setIsDropdownOpen(true);
-        }, 200);
+        if (hasSubItems) {
+            hoverTimeoutRef.current = setTimeout(() => {
+                setIsDropdownOpen(true);
+            }, 200);
+        }
     };
 
     const handleMouseLeave = () => {
@@ -153,15 +158,21 @@ function DesktopMenuItem({ item, handleMenuItemClick, productCategories = [] }) 
         }, 200);
     };
 
-    const handleItemClick = (path) => {
-        if (path) {
-            handleMenuItemClick(path);
+    // Handle click on menu item
+    const handleClick = (e) => {
+        if (hasSubItems) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // If it's the Products menu, redirect to dye-intermediate
+            if (isProductsMenu) {
+                window.location.href = '/dye-intermediate';
+            } else {
+                // For other menus with sub-items, toggle the dropdown
+                setIsDropdownOpen(!isDropdownOpen);
+            }
         }
     };
-
-    // Check if this is the products menu item
-    const isProductsMenu = item.pagename && typeof item.pagename === 'string' && 
-                         item.pagename.toLowerCase().includes('product');
 
     return (
         <div 
@@ -170,62 +181,57 @@ function DesktopMenuItem({ item, handleMenuItemClick, productCategories = [] }) 
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <div 
-                className={`flex items-center px-4 py-2 text-md uppercase font-bold  text-black hover:text-secondary cursor-pointer ${isDropdownOpen ? 'text-secondary' : ''}`}
-                onClick={() => !isProductsMenu && handleItemClick(item.path)}
-            >
-                {item.pagename}
-                {(item.subItems && item.subItems.length > 0 || isProductsMenu) && (
-                    <ArrowDown 
-                        className={`ml-1 transition-transform duration-200 ${isDropdownOpen ? 'transform rotate-180' : ''}`} 
-                        size={16} 
-                    />
-                )}
+            <div className="flex items-center">
+                <Link
+                    href={hasSubItems ? '' : (item.path || '')}
+                    onClick={handleClick}
+                    className={`px-4 py-2 text-md uppercase font-bold text-black hover:text-secondary flex items-center ${
+                        isDropdownOpen ? 'text-secondary' : ''
+                    }`}
+                >
+                    {item.pagename}
+                    {hasSubItems && (
+                        <ArrowDown 
+                            className={`ml-1 transition-transform duration-200 ${
+                                isDropdownOpen ? 'transform rotate-180' : ''
+                            }`} 
+                            size={16} 
+                        />
+                    )}
+                </Link>
             </div>
 
             {isDropdownOpen && (isProductsMenu ? (
                 <div className="absolute left-0 mt-0 w-56 bg-white rounded-md shadow-lg z-50">
                     <div className="py-1">
-                        {safeProductCategories.length > 0 ? (
-                            safeProductCategories.map((category, index) => (
-                                <div key={index} className="group/subitem relative">
-                                    <Link
-                                        href={`/${category.slug || ''}`}
-                                        className="block px-4 py-2 text-md text-[#a31010] hover:bg-gray-100 hover:text-secondary uppercase lg:flex lg:justify-between lg:items-center"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsDropdownOpen(false);
-                                        }}
-                                    >
-                                        {category.category || 'Unnamed Category'}
-                                    </Link>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="px-4 py-2 text-sm text-gray-500">No categories found</div>
-                        )}
-                    </div>
-                </div>
-            ) : item.subItems && item.subItems.length > 0 && (
-                <div className="absolute left-0 mt-0 w-56 bg-white rounded-md shadow-lg z-50">
-                    <div className="py-1">
-                        {item.subItems.map((subItem, index) => (
-                            <div key={index} className="group/subitem relative">
-                                <Link
-                                    href={subItem.path}
-                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-secondary lg:flex lg:justify-between lg:items-center"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setIsDropdownOpen(false);
-                                    }}
-                                >
-                                    {subItem.title}
-                                </Link>
-                            </div>
+                        {safeProductCategories.map((category, index) => (
+                            <Link
+                                key={index}
+                                href={`/${category.slug || ''}`}
+                                className="block px-4 py-2 text-md text-[#a31010] hover:bg-gray-100 hover:text-secondary uppercase"
+                                onClick={() => setIsDropdownOpen(false)}
+                            >
+                                {category.category || 'Unnamed Category'}
+                            </Link>
                         ))}
                     </div>
                 </div>
-            ))}
+            ) : item.subItems && item.subItems.length > 0 ? (
+                <div className="absolute left-0 mt-0 w-56 bg-white rounded-md shadow-lg z-50">
+                    <div className="py-1">
+                        {item.subItems.map((subItem, index) => (
+                            <Link
+                                key={index}
+                                href={subItem.path || '#'}
+                                className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-secondary"
+                                onClick={() => setIsDropdownOpen(false)}
+                            >
+                                {subItem.pagename}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            ) : null)}
         </div>
     );
 }
