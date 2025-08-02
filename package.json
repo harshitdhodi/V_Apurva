@@ -6,7 +6,10 @@
     "dev": "next dev -p 3023",
     "build": "next build",
     "start": "next start -p 3023",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build",
+    "analyze:server": "cross-env ANALYZE=server next build",
+    "analyze:browser": "cross-env ANALYZE=browser next build"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
@@ -27,13 +30,28 @@
     "react-icons": "^5.5.0",
     "react-redux": "^9.2.0",
     "react-slick": "^0.30.3",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "terser-webpack-plugin": "^5.3.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.3.5",
     "@tailwindcss/postcss": "^4",
+    "cross-env": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "tailwindcss": "^4"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
