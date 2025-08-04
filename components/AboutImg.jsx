@@ -26,6 +26,5 @@ export default async function AboutImg() {
       </div>
     )
   }
-
   return <AboutImgClient banners={banners} />
 }
