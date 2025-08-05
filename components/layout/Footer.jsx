@@ -9,15 +9,15 @@ async function getFooterData() {
     const [footerResponse, headerResponse, logoResponse] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/footer/getFooter`, {
         
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/header/getHeader`, {
         
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/footerwhite`, {
         
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
       }),
     ])
 
