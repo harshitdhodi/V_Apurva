@@ -46,4 +46,4 @@ export async function GET() {
   return getServerSideSitemap(fields);
 }
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Disable caching

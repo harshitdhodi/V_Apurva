@@ -18,7 +18,7 @@ async function getBanners() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/getBannersBySectionHome`, {
       
-      next: { revalidate: 1800 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch banners")
     const data = await response.json()
