@@ -4,6 +4,7 @@ import ProductDetail from '@/components/product/ProductDetails';
 import ProductCategoryGrid from '@/components/ProductCategoryGrid';
 import SingleBlog from '@/components/SingleBlog';
 import Simple404Page from '../404/page';
+import axios from 'axios';
 
 // Server-side data fetching
 async function fetchSlugs() {
@@ -43,6 +44,64 @@ async function determinePageType(slug) {
     console.error('Error determining page type:', err);
     return 'error';
   }
+}
+
+// Function to fetch product data by slug
+async function fetchProductData(slug) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const response = await axios.get(`${baseUrl}/api/product/getDataBySlug?slugs=${slug}`);
+    if (response.data.success) {
+      return response.data.productData;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching product data:', error);
+    return null;
+  }
+}
+
+// Generate metadata dynamically
+export async function generateMetadata({ params }) {
+  const slug = params?.slug?.join('/') || '';
+  const pageType = await determinePageType(slug);
+  
+  if (pageType === 'product') {
+    const productData = await fetchProductData(slug);
+    if (productData) {
+      return {
+        title: productData.metatitle || productData.title || 'Product Details',
+        description: productData.metadescription || '',
+        keywords: productData.metakeywords || '',
+        alternates: {
+          canonical: productData.url || `https://apurvachemicals.com/${slug}`,
+        },
+        openGraph: {
+          title: productData.metatitle || productData.title || 'Product Details',
+          description: productData.metadescription || '',
+          url: productData.url || `https://apurvachemicals.com/${slug}`,
+          siteName: 'Apurva Chemicals',
+          images: productData.photo?.length > 0 ? 
+            [{ url: `https://apurvachemicals.com/uploads/${productData.photo[0]}` }] : [],
+          locale: 'en_US',
+          type: 'website',
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: productData.metatitle || productData.title || 'Product Details',
+          description: productData.metadescription || '',
+          images: productData.photo?.length > 0 ? 
+            [`https://apurvachemicals.com/uploads/${productData.photo[0]}`] : [],
+        },
+      };
+    }
+  }
+  
+  // Default metadata
+  return {
+    title: 'Apurva Chemicals',
+    description: 'Leading manufacturer and exporter of specialty chemicals',
+  };
 }
 
 // ✅ Corrected async component usage
