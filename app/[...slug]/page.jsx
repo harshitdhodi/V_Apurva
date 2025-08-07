@@ -61,11 +61,41 @@ async function fetchProductData(slug) {
   }
 }
 
+// Function to fetch blog data by slug
+async function fetchBlogData(slug) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const response = await fetch(`${baseUrl}/api/news/getDataBySlug?slugs=${slug}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    
+    // Check if we got valid data in the expected format
+    if (!result || !result.productData) {
+      console.error('Unexpected API response format:', result);
+      return null;
+    }
+    
+    return result.productData; // Return the productData object directly
+  } catch (err) {
+    console.error('Error fetching blog data:', err);
+    return null;
+  }
+}
+
 // Generate metadata dynamically
 export async function generateMetadata({ params }) {
   const slug = params?.slug?.join('/') || '';
   const pageType = await determinePageType(slug);
   
+  // Handle product metadata
   if (pageType === 'product') {
     const productData = await fetchProductData(slug);
     if (productData) {
@@ -92,6 +122,43 @@ export async function generateMetadata({ params }) {
           description: productData.metadescription || '',
           images: productData.photo?.length > 0 ? 
             [`https://apurvachemicals.com/uploads/${productData.photo[0]}`] : [],
+        },
+      };
+    }
+  }
+  
+  // Handle blog post metadata
+  if (pageType === 'single-blog') {
+    const blogData = await fetchBlogData(slug);
+    if (blogData) {
+      const imageUrl = blogData.photo?.[0] 
+        ? `https://apurvachemicals.com/uploads/${blogData.photo[0]}`
+        : '';
+      
+      return {
+        title: blogData.metatitle || blogData.title || 'Blog Post',
+        description: blogData.metadescription || blogData.title || 'Blog post on Apurva Chemicals',
+        keywords: blogData.metakeywords || '',
+        alternates: {
+          canonical: blogData.url || `https://apurvachemicals.com/${slug}`,
+        },
+        openGraph: {
+          title: blogData.metatitle || blogData.title || 'Blog Post',
+          description: blogData.metadescription || blogData.title || 'Blog post on Apurva Chemicals',
+          url: blogData.url || `https://apurvachemicals.com/${slug}`,
+          siteName: 'Apurva Chemicals',
+          images: imageUrl ? [{ url: imageUrl }] : [],
+          locale: 'en_US',
+          type: 'article',
+          publishedTime: blogData.createdAt || '',
+          modifiedTime: blogData.updatedAt || '',
+          authors: [blogData.postedBy || 'Apurva Chemicals'],
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: blogData.metatitle || blogData.title || 'Blog Post',
+          description: blogData.metadescription || blogData.title || 'Blog post on Apurva Chemicals',
+          images: imageUrl ? [imageUrl] : [],
         },
       };
     }
