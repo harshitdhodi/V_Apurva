@@ -16,15 +16,15 @@ async function getData() {
   try {
     const [blogsRes, categoriesRes, bannersRes] = await Promise.all([
       fetch(`${apiUrl}/api/news/getActiveNews`, { 
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
         cache: 'force-cache'
       }),
       fetch(`${apiUrl}/api/news/getSpecificCategoryDetails`, { 
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
         cache: 'force-cache'
       }),
       fetch(`${apiUrl}/api/banner/getBannersBySectionBlog`, { 
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
         cache: 'force-cache'
       })
     ]);

@@ -32,4 +32,4 @@ export async function GET() {
 }
 
 // Prevents Next.js from adding default headers
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Disable caching

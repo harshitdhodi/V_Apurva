@@ -31,4 +31,4 @@ export async function GET() {
   }
 }
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Disable caching

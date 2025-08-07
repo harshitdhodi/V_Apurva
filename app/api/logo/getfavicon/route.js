@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import Logo from '@/lib/models/Logo';
-
-
 // Helper function to get the favicon file
 async function findFavicon() {
   await connectDB();
