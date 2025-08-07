@@ -262,7 +262,7 @@ export default function SingleBlog() {
       
       <div
         className="relative bg-cover bg-white bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(/api/image/download/${blogData.photo})` }}
+        style={{ backgroundImage: `url(https://admin.apurvachemicals.com/api/image/download/${blogData.photo})` }}
       >
         <div className="flex flex-col justify-center items-center h-[40vh] md:h-[40vh] mb-10">
           <div className="absolute space-y-4 space-x-2 z-10">
@@ -286,7 +286,7 @@ export default function SingleBlog() {
           <div className="m-5 space-y-5">
             <div>
               <Image
-                src={`/api/image/download/${blogData.photo}`}
+                src={`https://admin.apurvachemicals.com/api/image/download/${blogData.photo}`}
                 width={1200}
                 height={600}
                 className="rounded w-full"
@@ -317,7 +317,7 @@ export default function SingleBlog() {
                           <div className="relative mb-4">
                             <Link href={`/${post.slug}`}>
                               <Image
-                                src={`/api/image/download/${post.photo[0] || post.photo}`}
+                                src={`https://admin.apurvachemicals.com/api/image/download/${post.photo[0] || post.photo}`}
                                 width={400}
                                 height={300}
                                 alt={post.alt?.[0] || 'Latest post image'}
