@@ -4,7 +4,7 @@ import PackagingTypeClient from "./PackagingTypeClient"
 async function getPackagingDetail() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packagingdetail/getPackagingDetail`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch packaging detail")
     return await response.json()
@@ -17,7 +17,7 @@ async function getPackagingDetail() {
 async function getPageHeadings() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pageHeading/heading?pageType=packagingType`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch page headings")
     return await response.json()
@@ -30,7 +30,7 @@ async function getPageHeadings() {
 async function getPackagingTypes() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packaging-types`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch packaging types")
     const data = await response.json()

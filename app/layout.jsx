@@ -8,16 +8,12 @@ import NavbarServer from "@/components/NavbarServer"
 const inter = Inter({ subsets: ['latin'] });
 
 export async function generateMetadata() {
-  const favicon = await getFaviconPath();
   return {
     title: 'Apurva Chemicals',
     description: 'Apurva Chemicals is a trusted dye intermediate manufacturer. We offer high-purity products, bulk supply options, and consistent quality for global clients.',
     metadataBase: new URL('https://www.apurvachemicals.com'),
     alternates: {
       canonical: '/',
-    },
-    icons: {
-      icon: favicon || '/favicon.ico',
     },
     other: {
       'http-equiv': 'x-ua-compatible',
@@ -26,27 +22,12 @@ export async function generateMetadata() {
   };
 }
 
-async function getFaviconPath() {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/getfavicon`, {
-      next: { revalidate: 3600 },
-    });
-    if (!response.ok) throw new Error("Failed to fetch favicon");
-    const data = await response.json();
-    const filename = data?.photo;
-    return filename ? `/api/logo/download/${filename}` : null; 
-  } catch (error) {
-    console.error("Error fetching favicon:", error);
-    return null;
-  }
-}
-
 // Server-side data fetching functions (same as before)
 async function getHeaderData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/header`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })  
     if (!response.ok) throw new Error("Failed to fetch header data")
     return await response.json()
@@ -60,7 +41,7 @@ async function getFooterData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/footer`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch footer data")
     return await response.json()
@@ -74,7 +55,7 @@ async function getMenuListings() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/menu/getMenulisting`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch menu listings")
     const data = await response.json()
@@ -89,7 +70,7 @@ async function getProductCategories() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product/getCategoryAndPhoto`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch product categories")
     const data = await response.json()
@@ -104,7 +85,7 @@ async function getColorLogo() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/header-color`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch color logo")
     return await response.json()
@@ -166,6 +147,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="preconnect" href="https://www.apurvachemicals.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

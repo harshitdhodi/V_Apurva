@@ -4,7 +4,7 @@ import VideoClient from "./VideoClient"
 async function getAboutUsData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/aboutus/active`, {
-      next: { revalidate: 3600 }, // Revalidate every hour
+      next: { revalidate: 0 }, // Revalidate every hour
     })
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
