@@ -43,7 +43,7 @@ export default function ProductDetail() {
       fetchRelatedProducts();
     }
   }, [slug]);
-
+  
   const fetchProductData = async () => {
     try {
       setLoading(true);
@@ -154,9 +154,6 @@ export default function ProductDetail() {
     );
   }
 
-  const metaDescription = getMetaDescription();
-  const currentUrl = typeof window !== 'undefined' ? `https://www.apurvachemicals.com/${pathname}` : '';
-
   return (
     <>
       <style jsx global>{`
@@ -215,27 +212,6 @@ export default function ProductDetail() {
           font-style: italic;
         }
       `}</style>
-      {isMounted && (
-        <>
-          <title>{product?.productData.metatitle ? `${product.productData.metatitle} | Your Company Name` : 'Product Detail | Your Company Name'}</title>
-          <meta name="description" content={product?.productData.metadescription || metaDescription} />
-          <meta name="keywords" content={`${product?.productData.title || ''}, dye intermediate, chemical products`} />
-          <meta property="og:title" content={product?.productData.metatitle || 'Product Detail'} />
-          <meta property="og:description" content={product?.productData.metadescription || metaDescription} />
-          <meta property="og:type" content="product" />
-          {currentUrl && <meta property="og:url" content={currentUrl} />}
-          {product?.productData.photo?.[0] && (
-            <meta property="og:image" content={`/api/image/download/${product.productData.photo[0]}`} />
-          )}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={product?.productData.metatitle || 'Product Detail'} />
-          <meta name="twitter:description" content={product?.productData.metadescription || metaDescription} />
-          {product?.productData.photo?.[0] && (
-            <meta name="twitter:image" content={`/api/image/download/${product.productData.photo[0]}`} />
-          )}
-          {currentUrl && <link rel="canonical" href={currentUrl} />}
-        </>
-      )}
       <div className="w-full bg-white">
         <div suppressHydrationWarning>
           {!isMounted ? (

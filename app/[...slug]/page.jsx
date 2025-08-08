@@ -4,18 +4,23 @@ import ProductDetail from '@/components/product/ProductDetails';
 import ProductCategoryGrid from '@/components/ProductCategoryGrid';
 import SingleBlog from '@/components/SingleBlog';
 import Simple404Page from '../404/page';
+import { getMetadataBySlug } from '@/lib/getMetadata';
+
+// SSR meta export for dynamic meta tags
+export async function generateMetadata({ params }) {
+  const slug = params?.slug?.join('/') || '';
+  return await getMetadataBySlug(slug);
+}
 
 // Server-side data fetching
 async function fetchSlugs() {
   try {
-
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
     const response = await fetch(`${baseUrl}/api/dynamicSlug/getAllSlugs`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
-
     if (!response.ok) throw new Error('Failed to fetch slugs');
     const data = await response.json();
     return data;
@@ -29,15 +34,12 @@ async function determinePageType(slug) {
   try {
     const { data } = await fetchSlugs();
     const { productSlugs, productCategorySlugs, newsSlugs, newsCategorySlugs } = data;
-
     const slugString = Array.isArray(slug) ? slug.join('/') : slug;
     const validNewsCategorySlugs = newsCategorySlugs.filter(Boolean);
-
     if (productSlugs.includes(slugString)) return 'product';
     if (productCategorySlugs.includes(slugString)) return 'product-category';
     if (newsSlugs.includes(slugString)) return 'single-blog';
     if (validNewsCategorySlugs.includes(slugString)) return 'blog';
-
     return '404';
   } catch (err) {
     console.error('Error determining page type:', err);
@@ -50,7 +52,6 @@ export default async function Page(props) {
   const params = await props.params;
   const slug = params?.slug?.join('/') || '';
   const pageType = await determinePageType(slug);
-
   if (pageType === 'error') {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
@@ -61,11 +62,9 @@ export default async function Page(props) {
       </div>
     );
   }
-
   if (pageType === '404') {
     notFound();
   }
-
   switch (pageType) {
     case 'product':
       return <ProductDetail />;
@@ -79,3 +78,4 @@ export default async function Page(props) {
       return <Simple404Page />;
   }
 }
+  
