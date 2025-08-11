@@ -1,6 +1,6 @@
 import React from 'react';
-import ContactusImg from '../../components/contactus/ContactusImg';
-import ContactForm from '../../components/contactus/ContactForm';
+import ContactusImg from '@/components/contactus/ContactusImg';
+import ContactForm from '@/components/contactus/ContactForm';
 import { getMetadataBySlug } from '@/lib/getMetadata';
 
 // Server-side data fetching functions
