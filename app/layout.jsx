@@ -22,6 +22,7 @@ export async function generateMetadata() {
     },
     ...meta,
 }
+}
 
 // Server-side data fetching functions (same as before)
 async function getHeaderData() {
