@@ -7,28 +7,35 @@ import img1 from './images/contact-01.svg';
 import img2 from './images/contact-02.svg';
 import img3 from './images/contact-03.svg';
 
-const ContactForm = () => {
-    const [phoneNo, setPhoneNo] = useState("");
-    const [openingHours, setOpeningHours] = useState("");
-    const [address, setAddress] = useState("");
-    const [addresslink, setAddresslink] = useState("");
-    const [location, setLocation] = useState('');
+const ContactForm = ({ headerData = {}, footerData = {} }) => {
+    // Form state
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [message, setMessage] = useState('');
+    
+    // Client-side data state
     const [clientIp, setClientIp] = useState('');
     const [utmParams, setUtmParams] = useState({});
+    
+    // UI state
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isMapVisible, setIsMapVisible] = useState(false);
+    
+    // Refs
     const mapRef = useRef(null);
 
-    // Default Google Maps embed URL - replace with your actual location
-    const DEFAULT_MAP_URL = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.390259169117!2d77.22702231508336!3d28.61275098242474!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce2daa9eb4d0b%3A0x717971125923e5d!2sIndia%20Gate!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin';
+    // Extract data from props with fallbacks
+    const { phoneNo = "", openingHours = "" } = headerData;
+    const { 
+        address = "", 
+        addresslink = "", 
+        location = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.390259169117!2d77.22702231508336!3d28.61275098242474!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce2daa9eb4d0b%3A0x717971125923e5d!2sIndia%20Gate!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin'
+    } = footerData;
 
-    // Fetch client IP and UTM parameters
+    // Fetch client IP and UTM parameters (client-side only)
     useEffect(() => {
         const fetchClientIp = async () => {
             try {
@@ -41,66 +48,36 @@ const ContactForm = () => {
 
         fetchClientIp();
 
-        // Only run on client side
-        if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
-            setUtmParams({
-                utm_source: params.get('utm_source') || '',
-                utm_medium: params.get('utm_medium') || '',
-                utm_campaign: params.get('utm_campaign') || '',
-                utm_id: params.get('utm_id') || '',
-                gclid: params.get('gclid') || '',
-                gcid_source: params.get('gcid_source') || '',
-                utm_content: params.get('utm_content') || '',
-                utm_term: params.get('utm_term') || '',
-            });
-        }
+        // Extract UTM parameters from URL
+        const params = new URLSearchParams(window.location.search);
+        setUtmParams({
+            utm_source: params.get('utm_source') || '',
+            utm_medium: params.get('utm_medium') || '',
+            utm_campaign: params.get('utm_campaign') || '',
+            utm_id: params.get('utm_id') || '',
+            gclid: params.get('gclid') || '',
+            gcid_source: params.get('gcid_source') || '',
+            utm_content: params.get('utm_content') || '',
+            utm_term: params.get('utm_term') || '',
+        });
     }, []);
 
-    // Fetch header and footer data
-    useEffect(() => {
-        const fetchHeader = async () => {
-            try {
-                const response = await axios.get('/api/header/getPhoneAndHours', { withCredentials: true });
-                const header = response.data;
-                setPhoneNo(header.phoneNo || "");
-                setOpeningHours(header.openingHours || "");
-            } catch (error) {
-                console.error('Error fetching header:', error);
-            }
-        };
-
-        const fetchFooter = async () => {
-            try {
-                const response = await axios.get('/api/footer/getAddressAndLocation', { withCredentials: true });
-                const footer = response.data;
-                setAddress(footer.address || "");
-                setAddresslink(footer.addresslink || "");
-                setLocation(footer.location || DEFAULT_MAP_URL);
-            } catch (error) {
-                console.error('Error fetching footer:', error);
-            }
-        };
-
-        fetchHeader();
-        fetchFooter();
-    }, []);
-
+    // Intersection Observer for lazy loading map
     useEffect(() => {
         if (!mapRef.current) return;
 
         const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) {
-              setIsMapVisible(true);
-              observer.disconnect();
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsMapVisible(true);
+                    observer.disconnect();
+                }
+            },
+            {
+                root: null,
+                rootMargin: '200px',
+                threshold: 0.1,
             }
-          },
-          {
-            root: null,
-            rootMargin: '200px',
-            threshold: 0.1,
-          }
         );
 
         observer.observe(mapRef.current);
@@ -123,6 +100,7 @@ const ContactForm = () => {
             });
 
             setModalIsOpen(true);
+            // Reset form
             setName('');
             setEmail('');
             setPhone('');
@@ -140,8 +118,8 @@ const ContactForm = () => {
             {/* Left Column - Contact Info */}
             <div className="w-full md:w-1/3 lg:w-[25%] lg:mt-20 flex flex-col gap-8">
                 {/* Address Card */}
-                <div className="border shadow border-[#ECEEF3]  hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
-                    <div className="flex flex-col items-center  mb-4">
+                <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
+                    <div className="flex flex-col items-center mb-4">
                         <div className="w-16 h-16 flex items-center justify-center mb-4">
                             <img src={img1.src} alt="Address" className="w-full h-full object-contain" />
                         </div>

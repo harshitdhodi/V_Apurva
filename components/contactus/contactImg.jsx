@@ -1,38 +1,48 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
-function ContactusImg() {
-    const [banners, setBanners] = useState([]);
+function ContactusImg({ banners = [] }) {
     const [isClient, setIsClient] = useState(false);
     const pathname = usePathname();
+    
     const slug = pathname
-      .split('/')
-      .pop() // Get the last part after last slash
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+        .split('/')
+        .pop() // Get the last part after last slash
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
     useEffect(() => {
         setIsClient(true);
         window.scrollTo(0, 0);
-        fetchData();
     }, []);
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('/api/banner/getBannersBySectionContactus');
-            setBanners(response.data.data || []);
-        } catch (error) {
-            console.error("Error fetching banners:", error);
-        }
-    };
 
     if (!isClient) {
         return <div className="h-[40vh] md:h-[30vh] bg-gray-200 animate-pulse"></div>;
+    }
+
+    if (!banners.length) {
+        return (
+            <div className="relative bg-gray-200 h-[40vh] flex items-center justify-center">
+                <div className='flex flex-col justify-center items-center h-full mb-10 relative z-10'>
+                    <h1 className='font-bold text-gray-800 text-2xl md:text-4xl text-center px-4'>
+                        Contact Us
+                    </h1>
+                    <div className="absolute bottom-16 flex items-center space-x-2">
+                        <Link href="/" className="text-gray-800 hover:text-gray-600 text-sm md:text-base">
+                            Home
+                        </Link>
+                        <span className="text-gray-800">/</span>
+                        <span className="text-gray-800 text-sm md:text-base">
+                            {slug}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
