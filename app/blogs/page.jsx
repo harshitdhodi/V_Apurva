@@ -71,7 +71,7 @@ export default async function BlogPage() {
 // Generate metadata for SEO
 export async function generateMetadata() {
   try {
-    const metadata = await getMetadataBySlug('blogs');
+    const metadata = await getMetadataBySlug('blogs', true);
     return {
       ...metadata,
       // Ensure these are always present for SEO

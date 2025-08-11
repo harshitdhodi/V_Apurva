@@ -12,7 +12,7 @@ import { getMetadataBySlug } from '@/lib/getMetadata';
 // Adding metadata to the page
 export async function generateMetadata() {
   try {
-    const metadata = await getMetadataBySlug('about-us');
+    const metadata = await getMetadataBySlug('about-us', true);
     return {
       ...metadata,
       // Ensure these are always present for SEO

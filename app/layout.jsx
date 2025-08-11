@@ -8,7 +8,7 @@ import NavbarServer from "@/components/NavbarServer"
 const inter = Inter({ subsets: ['latin'] });
 
 export async function generateMetadata() {
-  const meta = await getMetadataBySlug('')
+  const meta = await getMetadataBySlug('', true)
   return {
     title: meta.title,
     description: meta.description,

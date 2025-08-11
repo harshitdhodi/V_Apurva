@@ -87,7 +87,7 @@ async function fetchContactData() {
 // Adding metadata to the page - this is crucial for SEO
 export async function generateMetadata() {
   try {
-    const metadata = await getMetadataBySlug('contact-us');
+    const metadata = await getMetadataBySlug('contact-us', true);
     return {
       ...metadata,
       // Ensure these are always present for SEO
