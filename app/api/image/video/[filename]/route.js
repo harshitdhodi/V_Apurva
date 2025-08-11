@@ -47,7 +47,7 @@ export async function GET(request, { params }) {
         await fs.access(possiblePath);
         filePath = possiblePath;
         fileExists = true;
-        console.log(`Found video at: ${filePath}`);
+        // console.log(`Found video at: ${filePath}`);
         break;
       } catch (error) {
         console.log(`Video not found at: ${possiblePath}`);
@@ -56,7 +56,7 @@ export async function GET(request, { params }) {
 
     // If file not found locally, try to fetch from external source as fallback
     if (!fileExists) {
-      console.log(`Video not found locally, trying external source: ${filename}`);
+      // console.log(`Video not found locally, trying external source: ${filename}`);
       try {
         const externalUrl = `https://www.apurvachemicals.com/api/image/video/${filename}`;
         const response = await fetch(externalUrl);

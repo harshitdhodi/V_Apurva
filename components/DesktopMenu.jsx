@@ -6,7 +6,7 @@ import { Grip ,ArrowDown } from 'lucide-react';
 import Link from 'next/link';
 
 function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setShowInquiryForm, productCategories = [], isLoading = false }) {
-console.log(menuItems)
+// console.log(menuItems)
     const logoUrl = colorlogo?.photo ? `/api/logo/download/${colorlogo.photo}` : '';
 
 

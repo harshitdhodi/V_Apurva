@@ -6,7 +6,7 @@ export async function GET(request) {
         await connectDB();
         const { searchParams } = new URL(request.url);
         const slug = searchParams.get('slug');
-        console.log("Slug", slug);
+        // console.log("Slug", slug);
         if (!slug) {
             return Response.json(
                 { success: false, message: 'Slug parameter is required' },

@@ -56,7 +56,7 @@ async function fetchProductData(slug) {
     }
     
     const result = await response.json();
-    console.log("Product response", result);
+    // console.log("Product response", result);
     
     return result;
   } catch (error) {

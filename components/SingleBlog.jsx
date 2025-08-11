@@ -126,7 +126,7 @@ export default function SingleBlog({
       const response = await fetch(`/api/news/getDataBySlug?slugs=${currentSlug}`);
       const result = await response.json();
       const { productData } = result;
-      console.log('Fetched blog data:', productData);
+      // console.log('Fetched blog data:', productData);
       setBlogData(productData || {});
       setLoading(false);
     } catch (error) {
