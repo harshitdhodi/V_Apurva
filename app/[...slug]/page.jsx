@@ -58,7 +58,6 @@ async function fetchProductData(slug) {
     const result = await response.json();
     console.log("Product response", result);
     
-    // Return the full response structure that your component expects
     return result;
   } catch (error) {
     console.error('Error fetching product data:', error);
@@ -88,7 +87,7 @@ async function fetchRelatedProducts(slug) {
   }
 }
 
-// Function to fetch blog data by slug
+// Function to fetch blog data by slug - SERVER SIDE
 async function fetchBlogData(slug) {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
@@ -104,13 +103,11 @@ async function fetchBlogData(slug) {
     
     const result = await response.json();
     
-    // Check for various possible response structurespro
     if (!result) {
       console.error('Empty API response');
       return null;
     }
     
-    // Handle different response structures
     const blogData = result?.data?.productData || 
                      result?.productData || 
                      result?.data?.blogData ||
@@ -127,6 +124,28 @@ async function fetchBlogData(slug) {
   } catch (err) {
     console.error('Error fetching blog data:', err);
     return null;
+  }
+}
+
+// Function to fetch latest news - SERVER SIDE
+async function fetchLatestNews() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const response = await fetch(`${baseUrl}/api/news/getLatestActiveNews`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    return result?.data || [];
+  } catch (err) {
+    console.error('Error fetching latest news:', err);
+    return [];
   }
 }
 
@@ -148,7 +167,6 @@ export async function generateMetadata({ params }) {
     // Handle product metadata
     if (pageType === 'product') {
       const productData = await fetchProductData(slug);
-      // Access the nested product data structure
       const product = productData?.data?.productData || productData?.productData;
       if (product) {
         const imageUrl = product.photo?.length > 0 
@@ -340,11 +358,30 @@ export default async function Page(props) {
       );
       
     case 'product-category':
-      return <ProductCategoryGrid   />;
+      return <ProductCategoryGrid />;
+      
     case 'single-blog':
-      return <SingleBlog />;
+      // Fetch blog data and latest news server-side
+      const [blogData, latestNews] = await Promise.all([
+        fetchBlogData(slug),
+        fetchLatestNews()
+      ]);
+      
+      if (!blogData) {
+        notFound();
+      }
+      
+      return (
+        <SingleBlog 
+          initialBlogData={blogData}
+          initialLatestNews={latestNews}
+          slug={slug}
+        />
+      );
+      
     case 'blog':
       return <BlogPage />;
+      
     default:
       return <Simple404Page />;
   }

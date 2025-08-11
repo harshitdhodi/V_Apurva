@@ -82,14 +82,28 @@ const HTMLContent = ({ html, className = "" }) => {
   );
 }
 
-export default function SingleBlog() {
-  const [blogData, setBlogData] = useState(null);
-  const [news, setNews] = useState([]);
-  const [loading, setLoading] = useState(true);
+// Updated component to accept server-side props
+export default function SingleBlog({ 
+  initialBlogData, 
+  initialLatestNews = [], 
+  slug 
+}) {
+  const [blogData, setBlogData] = useState(initialBlogData || null);
+  const [news, setNews] = useState(initialLatestNews.map(newsItem => ({ ...newsItem })));
+  const [loading, setLoading] = useState(!initialBlogData);
   const pathname = usePathname();
-  const slug = pathname.split('/').pop();
 
-  // Fetch latest news for the slider
+  // Only fetch data client-side if not provided from server
+  useEffect(() => {
+    if (!initialBlogData) {
+      fetchBlogData();
+    }
+    if (initialLatestNews.length === 0) {
+      fetchNews();
+    }
+  }, [initialBlogData, initialLatestNews]);
+
+  // Fetch latest news for the slider (fallback)
   const fetchNews = async () => {
     try {
       const response = await fetch('/api/news/getLatestActiveNews', {
@@ -105,10 +119,11 @@ export default function SingleBlog() {
     }
   };
 
-  // Fetch blog data by slug
+  // Fetch blog data by slug (fallback)
   const fetchBlogData = async () => {
     try {
-      const response = await fetch(`/api/news/getDataBySlug?slugs=${slug}`);
+      const currentSlug = slug || pathname.split('/').pop();
+      const response = await fetch(`/api/news/getDataBySlug?slugs=${currentSlug}`);
       const result = await response.json();
       const { productData } = result;
       console.log('Fetched blog data:', productData);
@@ -119,13 +134,6 @@ export default function SingleBlog() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (slug) {
-      fetchNews();
-      fetchBlogData();
-    }
-  }, [slug]);
 
   // Set the document title when blogData changes
   useEffect(() => {
@@ -145,20 +153,13 @@ export default function SingleBlog() {
     autoplay: true,
     autoplaySpeed: 2500,
     arrows: false,
-    vertical: false, // Ensure horizontal sliding
+    vertical: false,
     adaptiveHeight: true,
     dotsClass: "slick-dots custom-dots",
     customPaging: (i) => (
       <div className="w-3 h-3 bg-gray-300 rounded-full hover:bg-[#bf2e2e] transition-colors"></div>
     ),
   };
-
-  // Generate meta description from details if no metaDescription is provided
-  const metaDescription =
-    blogData?.metadescription ||
-    (blogData?.details
-      ? blogData.details.replace(/<[^>]+>/g, '').substring(0, 160)
-      : 'Read the latest blog post on our site.');
 
   if (loading || !blogData) {
     return <div>Loading...</div>;
@@ -295,7 +296,7 @@ export default function SingleBlog() {
                 priority
               />
             </div>
-            <p className="text-2xl font-semibold text-[#bf2e2e] font-montserrat">{blogData.title}</p>
+            <h1 className="text-2xl font-semibold text-[#bf2e2e] font-montserrat">{blogData.title}</h1>
             <div className="prose max-w-none">
               <HTMLContent html={blogData.details} className="ql-editor text-black" />
             </div>
@@ -305,14 +306,14 @@ export default function SingleBlog() {
         <div className="lg:w-1/3 space-y-16">
           <div className="m-4 shadow-md rounded">
             <div className="p-5 py-10">
-              <p className="text-2xl font-semibold text-[#bf2e2e] mb-6 font-montserrat">Latest Post</p>
+              <h2 className="text-2xl font-semibold text-[#bf2e2e] mb-6 font-montserrat">Latest Post</h2>
               <hr className="border-4 rounded w-1/6 border-[#bf2e2e] my-4" />
               
               {news.length > 0 ? (
                 <div className="slider-container">
                   <Slider {...settings}>
-                    {news.map((post) => (
-                      <div key={post.id}>
+                    {news.map((post, index) => (
+                      <div key={post.id || index}>
                         <div className="p-2">
                           <div className="relative mb-4">
                             <Link href={`/${post.slug}`}>
@@ -357,7 +358,6 @@ export default function SingleBlog() {
           </div>
         </div>
       </div>
-
     </>
   );
 }
