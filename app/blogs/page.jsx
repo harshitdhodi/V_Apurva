@@ -1,6 +1,7 @@
 // src/app/blogs/page.jsx (Server Component)
 import { Suspense } from 'react';
 import BlogPageComponent from './BlogPage';
+import { getMetadataBySlug } from '../../lib/getMetadata';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -69,13 +70,31 @@ export default async function BlogPage() {
 
 // Generate metadata for SEO
 export async function generateMetadata() {
-  return {
-    title: 'Blog - Latest News and Updates',
-    description: 'Read our latest blog posts and stay updated with news and insights.',
-    openGraph: {
-      title: 'Blog - Latest News and Updates',
-      description: 'Read our latest blog posts and stay updated with news and insights.',
-      type: 'website',
-    },
-  };
+  try {
+    const metadata = await getMetadataBySlug('blogs');
+    return {
+      ...metadata,
+      // Ensure these are always present for SEO
+      title: metadata?.title || 'Blogs - Apurva Chemicals',
+      description: metadata?.description || 'Explore our latest blog posts and stay updated on industry trends and company news.',
+      openGraph: {
+        title: metadata?.title || 'Blogs - Apurva Chemicals',
+        description: metadata?.description || 'Explore our latest blog posts and stay updated on industry trends and company news.',
+        type: 'website',
+        ...metadata?.openGraph,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: metadata?.title || 'Blogs - Apurva Chemicals',
+        description: metadata?.description || 'Explore our latest blog posts and stay updated on industry trends and company news.',
+        ...metadata?.twitter,
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: 'Blogs - Apurva Chemicals',
+      description: 'Explore our latest blog posts and stay updated on industry trends and company news.',
+    };
+  }
 }
