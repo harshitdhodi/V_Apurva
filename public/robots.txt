@@ -1,18 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: //
 
 # Sitemap location
 Sitemap: https://www.apurvachemicals.com/sitemap.xml
 
-# Crawl-delay: 10
-# Uncomment the above line if you want to limit crawl rate (in seconds)
+# Disallow crawling of double-slash URLs
+Disallow: /?
 
 # Disallow crawling of specific directories
 # Disallow: /admin/
 # Disallow: /api/
-
-# Allow all other pages to be crawled
-Disallow:
-
-# Crawl-delay: 10
-# Uncomment the above line if you want to limit crawl rate (in seconds)
