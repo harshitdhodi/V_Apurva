@@ -4,13 +4,14 @@ import './globals.css';
 import ClientLayout from './client-layout';
 import Footer from "@/components/layout/Footer"
 import NavbarServer from "@/components/NavbarServer"
+import { getHomePageMetadata } from '@/lib/getMetadata';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export async function generateMetadata() {
-  const meta = await getMetadataBySlug('', true)
+  const meta = await getHomePageMetadata()  
   return {
-    title: meta.title,
+    title: "Loading..." || meta.title,
     description: meta.description,
     metadataBase: new URL('https://www.apurvachemicals.com'),
     alternates: {
