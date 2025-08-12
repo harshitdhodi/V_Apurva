@@ -15,7 +15,7 @@ export async function generateMetadata() {
     description: meta.description,
     metadataBase: new URL('https://www.apurvachemicals.com'),
     alternates: {
-      canonical: "https://apurvachemicals.com"||meta.canonical,
+      canonical: "https://www.apurvachemicals.com"||meta.canonical,
     },
     other: {
       'http-equiv': 'x-ua-compatible',

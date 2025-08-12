@@ -2,6 +2,7 @@
 import { Suspense } from 'react';
 import BlogPageComponent from './BlogPage';
 import { getMetadataBySlug } from '../../lib/getMetadata';
+const meta = await getMetadataBySlug('blogs', true)
 
 export const revalidate = 3600; // Revalidate every hour
 

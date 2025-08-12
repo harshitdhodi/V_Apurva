@@ -10,8 +10,8 @@ function PackagingTypeClient({ data }) {
   }
 
   return (
-    <div className="p-4 md:px-16 py-16 bg-gray-100">
-      <p className='md:text-[18px] text-[#bf2e2e] font-bold mb-4 uppercase  text-center md:text-left'>
+    <div className="p-4 md:px-16 py-16 bg-gray-100">  
+      <p className='md:text-[20px] text-primary font-bold mb-4 uppercase text-center md:text-left'>
         {heading ? `____${heading}` : ''}
       </p>
       <h2 className="sm:text-4xl text-3xl font-daysOne mb-6 text-center font-bold md:text-left text-gray-800">
@@ -20,7 +20,7 @@ function PackagingTypeClient({ data }) {
       
       {description && (
         <div 
-          className="md:text-[18px] text-black mb-8 prose max-w-none"
+          className="md:text-[18px] text-black mb-8 prose max-w-none "
           dangerouslySetInnerHTML={{ __html: description }}
         />
       )}

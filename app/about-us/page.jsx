@@ -24,12 +24,7 @@ export async function generateMetadata() {
         type: 'website',
         ...metadata?.openGraph,
       },
-      twitter: {
-        card: 'summary_large_image',
-        title: metadata?.title || 'About Us - Apurva Chemicals',
-        description: metadata?.description || 'Learn more about Apurva Chemicals - a leading manufacturer and exporter of specialty chemicals.',
-        ...metadata?.twitter,
-      },
+      ...metadata
     };
   } catch (error) {
     console.error('Error generating metadata:', error);

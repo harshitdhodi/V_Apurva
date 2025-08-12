@@ -4,6 +4,7 @@ import ProductDetail from '@/components/product/ProductDetails';
 import ProductCategoryGrid from '@/components/ProductCategoryGrid';
 import SingleBlog from '@/components/SingleBlog';
 import Simple404Page from '../404/page';
+import { getMetadataBySlug } from '@/lib/getMetadata'
 
 // Server-side data fetching
 async function fetchSlugs() {
@@ -170,7 +171,7 @@ export async function generateMetadata({ params }) {
       const product = productData?.data?.productData || productData?.productData;
       if (product) {
         const imageUrl = product.photo?.length > 0 
-          ? `https://apurvachemicals.com/uploads/${product.photo[0]}`
+          ? `https://www.apurvachemicals.com/uploads/${product.photo[0]}`
           : '';
         
         return {
@@ -178,23 +179,23 @@ export async function generateMetadata({ params }) {
           description: product.metadescription || product.description || 'Quality chemical products from Apurva Chemicals',
           keywords: product.metakeywords || '',
           alternates: {
-            canonical: product.metacanonical || `https://apurvachemicals.com/${slug}` || product.url,
+            canonical: product.metacanonical || `https://www.apurvachemicals.com/${slug}` || product.url,
           },
           openGraph: {
             title: product.metatitle || product.title || 'Product Details',
             description: product.metadescription || product.description || 'Quality chemical products from Apurva Chemicals',
-            url: product.metacanonical || `https://apurvachemicals.com/${slug}` || product.url,
+            url: product.metacanonical || `https://www.apurvachemicals.com/${slug}` || product.url,
             siteName: 'Apurva Chemicals',
             images: imageUrl ? [{ url: imageUrl, alt: product.title || 'Product Image' }] : [],
             locale: 'en_US',
             type: 'website',
           }, 
-          twitter: {
-            card: 'summary_large_image',
-            title: product.metatitle || product.title || 'Product Details',
-            description: product.metadescription || product.description || 'Quality chemical products from Apurva Chemicals',
-            images: imageUrl ? [imageUrl] : [],
-          },
+          // twitter: {
+          //   card: 'summary_large_image',
+          //   title: product.metatitle || product.title || 'Product Details',
+          //   description: product.metadescription || product.description || 'Quality chemical products from Apurva Chemicals',
+          //   images: imageUrl ? [imageUrl] : [],
+          // },
           robots: {
             index: true,
             follow: true,
@@ -205,16 +206,18 @@ export async function generateMetadata({ params }) {
     
     // Handle product category metadata
     if (pageType === 'product-category') {
+      const meta = await getMetadataBySlug(slug, true);
       return {
-        title: `Product Category - Apurva Chemicals`,
-        description: `Browse our quality chemical products and solutions`,
+        title:  meta.metaTitle || `Product Category - Apurva Chemicals`,
+        description: meta.metaDescription || `Browse our quality chemical products and solutions` ,
+        keywords: meta.metakeywords || '',
         alternates: {
-          canonical: `https://apurvachemicals.com/${slug}`,
+          canonical: meta.metaCanonical || `https://www.apurvachemicals.com/${slug}`,
         },
         openGraph: {
-          title: 'Product Category - Apurva Chemicals',
-          description: 'Browse our quality chemical products and solutions',
-          url: `https://apurvachemicals.com/${slug}`,
+          title: meta.metaTitle || 'Product Category - Apurva Chemicals' ,
+          description: meta.metaDescription || 'Browse our quality chemical products and solutions' ,
+          url: meta.metaCanonical || `https://www.apurvachemicals.com/${slug}`,
           siteName: 'Apurva Chemicals',
           locale: 'en_US',
           type: 'website',
@@ -236,7 +239,7 @@ export async function generateMetadata({ params }) {
       const blogData = await fetchBlogData(slug);
       if (blogData) {
         const imageUrl = blogData.photo?.[0] 
-          ? `https://apurvachemicals.com/uploads/${blogData.photo[0]}`
+          ? `https://www.apurvachemicals.com/uploads/${blogData.photo[0]}`
           : '';
         
         return {
@@ -244,12 +247,12 @@ export async function generateMetadata({ params }) {
           description: blogData.metadescription || blogData.description || blogData.title || 'Read our latest insights and updates',
           keywords: blogData.metakeywords || '',
           alternates: {
-            canonical: blogData.url || `https://apurvachemicals.com/${slug}`,
+            canonical: blogData.url || `https://www.apurvachemicals.com/${slug}`,
           },
           openGraph: {
             title: blogData.metatitle || blogData.title || 'Blog Post',
             description: blogData.metadescription || blogData.description || blogData.title || 'Read our latest insights and updates',
-            url: blogData.url || `https://apurvachemicals.com/${slug}`,
+            url: blogData.url || `https://www.apurvachemicals.com/${slug}`,
             siteName: 'Apurva Chemicals',
             images: imageUrl ? [{ url: imageUrl, alt: blogData.title || 'Blog Image' }] : [],
             locale: 'en_US',
@@ -259,12 +262,12 @@ export async function generateMetadata({ params }) {
             authors: [blogData.postedBy || 'Apurva Chemicals'],
             section: blogData.category || 'General',
           },
-          twitter: {
-            card: 'summary_large_image',
-            title: blogData.metatitle || blogData.title || 'Blog Post',
-            description: blogData.metadescription || blogData.description || blogData.title || 'Read our latest insights and updates',
-            images: imageUrl ? [imageUrl] : [],
-          },
+          // twitter: {
+          //   card: 'summary_large_image',
+          //   title: blogData.metatitle || blogData.title || 'Blog Post',
+          //   description: blogData.metadescription || blogData.description || blogData.title || 'Read our latest insights and updates',
+          //   images: imageUrl ? [imageUrl] : [],
+          // },
           robots: {
             index: true,
             follow: true,
@@ -275,16 +278,18 @@ export async function generateMetadata({ params }) {
     
     // Handle blog category metadata
     if (pageType === 'blog') {
+      const blogMeta = await getMetadataBySlug(slug, true);
       return {
-        title: `Blog Category - Apurva Chemicals`,
-        description: `Read our latest articles, insights and industry updates`,
+        title: blogMeta.metaTitle || `Blog Category - Apurva Chemicals`,
+        description: blogMeta.metaDescription || `Read our latest articles, insights and industry updates`,
+        keywords: blogMeta.metakeywords || '',
         alternates: {
-          canonical: `https://apurvachemicals.com/${slug}`,
+          canonical: blogMeta.metaCanonical || `https://www.apurvachemicals.com/${slug}`,
         },
         openGraph: {
-          title: 'Blog Category - Apurva Chemicals',
-          description: 'Read our latest articles, insights and industry updates',
-          url: `https://apurvachemicals.com/${slug}`,
+          title: blogMeta.metaTitle || 'Blog Category - Apurva Chemicals',
+          description: blogMeta.metaDescription || 'Read our latest articles, insights and industry updates',
+          url: blogMeta.metaCanonical || `https://www.apurvachemicals.com/${slug}`,
           siteName: 'Apurva Chemicals',
           locale: 'en_US',
           type: 'website',
