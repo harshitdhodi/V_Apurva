@@ -22,7 +22,7 @@ async function fileExists(path) {
 
 export async function GET(request, { params }) {
   try {
-    console.log('MSDS request received, params:', params);
+    // console.log('MSDS request received, params:', params);
     const { filename } = params || {};
     
     if (!filename) {
@@ -48,7 +48,7 @@ export async function GET(request, { params }) {
       path.join(process.cwd(), 'app', 'api', 'image', 'msds', filename)
     ];
 
-    console.log('Checking for file in paths:', possiblePaths);
+    // console.log('Checking for file in paths:', possiblePaths);
 
     let filePath;
     let fileFound = false;
@@ -58,7 +58,7 @@ export async function GET(request, { params }) {
       if (await fileExists(possiblePath)) {
         filePath = possiblePath;
         fileFound = true;
-        console.log('Found file at:', filePath);
+        // console.log('Found file at:', filePath);
         break;
       }
       console.log('File not found at:', possiblePath);

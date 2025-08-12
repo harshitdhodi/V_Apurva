@@ -4,22 +4,25 @@ import './globals.css';
 import ClientLayout from './client-layout';
 import Footer from "@/components/layout/Footer"
 import NavbarServer from "@/components/NavbarServer"
+import { getHomePageMetadata } from '@/lib/getMetadata';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export async function generateMetadata() {
+  const meta = await getHomePageMetadata()  
   return {
-    title: 'Apurva Chemicals',
-    description: 'Apurva Chemicals is a trusted dye intermediate manufacturer. We offer high-purity products, bulk supply options, and consistent quality for global clients.',
+    title: "Loading..." || meta.title,
+    description: meta.description,
     metadataBase: new URL('https://www.apurvachemicals.com'),
     alternates: {
-      canonical: '/',
+      canonical: "https://apurvachemicals.com"||meta.canonical,
     },
     other: {
       'http-equiv': 'x-ua-compatible',
       content: 'ie=edge',
     },
-  };
+    ...meta,
+}
 }
 
 // Server-side data fetching functions (same as before)
