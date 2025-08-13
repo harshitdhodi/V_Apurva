@@ -227,24 +227,6 @@ export async function generateMetadata({ params }) {
     if (pageType === 'product-category') {
       const meta = await getProductCategoryMetadata(slug);
       return {
-        title: meta.title || `Product Category - Apurva Chemicals`,
-        description: meta.description || `Browse our quality chemical products and solutions`,
-        keywords: meta.keywords || '',
-        alternates: {
-          canonical: meta.canonical || `https://www.apurvachemicals.com/${slug}`,
-        },
-        openGraph: {
-          title: meta.title || 'Product Category - Apurva Chemicals',
-          description: meta.description || 'Browse our quality chemical products and solutions',
-          url: meta.canonical || `https://www.apurvachemicals.com/${slug}`,
-          siteName: 'Apurva Chemicals',
-          locale: 'en_US',
-          type: 'website',
-        },
-        robots: {
-          index: true,
-          follow: true,
-        },
         ...meta
       };
     }
