@@ -1,12 +1,39 @@
 import { notFound } from 'next/navigation';
-import BlogPage from '../blogs/BlogPage';
-import ProductDetail from '@/components/product/ProductDetails';
 import ProductCategoryGrid from '@/components/ProductCategoryGrid';
+import ProductDetail from '@/components/product/ProductDetails';
 import SingleBlog from '@/components/SingleBlog';
+import BlogPage from '../blogs/BlogPage';
 import Simple404Page from '../404/page';
-import { getMetadataBySlug } from '@/lib/getMetadata'
+import { getMetadataBySlug, getProductCategoryMetadata } from '@/lib/getMetadata';
 
-// Server-side data fetching
+// Function to fetch category data by slug - SERVER SIDE
+async function fetchCategoryData(slug) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const response = await fetch(
+      `${baseUrl}/api/product/getProductsByCategory?categorySlug=${slug}`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return {
+      products: result.products || [],
+      category: result.category || null,
+    };
+  } catch (error) {
+    console.error('Error fetching category data:', error);
+    return null;
+  }
+}
+
+// Function to fetch all slugs
 async function fetchSlugs() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
@@ -24,13 +51,14 @@ async function fetchSlugs() {
   }
 }
 
+// Function to determine page type based on slug
 async function determinePageType(slug) {
   try {
     const { data } = await fetchSlugs();
     const { productSlugs, productCategorySlugs, newsSlugs, newsCategorySlugs } = data;
     const slugString = Array.isArray(slug) ? slug.join('/') : slug;
     const validNewsCategorySlugs = newsCategorySlugs.filter(Boolean);
-    
+
     if (productSlugs.includes(slugString)) return 'product';
     if (productCategorySlugs.includes(slugString)) return 'product-category';
     if (newsSlugs.includes(slugString)) return 'single-blog';
@@ -51,14 +79,12 @@ async function fetchProductData(slug) {
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
-    // console.log("Product response", result);
-    
     return result;
   } catch (error) {
     console.error('Error fetching product data:', error);
@@ -75,11 +101,11 @@ async function fetchRelatedProducts(slug) {
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
     return result;
   } catch (error) {
@@ -101,26 +127,27 @@ async function fetchBlogData(slug) {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
-    
+
     if (!result) {
       console.error('Empty API response');
       return null;
     }
-    
-    const blogData = result?.data?.productData || 
-                     result?.productData || 
-                     result?.data?.blogData ||
-                     result?.blogData ||
-                     result?.data ||
-                     null;
-    
+
+    const blogData =
+      result?.data?.productData ||
+      result?.productData ||
+      result?.data?.blogData ||
+      result?.blogData ||
+      result?.data ||
+      null;
+
     if (!blogData) {
       console.error('No blog data found in response:', result);
       return null;
     }
-    
+
     return blogData;
   } catch (err) {
     console.error('Error fetching blog data:', err);
@@ -141,7 +168,7 @@ async function fetchLatestNews() {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
     return result?.data || [];
   } catch (err) {
@@ -154,26 +181,25 @@ async function fetchLatestNews() {
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const slug = resolvedParams?.slug?.join('/') || '';
-  
+
   if (!slug) {
     return {
       title: 'Apurva Chemicals',
       description: 'Leading manufacturer and exporter of specialty chemicals',
     };
   }
-  
+
   const pageType = await determinePageType(slug);
-  
+
   try {
-    // Handle product metadata
     if (pageType === 'product') {
       const productData = await fetchProductData(slug);
       const product = productData?.data?.productData || productData?.productData;
       if (product) {
-        const imageUrl = product.photo?.length > 0 
+        const imageUrl = product.photo?.length > 0
           ? `https://www.apurvachemicals.com/uploads/${product.photo[0]}`
           : '';
-        
+
         return {
           title: product.metatitle || product.title || 'Product Details - Apurva Chemicals',
           description: product.metadescription || product.description || 'Quality chemical products from Apurva Chemicals',
@@ -189,59 +215,47 @@ export async function generateMetadata({ params }) {
             images: imageUrl ? [{ url: imageUrl, alt: product.title || 'Product Image' }] : [],
             locale: 'en_US',
             type: 'website',
-          }, 
-          // twitter: {
-          //   card: 'summary_large_image',
-          //   title: product.metatitle || product.title || 'Product Details',
-          //   description: product.metadescription || product.description || 'Quality chemical products from Apurva Chemicals',
-          //   images: imageUrl ? [imageUrl] : [],
-          // },
+          },
           robots: {
             index: true,
             follow: true,
-          }
+          },
         };
       }
     }
-    
-    // Handle product category metadata
+
     if (pageType === 'product-category') {
-      const meta = await getMetadataBySlug(slug, true);
+      const meta = await getProductCategoryMetadata(slug);
       return {
-        title:  meta.metaTitle || `Product Category - Apurva Chemicals`,
-        description: meta.metaDescription || `Browse our quality chemical products and solutions` ,
-        keywords: meta.metakeywords || '',
+        title: meta.title || `Product Category - Apurva Chemicals`,
+        description: meta.description || `Browse our quality chemical products and solutions`,
+        keywords: meta.keywords || '',
         alternates: {
-          canonical: meta.metaCanonical || `https://www.apurvachemicals.com/${slug}`,
+          canonical: meta.canonical || `https://www.apurvachemicals.com/${slug}`,
         },
         openGraph: {
-          title: meta.metaTitle || 'Product Category - Apurva Chemicals' ,
-          description: meta.metaDescription || 'Browse our quality chemical products and solutions' ,
-          url: meta.metaCanonical || `https://www.apurvachemicals.com/${slug}`,
+          title: meta.title || 'Product Category - Apurva Chemicals',
+          description: meta.description || 'Browse our quality chemical products and solutions',
+          url: meta.canonical || `https://www.apurvachemicals.com/${slug}`,
           siteName: 'Apurva Chemicals',
           locale: 'en_US',
           type: 'website',
         },
-        twitter: {
-          card: 'summary_large_image',
-          title: 'Product Category - Apurva Chemicals',
-          description: 'Browse our quality chemical products and solutions',
-        },
         robots: {
           index: true,
           follow: true,
-        }
+        },
+        ...meta
       };
     }
-    
-    // Handle blog post metadata
+
     if (pageType === 'single-blog') {
       const blogData = await fetchBlogData(slug);
       if (blogData) {
-        const imageUrl = blogData.photo?.[0] 
+        const imageUrl = blogData.photo?.[0]
           ? `https://www.apurvachemicals.com/uploads/${blogData.photo[0]}`
           : '';
-        
+
         return {
           title: blogData.metatitle || blogData.title || 'Blog Post - Apurva Chemicals',
           description: blogData.metadescription || blogData.description || blogData.title || 'Read our latest insights and updates',
@@ -262,21 +276,14 @@ export async function generateMetadata({ params }) {
             authors: [blogData.postedBy || 'Apurva Chemicals'],
             section: blogData.category || 'General',
           },
-          // twitter: {
-          //   card: 'summary_large_image',
-          //   title: blogData.metatitle || blogData.title || 'Blog Post',
-          //   description: blogData.metadescription || blogData.description || blogData.title || 'Read our latest insights and updates',
-          //   images: imageUrl ? [imageUrl] : [],
-          // },
           robots: {
             index: true,
             follow: true,
-          }
+          },
         };
       }
     }
-    
-    // Handle blog category metadata
+
     if (pageType === 'blog') {
       const blogMeta = await getMetadataBySlug(slug, true);
       return {
@@ -297,21 +304,20 @@ export async function generateMetadata({ params }) {
         robots: {
           index: true,
           follow: true,
-        }
+        },
       };
     }
   } catch (error) {
     console.error('Error generating metadata:', error);
   }
-  
-  // Default metadata for unknown or error cases
+
   return {
     title: 'Apurva Chemicals',
     description: 'Leading manufacturer and exporter of specialty chemicals',
     robots: {
       index: true,
       follow: true,
-    }
+    },
   };
 }
 
@@ -319,13 +325,13 @@ export async function generateMetadata({ params }) {
 export default async function Page(props) {
   const params = await props.params;
   const slug = params?.slug?.join('/') || '';
-  
+
   if (!slug) {
     notFound();
   }
-  
+
   const pageType = await determinePageType(slug);
-  
+
   if (pageType === 'error') {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
@@ -336,57 +342,63 @@ export default async function Page(props) {
       </div>
     );
   }
-  
+
   if (pageType === '404') {
     notFound();
   }
-  
-  // Render the appropriate component based on page type
+
   switch (pageType) {
     case 'product':
-      // Fetch product data server-side
       const [productData, relatedProducts] = await Promise.all([
         fetchProductData(slug),
-        fetchRelatedProducts(slug)
+        fetchRelatedProducts(slug),
       ]);
-      
+
       if (!productData) {
         notFound();
       }
-      
+
       return (
-        <ProductDetail 
-          initialProduct={productData} 
+        <ProductDetail
+          initialProduct={productData}
           initialRelatedProducts={relatedProducts}
           slug={slug}
         />
       );
-      
+
     case 'product-category':
-      return <ProductCategoryGrid />;
-      
+      const categoryData = await fetchCategoryData(slug);
+      if (!categoryData || !categoryData.category) {
+        notFound();
+      }
+      return (
+        <ProductCategoryGrid
+          initialProducts={categoryData.products}
+          initialCategory={categoryData.category}
+        />
+      );
+
     case 'single-blog':
-      // Fetch blog data and latest news server-side
       const [blogData, latestNews] = await Promise.all([
         fetchBlogData(slug),
-        fetchLatestNews()
+        fetchLatestNews(),
       ]);
-      
+
       if (!blogData) {
         notFound();
       }
-      
+
       return (
-        <SingleBlog 
+        <SingleBlog
           initialBlogData={blogData}
           initialLatestNews={latestNews}
           slug={slug}
         />
       );
-      
+
     case 'blog':
       return <BlogPage />;
-      
+
     default:
       return <Simple404Page />;
   }
