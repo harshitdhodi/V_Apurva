@@ -24,11 +24,14 @@ export async function GET() {
     ? 'https://www.apurvachemicals.com'
     : 'https://www.apurvachemicals.com';
   const chemicals = await fetchChemicals();
+// ...existing code...
+console.log('Chemicals updatedAt values:', chemicals.map(c => c.updatedAt));
+// ...existing code...
   const fields = chemicals
     .filter(chemical => chemical.slug && chemical.updatedAt)
     .map(chemical => ({
       loc: `${baseUrl}/${chemical.slug}`,
-      lastmod: new Date(chemical.updatedAt).toISOString(),
+      lastmod: new Date(chemical.updatedAt),
       changefreq: 'weekly',
       priority: 0.9,
     }));
