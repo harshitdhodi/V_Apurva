@@ -22,10 +22,10 @@ export async function GET() {
   const chemicals = await fetchChemicals();
   // console.log("Chemicals", chemicals);
   const fields = chemicals
-    .filter(chemical => chemical.slug && chemical.updatedAt)
+    .filter(chemical => chemical.slug)
     .map(chemical => ({
       loc: `${baseUrl}/${chemical.slug}`,
-      lastmod: new Date(chemical.updatedAt).toISOString(),
+      // lastmod: new Date(chemical.updatedAt).toISOString(),
       changefreq: 'weekly',
       priority: 0.9,
     }));
