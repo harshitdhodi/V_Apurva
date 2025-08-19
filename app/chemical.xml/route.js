@@ -11,6 +11,7 @@ const CHEMICAL_API_URL = `${BASE_URL}/api/product/getProductsByCategory?category
 async function fetchChemicals() {
   try {
     const response = await axios.get(CHEMICAL_API_URL);
+    console.log('Fetched chemicals:', response.data);
     return Array.isArray(response.data.products) ? response.data.products : [];
   } catch (error) {
     console.error('Error fetching chemicals:', error);
