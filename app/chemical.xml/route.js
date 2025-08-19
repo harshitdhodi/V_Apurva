@@ -1,15 +1,16 @@
 import { getServerSideSitemap } from 'next-sitemap';
 import axios from 'axios';
 
-
-const BASE_URL = "https://www.apurvachemicals.com";
+const isProd = process.env.NODE_ENV === 'production';
+const BASE_URL = isProd
+  ? "https://www.apurvachemicals.com"
+  : "https://www.demo.apurvachemicals.com";
 
 const CHEMICAL_API_URL = `${BASE_URL}/api/product/getProductsByCategory?categorySlug=dye-intermediate`;
 
 async function fetchChemicals() {
   try {
     const response = await axios.get(CHEMICAL_API_URL);
-    // console.log("Chemicals", response.data);
     return Array.isArray(response.data.products) ? response.data.products : [];
   } catch (error) {
     console.error('Error fetching chemicals:', error);
@@ -18,9 +19,10 @@ async function fetchChemicals() {
 }
 
 export async function GET() {
-  const baseUrl = 'https://www.apurvachemicals.com';
+  const baseUrl = isProd
+    ? 'https://www.apurvachemicals.com'
+    : 'https://www.apurvachemicals.com';
   const chemicals = await fetchChemicals();
-  // console.log("Chemicals", chemicals);
   const fields = chemicals
     .filter(chemical => chemical.slug && chemical.updatedAt)
     .map(chemical => ({
