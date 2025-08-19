@@ -17,7 +17,7 @@ export async function GET(request) {
       }
   
       // Find the category by its slug and include only specific fields
-      const category = await productCategory.findOne({ slug: categorySlug }).select('category photo alt imgTitle description metatitle metadescription metakeywords metacanonical metalanguage metaschema otherMeta');
+      const category = await productCategory.findOne({ slug: categorySlug }).select('category photo alt imgTitle description metatitle metadescription slug metakeywords metacanonical metalanguage metaschema otherMeta updatedAt');
   
       if (!category) {
         return NextResponse.json({ message: 'Category not found' }, { status: 404 });
@@ -26,7 +26,7 @@ export async function GET(request) {
       // Find all products that belong to the category
       const products = await Product.find({
         categories: { $in: categorySlug },
-      }).select('_id title photo alt imgTitle slug url updatedAt');
+      }).select('_id title photo alt slug imgTitle slug url updatedAt');
 
       // console.log("Fetched Products", products)
   

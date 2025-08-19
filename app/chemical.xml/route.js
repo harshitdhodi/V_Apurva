@@ -1,34 +1,48 @@
 import { getServerSideSitemap } from 'next-sitemap';
 import axios from 'axios';
 
-
 const BASE_URL = "http://localhost:3023/";
+const baseUrl = 'https://www.apurvachemicals.com';
+const categorySlug = 'dye-intermediate';
+const CHEMICAL_API_URL = `${BASE_URL}api/product/getProductsByCategory?categorySlug=${categorySlug}`;
 
-const CHEMICAL_API_URL = `${BASE_URL}api/product/getProductsByCategory?categorySlug=dye-intermediate`;
-
-async function fetchChemicals() {
+async function fetchCategoryAndChemicals() {
   try {
     const response = await axios.get(CHEMICAL_API_URL);
-    // console.log("Chemicals", response.data);
-    return Array.isArray(response.data.products) ? response.data.products : [];
+    // response.data.category and response.data.products
+    return {
+      category: response.data.category,
+      products: Array.isArray(response.data.products) ? response.data.products : [],
+    };
   } catch (error) {
-    console.error('Error fetching chemicals:', error);``
-    return []
+    console.error('Error fetching chemicals:', error);
+    return { category: null, products: [] };
   }
 }
 
 export async function GET() {
-  const baseUrl = 'https://www.apurvachemicals.com';
-  const chemicals = await fetchChemicals();
-  // console.log("Chemicals", chemicals.map(chemical=> chemical.updatedAt));
-  const fields = chemicals
-    .filter(chemical => chemical.slug && chemical.updatedAt)
-    .map(chemical => ({
-      loc: `${baseUrl}/${chemical.slug}`,
-      lastmod: new Date(chemical.updatedAt).toISOString(),
+  const { category, products } = await fetchCategoryAndChemicals();
+
+  // Use the slug from the category object, fallback to default if missing
+  const dynamicCategorySlug = category?.slug;
+
+  // Add the category page as the first entry with priority 1
+  const fields = [
+    {
+      loc: `${baseUrl}/${dynamicCategorySlug}`,
+      lastmod: new Date(category.updatedAt).toISOString(),
       changefreq: 'weekly',
-      priority: 0.9,
-    }));
+      priority: 1,
+    },
+    ...products
+      .filter(chemical => chemical.slug && chemical.updatedAt)
+      .map(chemical => ({
+        loc: `${baseUrl}/${chemical.slug}`,
+        lastmod: new Date(chemical.updatedAt).toISOString(),
+        changefreq: 'weekly',
+        priority: 0.9,
+      })),
+  ];
 
   return getServerSideSitemap(fields);
 }
