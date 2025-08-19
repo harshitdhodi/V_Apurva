@@ -12,7 +12,7 @@ async function fetchChemicals() {
     // console.log("Chemicals", response.data);
     return Array.isArray(response.data.products) ? response.data.products : [];
   } catch (error) {
-    console.error('Error fetching chemicals:', error);
+    console.error('Error fetching chemicals:', error);``
     return []
   }
 }
@@ -20,12 +20,12 @@ async function fetchChemicals() {
 export async function GET() {
   const baseUrl = 'https://www.apurvachemicals.com';
   const chemicals = await fetchChemicals();
-  console.log("Chemicals", chemicals.map(chemical=> chemical.updatedAt));
+  // console.log("Chemicals", chemicals.map(chemical=> chemical.updatedAt));
   const fields = chemicals
-    .filter(chemical => chemical.slug )
+    .filter(chemical => chemical.slug && chemical.updatedAt)
     .map(chemical => ({
       loc: `${baseUrl}/${chemical.slug}`,
-      // lastmod: new Date(chemical.updatedAt).toISOString(),
+      lastmod: new Date(chemical.updatedAt).toISOString(),
       changefreq: 'weekly',
       priority: 0.9,
     }));
