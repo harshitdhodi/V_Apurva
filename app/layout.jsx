@@ -158,7 +158,7 @@ export default async function RootLayout({ children }) {
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <meta name="robots" content="index,follow" />
-        
+        <meta name="google-site-verification" content="CPbJU1xhTk_GLLM7xLgP2Zjr-U8tUu-XsGfCFB9g9HA" />
         {/* Self-hosted GTM script with delayed loading */}
         <Script id="gtm-script" strategy="lazyOnload">
           {`
