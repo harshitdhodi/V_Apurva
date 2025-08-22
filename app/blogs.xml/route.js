@@ -18,18 +18,28 @@ export async function GET() {
   const baseUrl = 'https://www.apurvachemicals.com';
   const blogs = await fetchBlogs();
   
-  const fields = blogs
-    .filter(blog => blog.slug && blog.date)
-    .map(blog => ({
-      loc: `${baseUrl}/blog/${blog.slug}`,
-      lastmod: new Date(blog.date).toISOString(),
+  const fields = [
+    // Add static /blogs page
+    {
+      loc: `${baseUrl}/blogs`,
+      lastmod: new Date().toISOString(),
       changefreq: 'weekly',
-      priority: 0.7,
-    }));
+      priority: 0.8,
+    },
+    // Add dynamic blog posts
+    ...blogs
+      .filter(blog => blog.slug && blog.date)
+      .map(blog => ({
+        loc: `${baseUrl}/${blog.slug}`,
+        lastmod: new Date(blog.date).toISOString(),
+        changefreq: 'weekly',
+        priority: 0.7,
+      })),
+  ];
 
   // Generate the XML sitemap
   return getServerSideSitemap(fields);
 }
 
 // Prevents Next.js from adding default headers
-export const dynamic = 'force-dynamic'; // Disable caching
+export const dynamic = 'force-dynamic';
