@@ -17,18 +17,9 @@ async function getData() {
 
   try {
     const [blogsRes, categoriesRes, bannersRes] = await Promise.all([
-      fetch(`${apiUrl}/api/news/getActiveNews`, { 
-        next: { revalidate: 3600 },
-        cache: 'force-cache'
-      }),
-      fetch(`${apiUrl}/api/news/getSpecificCategoryDetails`, { 
-        next: { revalidate: 3600 },
-        cache: 'force-cache'
-      }),
-      fetch(`${apiUrl}/api/banner/getBannersBySectionBlog`, { 
-        next: { revalidate: 3600 },
-        cache: 'force-cache'
-      })
+      fetch(`${apiUrl}/api/news/getActiveNews`),
+      fetch(`${apiUrl}/api/news/getSpecificCategoryDetails`),
+      fetch(`${apiUrl}/api/banner/getBannersBySectionBlog`)
     ]);
 
     const [blogs, categories, banners] = await Promise.all([
