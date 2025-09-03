@@ -10,7 +10,7 @@ import axios from 'axios';
 async function fetchSlugs() {
   try {
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
     const response = await fetch(`${baseUrl}/api/dynamicSlug/getAllSlugs`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -49,7 +49,7 @@ async function determinePageType(slug) {
 // Function to fetch product data by slug
 async function fetchProductData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
     const response = await axios.get(`${baseUrl}/api/product/getDataBySlug?slugs=${slug}`);
     if (response.data.success) {
       return response.data.productData;
@@ -64,7 +64,7 @@ async function fetchProductData(slug) {
 // Function to fetch blog data by slug
 async function fetchBlogData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
     const response = await fetch(`${baseUrl}/api/news/getDataBySlug?slugs=${slug}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },

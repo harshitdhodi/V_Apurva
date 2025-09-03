@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3023",
+    "dev": "next dev -p 3059",
     "build": "next build",
-    "start": "next start -p 3023",
+    "start": "next start -p 3059",
     "lint": "next lint",
     "analyze": "cross-env ANALYZE=true next build",
     "analyze:server": "cross-env ANALYZE=server next build",

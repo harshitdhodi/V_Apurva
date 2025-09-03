@@ -17,13 +17,13 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3023',
+        port: '3059',
         pathname: '/api/image/**',
       },
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3023',
+        port: '3059',
         pathname: '/api/logo/**',
       }
     ],
@@ -46,10 +46,10 @@ const nextConfig = {
         transform: 'react-icons/{{member}}',
       },
     },
-    // Enable server components (if you're using them)
-    serverComponents: true,
     // Enable optimized package imports
     optimizePackageImports: ['lucide-react', 'react-icons'],
+    // Enable server components
+    serverComponents: true,
   },
 
   // Webpack configuration
@@ -162,14 +162,14 @@ const nextConfig = {
         source: '/api/:path*',
         destination: process.env.NODE_ENV === 'production' 
           ? 'https://www.apurvachemicals.com/api/:path*' 
-          : 'http://localhost:3023/api/:path*',
+          : 'http://localhost:3059/api/:path*',
       },
     ];
   },
   
   // Set the default port for development
   env: {
-    PORT: '3023',
+    PORT: '3059',
   },
 };
 
