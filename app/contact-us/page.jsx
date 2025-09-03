@@ -7,8 +7,8 @@ import { getMetadataBySlug } from '@/lib/getMetadata';
 async function fetchBannerData() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000';
-    const url = `${baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`}/api/banner/getBannersBySectionContactus`;
-    
+    const url = `https://admin.apurvachemicals.com/api/banner/getBannersBySectionContactus`;
+    console.log("Fetching banners from:", url);
     const response = await fetch(url, {
       cache: 'no-store', // Ensure fresh data for dynamic content
       headers: {

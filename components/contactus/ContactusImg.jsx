@@ -6,7 +6,7 @@ import ClientContactImg from './ClientContactImg'; // We'll create this for clie
 function ContactusImg({ banners = [] }) {
     // Generate slug on server side
     const slug = 'Contact Us'; // Since this is contact page, we can hardcode or make it dynamic
-
+console.log(banners);
     // If no banners, render fallback on server
     if (!banners.length) {
         return (
@@ -37,7 +37,7 @@ function ContactusImg({ banners = [] }) {
                     <div
                         className="relative bg-cover bg-center bg-no-repeat"
                         style={{
-                            backgroundImage: `url(/api/image/download/${banner.photo})`,
+                            backgroundImage: `url(https://admin.apurvachemicals.com/api/image/download/${banner.photo})`,
                             height: '40vh'
                         }}
                         title={banner.title || 'Contact Us Banner'}
@@ -45,7 +45,7 @@ function ContactusImg({ banners = [] }) {
                         {/* This content will be in proper HTML for SEO crawlers */}
                         <div className='flex flex-col justify-center items-center h-full mb-10 relative z-10'>
                             <h1 className='font-bold text-white text-2xl md:text-4xl text-center px-4'>
-                                {banner.title || 'Contact Us'}
+                                {banner.slug || 'Contact Us'}
                             </h1>
                             <div className="absolute bottom-16 flex items-center space-x-2">
                                 <Link 

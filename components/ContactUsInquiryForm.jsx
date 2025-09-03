@@ -73,6 +73,7 @@ function ContactUsInquiryForm({ onClose }) {
         }
 
         try {
+            // First API call
             await axios.post('/api/inquiries/createInquiry', {
                 name,
                 email,
@@ -82,17 +83,32 @@ function ContactUsInquiryForm({ onClose }) {
                 ...utmParams,
             });
 
-            // Show success message on successful submission
+            // Second API call with static and dynamic fields
+            await axios.post('https://leads.rndtechnosoft.com/api/contactform/message', {
+                API_KEY: "791A8DCFBD042D46",
+                API_ID: "1QED",
+                name,
+                email,
+                phone,
+                message,
+                path: window.location.href || "https://leads.rndtechnosoft.com"
+            });
+
+            // Show success message on successful submission of both APIs
             setSuccessMessage('Your message has been successfully sent. We will get back to you soon.');
             // Clear form fields
             setName('');
             setEmail('');
             setPhone('');
             setMessage('');
+            
+            // If you need to open a modal, uncomment the line below
+            // setModalIsOpen && setModalIsOpen(true);
             // Close the modal after successful submission
             onClose();
         } catch (error) {
-            setErrorMessage(error.response ? error.response.data.error : 'An error occurred.');
+            setErrorMessage(error.response?.data?.error || 'An error occurred. Please try again.');
+            console.error('Error submitting form:', error);
         } finally {
             setIsSubmitting(false);
         }
