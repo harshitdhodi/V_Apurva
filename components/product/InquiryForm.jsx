@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from 'axios';
@@ -58,6 +57,7 @@ function InquiryForm({ productName, onClose }) {
         setIsSubmitting(true);
 
         try {
+            // First API call - Product Inquiry
             const response = await axios.post('/api/productinquiry/createproductinquiries', {
                 name,
                 email,
@@ -68,6 +68,22 @@ function InquiryForm({ productName, onClose }) {
                 ipaddress: clientIp,
                 ...utmParams,
             });
+
+            // Second API call - Lead Management System
+            try {
+                await axios.post('https://leads.rndtechnosoft.com/api/contactform/message', {
+                    API_KEY: "791A8DCFBD042D46",
+                    API_ID: "1QED",
+                    name,
+                    email,
+                    phone,
+                    message: `Product: ${productName}\n${message}`,
+                    path: window.location.href || "https://leads.rndtechnosoft.com"
+                });
+            } catch (leadError) {
+                console.error('Error submitting to lead management system:', leadError);
+                // Continue with the flow even if the second API fails
+            }
 
             // Clear form fields
             setName('');
@@ -82,6 +98,7 @@ function InquiryForm({ productName, onClose }) {
 
         } catch (error) {
             setErrorMessage(error.response?.data?.error || 'An error occurred. Please try again.');
+            console.error('Error submitting form:', error);
         } finally {
             setIsSubmitting(false);
         }
@@ -98,7 +115,8 @@ function InquiryForm({ productName, onClose }) {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-400/30  p-4">
+       
             <div className="bg-white p-4 md:p-6 rounded-lg shadow-2xl w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
                 <button
                     onClick={onClose}

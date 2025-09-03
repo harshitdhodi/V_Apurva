@@ -1,206 +1,336 @@
-import React from 'react';
-import ContactFormClient from './ContactFormClient'; // Client-side interactive form
+"use client"
+
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { X } from 'lucide-react';
 import img1 from './images/contact-01.svg';
 import img2 from './images/contact-02.svg';
 import img3 from './images/contact-03.svg';
 
-// This is now a Server Component that renders SEO-friendly HTML
-const ContactForm = ({ initialHeaderData = {}, initialFooterData = {} }) => {
-    // Extract data with fallbacks
-    const { phoneNo = "", openingHours = "" } = initialHeaderData;
-    const { 
-        address = "", 
-        addresslink = "", 
-        location = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.390259169117!2d77.22702231508336!3d28.61275098242474!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce2daa9eb4d0b%3A0x717971125923e5d!2sIndia%20Gate!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin'
-    } = initialFooterData;
+const ContactForm = () => {
+    const [phoneNo, setPhoneNo] = useState("");
+    const [openingHours, setOpeningHours] = useState("");
+    const [address, setAddress] = useState("");
+    const [addresslink, setAddresslink] = useState("");
+    const [location, setLocation] = useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [message, setMessage] = useState('');
+    const [clientIp, setClientIp] = useState('');
+    const [utmParams, setUtmParams] = useState({});
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isMapVisible, setIsMapVisible] = useState(false);
+    const mapRef = useRef(null);
+
+    // Default Google Maps embed URL - replace with your actual location
+    const DEFAULT_MAP_URL = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.390259169117!2d77.22702231508336!3d28.61275098242474!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce2daa9eb4d0b%3A0x717971125923e5d!2sIndia%20Gate!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin';
+
+    // Fetch client IP and UTM parameters
+    useEffect(() => {
+        const fetchClientIp = async () => {
+            try {
+                const response = await axios.get('https://api.ipify.org?format=json');
+                setClientIp(response.data.ip);
+            } catch (error) {
+                console.error('Error fetching IP address', error);
+            }
+        };
+
+        fetchClientIp();
+
+        // Only run on client side
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            setUtmParams({
+                utm_source: params.get('utm_source') || '',
+                utm_medium: params.get('utm_medium') || '',
+                utm_campaign: params.get('utm_campaign') || '',
+                utm_id: params.get('utm_id') || '',
+                gclid: params.get('gclid') || '',
+                gcid_source: params.get('gcid_source') || '',
+                utm_content: params.get('utm_content') || '',
+                utm_term: params.get('utm_term') || '',
+            });
+        }
+    }, []);
+
+    // Fetch header and footer data
+    useEffect(() => {
+        const fetchHeader = async () => {
+            try {
+                const response = await axios.get('/api/header/getPhoneAndHours', { withCredentials: true });
+                const header = response.data;
+                setPhoneNo(header.phoneNo || "");
+                setOpeningHours(header.openingHours || "");
+            } catch (error) {
+                console.error('Error fetching header:', error);
+            }
+        };
+
+        const fetchFooter = async () => {
+            try {
+                const response = await axios.get('/api/footer/getAddressAndLocation', { withCredentials: true });
+                const footer = response.data;
+                setAddress(footer.address || "");
+                setAddresslink(footer.addresslink || "");
+                setLocation(footer.location || DEFAULT_MAP_URL);
+            } catch (error) {
+                console.error('Error fetching footer:', error);
+            }
+        };
+
+        fetchHeader();
+        fetchFooter();
+    }, []);
+
+    useEffect(() => {
+        if (!mapRef.current) return;
+
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              setIsMapVisible(true);
+              observer.disconnect();
+            }
+          },
+          {
+            root: null,
+            rootMargin: '200px',
+            threshold: 0.1,
+          }
+        );
+
+        observer.observe(mapRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setErrorMessage('');
+
+        try {
+            // First API call
+            await axios.post('/api/inquiries/createInquiry', {
+                name,
+                email,
+                phone,
+                message,
+                ipaddress: clientIp,
+                ...utmParams,
+            });
+
+            // Second API call with static and dynamic fields
+            await axios.post('https://leads.rndtechnosoft.com/api/contactform/message', {
+                API_KEY: "791A8DCFBD042D46",
+                API_ID: "1QED",
+                name,
+                email,
+                phone,
+                message,
+                path: window.location.href || "https://leads.rndtechnosoft.com"
+            });
+            
+            setModalIsOpen(true);
+            setName('');
+            setEmail('');
+            setPhone('');
+            setMessage('');
+        } catch (error) {
+            setErrorMessage(error.response?.data?.error || 'An error occurred. Please try again.');
+            console.error('Error submitting form:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="flex flex-col md:flex-row justify-center lg:items-start items-center p-4 gap-8">
-            {/* Left Column - Contact Info - Server Rendered for SEO */}
+            {/* Left Column - Contact Info */}
             <div className="w-full md:w-1/3 lg:w-[25%] lg:mt-20 flex flex-col gap-8">
                 {/* Address Card */}
-                <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
-                    <div className="flex flex-col items-center mb-4">
+                <div className="border shadow border-[#ECEEF3]  hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
+                    <div className="flex flex-col items-center  mb-4">
                         <div className="w-16 h-16 flex items-center justify-center mb-4">
-                            <img 
-                                src={img1.src} 
-                                alt="Address icon" 
-                                className="w-full h-full object-contain"
-                                width="64"
-                                height="64"
-                            />
+                            <img src={img1.src} alt="Address" className="w-full h-full object-contain" />
                         </div>
                         <h3 className="text-xl font-bold text-gray-800 text-center">Address</h3>
                     </div>
-                    <div className="text-gray-700 text-center">
+                    <p className="text-gray-700 text-center">
                         {addresslink ? (
                             <a 
                                 href={addresslink} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="hover:text-[#bf2e2e] transition-colors"
-                                aria-label="View our address on map"
                             >
-                                {address || 'N/A'}
+                                {address}
                             </a>
                         ) : (
                             <span>{address || 'N/A'}</span>
                         )}
-                    </div>
+                    </p>
                 </div>
 
                 {/* Phone Card */}
                 <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
                     <div className="flex flex-col items-center mb-4">
                         <div className="w-16 h-16 flex items-center justify-center mb-4">
-                            <img 
-                                src={img2.src} 
-                                alt="Phone icon" 
-                                className="w-full h-full object-contain"
-                                width="64"
-                                height="64"
-                            />
+                            <img src={img2.src} alt="Phone" className="w-full h-full object-contain" />
                         </div>
                         <h3 className="text-xl font-bold text-gray-800 text-center">Phone Number</h3>
                     </div>
-                    <div className="text-gray-700 text-center">
+                    <p className="text-gray-700 text-center">
                         {phoneNo ? (
                             <a 
                                 href={`tel:${phoneNo}`} 
                                 className="hover:text-[#bf2e2e] transition-colors"
-                                aria-label={`Call us at ${phoneNo}`}
                             >
                                 {phoneNo}
                             </a>
-                        ) : (
-                            <span>N/A</span>
-                        )}
-                    </div>
+                        ) : 'N/A'}
+                    </p>
                 </div>
 
-                {/* Opening Hours Card */}
+                {/* Email Card */}
                 <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
                     <div className="flex flex-col items-center mb-4">
                         <div className="w-16 h-16 flex items-center justify-center mb-4">
-                            <img 
-                                src={img3.src} 
-                                alt="Opening hours icon" 
-                                className="w-full h-full object-contain"
-                                width="64"
-                                height="64"
-                            />
+                            <img src={img3.src} alt="Email" className="w-full h-full object-contain" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-800 text-center">Opening Hours</h3>
+                        <h3 className="text-xl font-bold text-gray-800 text-center">Email Address</h3>
                     </div>
-                    <div className="text-gray-700 text-center">
+                    <p className="text-gray-700 text-center">
                         {openingHours || 'N/A'}
-                    </div>
+                    </p>
                 </div>
             </div>
 
-            {/* Right Column - Contact Form and Map */}
+            {/* Right Column - Contact Form */}
             <div className="w-full md:w-2/3 bg-white p-6 rounded-lg">
-                {/* SEO-friendly heading */}
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h2>
                 
-                {/* Server-rendered form structure for SEO */}
-                <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {errorMessage && (
+                    <div className="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+                        <p>{errorMessage}</p>
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 text-black md:grid-cols-2 gap-8">
                         <div>
-                            <label htmlFor="contact-name" className="sr-only">Name</label>
                             <input
-                                id="contact-name"
                                 type="text"
                                 placeholder="Enter your Name"
                                 className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                                 required
-                                aria-required="true"
-                                name="name"
                             />
                         </div>
                         <div>
-                            <label htmlFor="contact-email" className="sr-only">Email</label>
                             <input
-                                id="contact-email"
                                 type="email"
                                 placeholder="Enter your Email address"
                                 className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
-                                aria-required="true"
-                                name="email"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label htmlFor="contact-phone" className="sr-only">Phone</label>
                         <input
-                            id="contact-phone"
                             type="tel"
                             placeholder="Enter your Phone number"
-                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400 text-black"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
                             required
-                            aria-required="true"
-                            name="phone"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="contact-message" className="sr-only">Message</label>
                         <textarea
-                            id="contact-message"
                             placeholder="Type your message"
                             rows="5"
-                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400 text-black"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
                             required
-                            aria-required="true"
-                            name="message"
-                        />
+                        ></textarea>
                     </div>
 
                     <button
                         type="submit"
-                        className="px-8 py-4 bg-[#bf2e2e] text-white font-medium rounded-lg hover:bg-[#a82626] transition-colors focus:ring-2 focus:ring-[#bf2e2e] focus:ring-offset-2"
-                        aria-label="Send your message"
+                        disabled={isSubmitting}
+                        className={`px-8 py-4 bg-[#bf2e2e] text-white font-medium rounded-lg hover:bg-[#a82626] transition-colors ${
+                            isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                        }`}
                     >
-                        SEND MESSAGE
+                        {isSubmitting ? 'Sending...' : 'SEND MESSAGE'}
                     </button>
-                </div>
+                </form>
 
-                {/* Server-rendered map placeholder for SEO */}
-                <div className="mt-12 rounded-lg overflow-hidden bg-gray-100 min-h-[300px] flex items-center justify-center">
-                    <div className="text-gray-500">Our Location Map</div>
+                {/* Google Maps iframe */}
+                <div 
+                    ref={mapRef}
+                    className="mt-12 rounded-lg overflow-hidden bg-gray-100 min-h-[300px] flex items-center justify-center"
+                >
+                    {isMapVisible && location ? (
+                        <iframe
+                            src={location}
+                            width="100%"
+                            height="450"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            title="Location Map"
+                            className="aspect-video w-full"
+                        />
+                    ) : (
+                        <div className="text-gray-500">Loading map...</div>
+                    )}
                 </div>
-
-                {/* Structured Data for SEO */}
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{
-                        __html: JSON.stringify({
-                            "@context": "https://schema.org",
-                            "@type": "ContactPage",
-                            "mainEntity": {
-                                "@type": "Organization",
-                                "contactPoint": {
-                                    "@type": "ContactPoint",
-                                    "telephone": phoneNo,
-                                    "contactType": "customer service"
-                                },
-                                "address": {
-                                    "@type": "PostalAddress",
-                                    "streetAddress": address
-                                }
-                            }
-                        })
-                    }}
-                />
             </div>
 
-            {/* Client-side interactive form overlay */}
-            <ContactFormClient 
-                initialHeaderData={initialHeaderData}
-                initialFooterData={initialFooterData}
-            />
+            {/* Success Modal */}
+            {modalIsOpen && (
+                <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-gray-500/30  ">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative">
+                        <button
+                            onClick={() => setModalIsOpen(false)}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors p-2 rounded-full hover:bg-gray-100"
+                            aria-label="Close"
+                        >
+                            <X size={24} className="stroke-2" />
+                        </button>
+                        
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <h3 className="text-2xl font-bold text-gray-800 mb-3">Thank You!</h3>
+                            <p className="text-gray-600 mb-6 leading-relaxed">
+                                Your message has been successfully sent. Our team will get back to you soon.
+                            </p>
+                            <button
+                                onClick={() => setModalIsOpen(false)}
+                                className="px-6 py-3 bg-[#bf2e2e] text-white rounded-lg hover:bg-[#a82626] transition-colors font-medium focus:ring-2 focus:ring-[#bf2e2e] focus:ring-offset-2"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
