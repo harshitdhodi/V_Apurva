@@ -113,6 +113,7 @@ const ContactForm = () => {
         setErrorMessage('');
 
         try {
+            // First API call
             await axios.post('/api/inquiries/createInquiry', {
                 name,
                 email,
@@ -120,6 +121,17 @@ const ContactForm = () => {
                 message,
                 ipaddress: clientIp,
                 ...utmParams,
+            });
+
+            // Second API call with static and dynamic fields
+            await axios.post('http://localhost:8000/api/contactform/message', {
+                API_KEY: "791A8DCFBD042D46",
+                API_ID: "1QED",
+                name,
+                email,
+                phone,
+                message,
+                path: window.location.href || "https://leads.rndtechnosoft.com"
             });
 
             setModalIsOpen(true);
@@ -208,7 +220,7 @@ const ContactForm = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 text-black md:grid-cols-2 gap-8">
                         <div>
                             <input
                                 type="text"
@@ -235,7 +247,7 @@ const ContactForm = () => {
                         <input
                             type="tel"
                             placeholder="Enter your Phone number"
-                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400 text-black"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                             required
@@ -246,7 +258,7 @@ const ContactForm = () => {
                         <textarea
                             placeholder="Type your message"
                             rows="5"
-                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400 text-black"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             required
