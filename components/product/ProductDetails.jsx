@@ -185,14 +185,50 @@ export default function ProductDetail({ initialProduct, initialRelatedProducts =
                 <div className="bg-gray-100 p-5 rounded-lg">
                   <span className="text-xl font-bold text-red-700">Description:</span>
                   <div className="mt-3">
-                    <div
-                      className="product-content"
-                      dangerouslySetInnerHTML={{
-                        __html: showFullContent
-                          ? product.productData.details
-                          : getPartialContent(product.productData.details)
-                      }}
-                    />
+                   <div
+                          className="product-content"
+                          style={{
+                            overflowX: 'auto',
+                            WebkitOverflowScrolling: 'touch',
+                            msOverflowStyle: '-ms-autohiding-scrollbar',
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: `
+                              <style>
+                                .product-content table {
+                                  width: 100%;
+                                  border-collapse: collapse;
+                                  margin: 1rem 0;
+                                  min-width: 600px; /* Ensures table has minimum width */
+                                }
+                                .product-content th, 
+                                .product-content td {
+                                  border: 1px solid #ddd;
+                                  padding: 8px 12px;
+                                  text-align: left;
+                                }
+                                .product-content th {
+                                  background-color: #f5f5f5;
+                                  font-weight: bold;
+                                }
+                                .product-content tr:nth-child(even) {
+                                  background-color: #f9f9f9;
+                                }
+                                @media (max-width: 768px) {
+                                  .product-content table {
+                                    display: block;
+                                    overflow-x: auto;
+                                    white-space: nowrap;
+                                  }
+                                }
+                              </style>
+                              ${showFullContent 
+                                ? product.productData.details 
+                                : getPartialContent(product.productData.details)
+                              }
+                            `
+                          }}
+                        />
                     {product.productData.details.length > 300 && (
                       <button
                         className="text-red-700 mt-2 hover:underline text-sm font-medium"
