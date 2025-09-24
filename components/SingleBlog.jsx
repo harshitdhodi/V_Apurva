@@ -296,7 +296,7 @@ export default function SingleBlog({
                 priority
               />
             </div>
-            <h1 className="text-2xl font-semibold text-[#bf2e2e] font-montserrat">{blogData.title}</h1>
+            {/* <h1 className="text-2xl font-semibold text-[#bf2e2e] font-montserrat">{blogData.title}</h1> */}
             <div className="prose max-w-none">
               <HTMLContent html={blogData.details} className="ql-editor text-black" />
             </div>
