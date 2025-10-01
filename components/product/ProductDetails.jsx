@@ -105,14 +105,45 @@ export default function ProductDetail({ initialProduct, initialRelatedProducts =
           margin-bottom: 0.5rem;
           color: #1f2937;
         }
+          .product-content h1 a,
+.product-content h2 a,
+.product-content h3 a,
+.product-content h4 a,
+.product-content h5 a,
+.product-content h6 a {
+  color: #bf2e2e !important;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+.product-content h1 a:hover,
+.product-content h2 a:hover,
+.product-content h3 a:hover,
+.product-content h4 a:hover,
+.product-content h5 a:hover,
+.product-content h6 a:hover {
+  color: #991b1b !important;
+}
        .product-content ul {
   list-style-type: disc !important;
-  margin-left: 6%;
+  margin-left: 4%;
   margin-bottom: 1rem;
 }
+
+.product-content ul a,
+.product-content ol a {
+  color: #bf2e2e !important;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+.product-content ul a:hover,
+.product-content ol a:hover {
+  color: #991b1b !important;
+}
+
+
 .product-content ol {
   list-style-type: decimal !important;
-  margin-left: 1.5rem;
+  margin-left: 4%;
   margin-bottom: 1rem;
 }
         .product-content li {
