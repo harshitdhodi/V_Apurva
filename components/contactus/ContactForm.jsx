@@ -114,7 +114,7 @@ const ContactForm = () => {
 
         try {
             // First API call
-            await axios.post('http://localhost:3023/api/inquiries/createInquiry', {
+            await axios.post('https://admin.apurvachemicals.com/api/inquiries/createInquiry', {
                 name,
                 email,
                 phone,
