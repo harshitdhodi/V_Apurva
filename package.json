@@ -3,12 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-<<<<<<< HEAD
-    "dev": " next dev --turbopack",
-    "build": " next build",
-    "start": " next start",
-    "lint": "next lint"
-=======
     "dev": "next dev -p 3059",
     "build": "next build",
     "start": "next start -p 3059",
@@ -16,7 +10,6 @@
     "analyze": "cross-env ANALYZE=true next build",
     "analyze:server": "cross-env ANALYZE=server next build",
     "analyze:browser": "cross-env ANALYZE=browser next build"
->>>>>>> prod
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",

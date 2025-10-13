@@ -24,11 +24,7 @@ function PartnersClient({ partners }) {
 
     intervalRef.current = setInterval(() => {
       nextSlide()
-<<<<<<< HEAD
     }, 3000)
-=======
-    }, 3059)
->>>>>>> prod
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)

@@ -5,17 +5,11 @@ import BlogPageComponent from './BlogPage';
 export const revalidate = 3600; // Revalidate every hour
 
 async function getData() {
-<<<<<<< HEAD
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-  if (!apiUrl) { 
-    console.error  ('NEXT_PUBLIC_API_URL is not set');
-=======
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
   if (!apiUrl) {
     console.error('NEXT_PUBLIC_API_URL is not set');
 
->>>>>>> prod
     return { blogs: [], categories: [], banners: [] };
   }
 

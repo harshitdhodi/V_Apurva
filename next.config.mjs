@@ -160,16 +160,9 @@ const nextConfig = {
       },
       {
         source: '/api/:path*',
-<<<<<<< HEAD
-        destination:
-          process.env.NODE_ENV === 'production'
-            ? 'https://www.apurvachemicals.com/api/:path*'
-            : 'http://localhost:3000/api/:path*',
-=======
         destination: process.env.NODE_ENV === 'production' 
           ? 'https://www.apurvachemicals.com/api/:path*' 
           : 'http://localhost:3059/api/:path*',
->>>>>>> prod
       },
     ];
   },
