@@ -9,12 +9,7 @@ import axios from 'axios';
 // Server-side data fetching
 async function fetchSlugs() {
   try {
-<<<<<<< HEAD
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-=======
-
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
->>>>>>> prod
     const response = await fetch(`${baseUrl}/api/dynamicSlug/getAllSlugs`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
