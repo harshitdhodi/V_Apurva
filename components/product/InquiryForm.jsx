@@ -115,8 +115,7 @@ function InquiryForm({ productName, onClose }) {
     };
 
     return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-400/30  p-4">
-       
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-400/30  p-4">
             <div className="bg-white p-4 md:p-6 rounded-lg shadow-2xl w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
                 <button
                     onClick={onClose}

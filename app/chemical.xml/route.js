@@ -1,10 +1,8 @@
 import { getServerSideSitemap } from 'next-sitemap';
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:3023/";
-const baseUrl = 'https://www.apurvachemicals.com';
-const categorySlug = 'dye-intermediate';
-const CHEMICAL_API_URL = `${BASE_URL}api/product/getProductsByCategory?categorySlug=${categorySlug}`;
+
+const BASE_URL = "http://localhost:3059/";
 
 async function fetchCategoryAndChemicals() {
   try {

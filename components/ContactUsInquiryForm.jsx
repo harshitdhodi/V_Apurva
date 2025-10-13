@@ -74,7 +74,7 @@ function ContactUsInquiryForm({ onClose }) {
 
         try {
             // First API call
-            await axios.post('/api/inquiries/createInquiry', {
+            await axios.post('https://www.admin.apurvachemicals.com/api/inquiries/createInquiry', {
                 name,
                 email,
                 phone,
@@ -138,7 +138,7 @@ function ContactUsInquiryForm({ onClose }) {
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+                                    className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                     placeholder="Enter your name"
                                     required
                                 />
@@ -149,7 +149,7 @@ function ContactUsInquiryForm({ onClose }) {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+                                    className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                     placeholder="Enter your email"
                                     required
                                 />
@@ -161,7 +161,7 @@ function ContactUsInquiryForm({ onClose }) {
                                 type="text"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
-                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+                                className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                 placeholder="Enter your phone number"
                                 required
                             />
@@ -171,7 +171,7 @@ function ContactUsInquiryForm({ onClose }) {
                             <textarea
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+                                className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                 rows="2"
                                 placeholder="Write your message here"
                                 required
@@ -190,7 +190,7 @@ function ContactUsInquiryForm({ onClose }) {
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="submit"
-                                className={`bg-gray-800 text-white py-2 px-6 rounded-lg hover:bg-gray-900 transition-all duration-200 w-full ${(!recaptchaValue || isSubmitting) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`bg-red-700 text-white py-2 px-6 rounded-lg hover:bg-red-700 cursor-pointer transition-all duration-200 w-full ${(!recaptchaValue || isSubmitting) ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 disabled={!recaptchaValue || isSubmitting}
                             >
                                 {isSubmitting ? 'Submitting...' : 'Submit'}

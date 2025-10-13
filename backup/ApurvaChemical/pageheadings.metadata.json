@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"pageType":{"$numberInt":"1"}},"name":"pageType_1","background":true,"unique":true}],"uuid":"6e93937e737748fe918e76fe17809d9a","collectionName":"pageheadings","type":"collection"}

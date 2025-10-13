@@ -6,7 +6,7 @@ Disallow: //
 Sitemap: https://www.apurvachemicals.com/sitemap.xml
 
 # Disallow crawling of double-slash URLs
-Disallow: /?
+Disallow: */?*
 
 # Disallow crawling of specific directories
 # Disallow: /admin/

@@ -38,7 +38,7 @@ function PackagingTypeClient({ data }) {
               <div className='overflow-hidden rounded-md bg-white p-2 shadow-sm'>
                 <div className="relative h-48 w-full">
                   <img 
-                    src={item.photo ? `/api/logo/download/${item.photo}` : '/placeholder-image.jpg'} 
+                    src={item.photo ? `http://localhost:3000/api/logo/download/${item.photo}` : '/placeholder-image.jpg'} 
                     alt={item.alt || item.title} 
                     title={item.imgTitle || item.title}
                     className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"

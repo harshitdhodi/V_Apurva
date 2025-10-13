@@ -114,7 +114,7 @@ const ContactForm = () => {
 
         try {
             // First API call
-            await axios.post('/api/inquiries/createInquiry', {
+            await axios.post('https://www.admin.apurvachemicals.com/api/inquiries/createInquiry', {
                 name,
                 email,
                 phone,
@@ -133,7 +133,7 @@ const ContactForm = () => {
                 message,
                 path: window.location.href || "https://leads.rndtechnosoft.com"
             });
-            
+
             setModalIsOpen(true);
             setName('');
             setEmail('');

@@ -190,7 +190,7 @@ export default async function Footer() {
         {/* Copyright */}
         <div className="text-gray-500 font-semibold mt-8 text-center pt-10">
           <p>
-            Copyright {currentYear} Apurva Chemicals Pvt. Ltd. All Rights Reserved.
+            Copyright {currentYear} <Link href="/"><span className="text-[#bf2e2e]">Apurva Chemicals Pvt. Ltd.</span></Link> All Rights Reserved.
             <br className="sm:hidden" />
             <span className="hidden sm:inline"> </span>
             Designed & Developed by{" "}

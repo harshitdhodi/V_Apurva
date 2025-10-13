@@ -25,10 +25,9 @@ export async function GET(request) {
       
       // Find all products that belong to the category
       const products = await Product.find({
-        categories: { $in: categorySlug },
-      }).select('_id title photo alt slug imgTitle slug url updatedAt');
-
-      // console.log("Fetched Products", products)
+        categories: { $in: categorySlug  },
+        status: 'active',
+      });
   
       // Return the category and products in the response
       return NextResponse.json({

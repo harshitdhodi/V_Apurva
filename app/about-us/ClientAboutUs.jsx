@@ -25,10 +25,7 @@ const Partners = dynamic(() => import('../../components/Partners'), {
   ssr: false,
   loading: () => <div className="h-[400px] bg-gray-100 animate-pulse"></div>,
 });
-const OurProcess = dynamic(() => import('../../components/ourprocess/OurProcess'), {
-  ssr: false,
-  loading: () => <div className="h-[600px] bg-gray-100 animate-pulse"></div>,
-});
+import OurProcess from '../../components/ourprocess/OurProcess';
 const Footer = dynamic(() => import('../../components/layout/Footer'), {
   ssr: false,
   loading: () => <div className="h-20 bg-gray-100"></div>,
