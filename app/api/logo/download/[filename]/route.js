@@ -75,7 +75,7 @@ export async function GET(request, { params }) {
       });
     }
 
-    console.log(`Serving logo from: ${filePath}`);
+    // console.log(`Serving logo from: ${filePath}`);
     
     try {
       const fileBuffer = await fs.readFile(filePath);

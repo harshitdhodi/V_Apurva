@@ -1,29 +1,13 @@
-"use client"
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import ClientContactImg from './ClientContactImg'; // We'll create this for client-side features
 
+// This is now a Server Component that renders proper HTML
 function ContactusImg({ banners = [] }) {
-    const [isClient, setIsClient] = useState(false);
-    const pathname = usePathname();
-    
-    const slug = pathname
-        .split('/')
-        .pop() // Get the last part after last slash
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-
-    useEffect(() => {
-        setIsClient(true);
-        window.scrollTo(0, 0);
-    }, []);
-
-    if (!isClient) {
-        return <div className="h-[40vh] md:h-[30vh] bg-gray-200 animate-pulse"></div>;
-    }
-
+    // Generate slug on server side
+    const slug = 'Contact Us'; // Since this is contact page, we can hardcode or make it dynamic
+console.log(banners);
+    // If no banners, render fallback on server
     if (!banners.length) {
         return (
             <div className="relative bg-gray-200 h-[40vh] flex items-center justify-center">
@@ -45,37 +29,46 @@ function ContactusImg({ banners = [] }) {
         );
     }
 
+    // Render banners with proper HTML structure for SEO
     return (
-        <div>
+        <>
             {banners.map((banner, index) => (
-                <div key={index}>
+                <div key={`banner-${index}`}>
                     <div
                         className="relative bg-cover bg-center bg-no-repeat"
                         style={{
-                            backgroundImage: `url(/api/image/download/${banner.photo})`,
+                            backgroundImage: `url(https://admin.apurvachemicals.com/api/image/download/${banner.photo})`,
                             height: '40vh'
                         }}
-                        title={banner.title}
+                        title={banner.title || 'Contact Us Banner'}
                     >
+                        {/* This content will be in proper HTML for SEO crawlers */}
                         <div className='flex flex-col justify-center items-center h-full mb-10 relative z-10'>
                             <h1 className='font-bold text-white text-2xl md:text-4xl text-center px-4'>
-                                {banner.title}
+                                {banner.slug || 'Contact Us'}
                             </h1>
                             <div className="absolute bottom-16 flex items-center space-x-2">
-                                <Link href="/" className="text-white hover:text-gray-300 text-sm md:text-base">
+                                <Link 
+                                    href="/" 
+                                    className="text-white hover:text-gray-300 text-sm md:text-base"
+                                    aria-label="Go to Home page"
+                                >
                                     Home
                                 </Link>
-                                <span className="text-white">/</span>
+                                <span className="text-white" aria-hidden="true">/</span>
                                 <span className="text-white text-sm md:text-base">
                                     {slug}
                                 </span>
                             </div>
                         </div>
-                        <div className='absolute inset-0 bg-black opacity-40'></div>
+                        <div className='absolute inset-0 bg-black opacity-40' aria-hidden="true"></div>
                     </div>
                 </div>
             ))}
-        </div>
+            
+            {/* Add client-side features without affecting SEO */}
+            <ClientContactImg />
+        </>
     );
 }
 

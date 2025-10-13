@@ -12,7 +12,7 @@ const withBundleAnalyzer = process.env.ANALYZE
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['www.apurvachemicals.com', 'localhost'],
+    domains: ['www.admin.apurvachemicals.com', 'localhost'],
     remotePatterns: [
       {
         protocol: 'http',

@@ -99,7 +99,7 @@ async function fetchWhyChooseUsData() {
 
     const { heading = "Why Choose Us", subheading = "Discover What Makes Us Different" } = headingsData || {};
     const items = Array.isArray(responseData?.data) ? responseData.data : [];
-console.log("items",items)
+// console.log("items",items)
     return {
       heading,
       subheading,

@@ -30,7 +30,7 @@ function BlogPage() {
     try {
       const response = await axios.get('/api/banner/getBannersBySectionBlog', { withCredentials: true });
       setBanners(response.data.data);
-      console.log(response.data.data)
+      // console.log(response.data.data)
     } catch (error) {
       console.error(error);
     }
@@ -40,7 +40,7 @@ function BlogPage() {
     try {
       const response = await axios.get(`/api/news/getSpecificCategoryDetails`, { withCredentials: true });
       setCategories(response.data);
-      console.log(response.data)
+      // console.log(response.data)
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
