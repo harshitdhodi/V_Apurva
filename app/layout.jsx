@@ -4,22 +4,25 @@ import './globals.css';
 import ClientLayout from './client-layout';
 import Footer from "@/components/layout/Footer"
 import NavbarServer from "@/components/NavbarServer"
+import { getHomePageMetadata } from '@/lib/getMetadata';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export async function generateMetadata() {
+  const meta = await getHomePageMetadata()  
   return {
-    title: 'Apurva Chemicals',
-    description: 'Apurva Chemicals is a trusted dye intermediate manufacturer. We offer high-purity products, bulk supply options, and consistent quality for global clients.',
+    title: "Loading..." || meta.title,
+    description: meta.description,
     metadataBase: new URL('https://www.apurvachemicals.com'),
     alternates: {
-      canonical: '/',
+      canonical: "https://www.apurvachemicals.com"||meta.canonical,
     },
     other: {
       'http-equiv': 'x-ua-compatible',
       content: 'ie=edge',
     },
-  };
+    ...meta,
+}
 }
 
 // Server-side data fetching functions (same as before)
@@ -155,7 +158,7 @@ export default async function RootLayout({ children }) {
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <meta name="robots" content="index,follow" />
-        
+        <meta name="google-site-verification" content="CPbJU1xhTk_GLLM7xLgP2Zjr-U8tUu-XsGfCFB9g9HA" />
         {/* Self-hosted GTM script with delayed loading */}
         <Script id="gtm-script" strategy="lazyOnload">
           {`
