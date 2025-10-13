@@ -4,7 +4,7 @@ import OurPeopleClient from "./OurPeopleClient"
 async function getHeadings() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pageHeading/heading?pageType=ourpeople`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch headings")
     return await response.json()
@@ -17,7 +17,7 @@ async function getHeadings() {
 async function getOurPeopleData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ourpeople/getOurPeople`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 0 },
     })
     if (!response.ok) throw new Error("Failed to fetch our people data")
     const data = await response.json()

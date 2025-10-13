@@ -155,7 +155,7 @@ export default function ProductDetail() {
   }
 
   const metaDescription = getMetaDescription();
-  const currentUrl = typeof window !== 'undefined' ? `${window.location.origin}${pathname}` : '';
+  const currentUrl = typeof window !== 'undefined' ? `https://www.apurvachemicals.com/${pathname}` : '';
 
   return (
     <>
@@ -301,10 +301,46 @@ export default function ProductDetail() {
                       <div className="mt-3">
                         <div
                           className="product-content"
+                          style={{
+                            overflowX: 'auto',
+                            WebkitOverflowScrolling: 'touch',
+                            msOverflowStyle: '-ms-autohiding-scrollbar',
+                          }}
                           dangerouslySetInnerHTML={{
-                            __html: showFullContent
-                              ? product.productData.details
-                              : getPartialContent(product.productData.details)
+                            __html: `
+                              <style>
+                                .product-content table {
+                                  width: 100%;
+                                  border-collapse: collapse;
+                                  margin: 1rem 0;
+                                  min-width: 600px; /* Ensures table has minimum width */
+                                }
+                                .product-content th, 
+                                .product-content td {
+                                  border: 1px solid #ddd;
+                                  padding: 8px 12px;
+                                  text-align: left;
+                                }
+                                .product-content th {
+                                  background-color: #f5f5f5;
+                                  font-weight: bold;
+                                }
+                                .product-content tr:nth-child(even) {
+                                  background-color: #f9f9f9;
+                                }
+                                @media (max-width: 768px) {
+                                  .product-content table {
+                                    display: block;
+                                    overflow-x: auto;
+                                    white-space: nowrap;
+                                  }
+                                }
+                              </style>
+                              ${showFullContent 
+                                ? product.productData.details 
+                                : getPartialContent(product.productData.details)
+                              }
+                            `
                           }}
                         />
                         {product.productData.details.length > 300 && (

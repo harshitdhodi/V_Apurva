@@ -29,13 +29,13 @@ const HTMLContent = ({ html, className = "" }) => {
     }
     .ql-editor h2 {
       font-size: 1.5rem;
-      font-weight: 600;
+      font-weight: 400;
       margin: 0.8rem 0 0.4rem;
       color: #2d3748;
     }
     .ql-editor h3 {
-      font-size: 1.3rem;
-      font-weight: 600;
+      font-size: 1rem;
+      font-weight: 400;
       margin: 0.6rem 0 0.3rem;
       color: #4a5568;
     }
@@ -54,6 +54,7 @@ const HTMLContent = ({ html, className = "" }) => {
     .ql-editor ul, .ql-editor ol {
       margin: 0.5rem 0 0.5rem 1.5rem;
       padding: 0;
+      list-style-type: disc;
     }
     .ql-editor li {
       margin-bottom: 0.25rem;
@@ -261,19 +262,21 @@ export default function SingleBlog() {
       
       <div
         className="relative bg-cover bg-white bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(/api/image/download/${blogData.photo})` }}
+        style={{ backgroundImage: `url(https://admin.apurvachemicals.com/api/image/download/${blogData.photo})` }}
       >
-        <div className="flex flex-col justify-center items-center h-[40vh] md:h-[30vh] mb-10">
+        <div className="flex flex-col justify-center items-center h-[40vh] md:h-[40vh] mb-10">
+          <div className="absolute space-y-4 space-x-2 z-10">
           <h1 className="font-bold text-[#bf2e2e] sm:text-2xl md:text-3xl text-xl z-10 text-center">
             {blogData.title}
           </h1>
-          <div className="absolute bottom-4 flex space-x-2 z-10">
-            <Link href="/blogs" className="hover:text-[#bf2e2e] text-gray-100">
+           <div className="flex items-center justify-center space-x-2">
+           <Link href="/blogs" className="hover:text-[#bf2e2e] text-gray-100">
               Blog
             </Link>
             <span className="hover:text-[#bf2e2e] text-gray-100">/</span>
             <p className="hover:text-[#bf2e2e] text-gray-100 cursor-pointer">{blogData.title}</p>
           </div>
+           </div>
           <div className="absolute inset-0 bg-black opacity-40 z-1"></div>
         </div>
       </div>
@@ -283,7 +286,7 @@ export default function SingleBlog() {
           <div className="m-5 space-y-5">
             <div>
               <Image
-                src={`/api/image/download/${blogData.photo}`}
+                src={`https://admin.apurvachemicals.com/api/image/download/${blogData.photo}`}
                 width={1200}
                 height={600}
                 className="rounded w-full"
@@ -314,7 +317,7 @@ export default function SingleBlog() {
                           <div className="relative mb-4">
                             <Link href={`/${post.slug}`}>
                               <Image
-                                src={`/api/image/download/${post.photo[0] || post.photo}`}
+                                src={`https://admin.apurvachemicals.com/api/image/download/${post.photo[0] || post.photo}`}
                                 width={400}
                                 height={300}
                                 alt={post.alt?.[0] || 'Latest post image'}

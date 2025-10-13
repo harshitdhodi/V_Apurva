@@ -1,7 +1,13 @@
 import { getServerSideSitemap } from 'next-sitemap';
 import axios from 'axios';
 
+<<<<<<< HEAD
 const BASE_URL = "http://localhost:3000/";
+=======
+
+const BASE_URL = "http://localhost:3059/";
+
+>>>>>>> prod
 const CHEMICAL_API_URL = `${BASE_URL}api/product/getProductsByCategory?categorySlug=dye-intermediate`;
 
 async function fetchChemicals() {
@@ -16,7 +22,11 @@ async function fetchChemicals() {
 }
 
 export async function GET() {
+<<<<<<< HEAD
   const baseUrl = 'http://localhost:3000';
+=======
+  const baseUrl = 'https://www.apurvachemicals.com';
+>>>>>>> prod
   const chemicals = await fetchChemicals();
   console.log("Chemicals", chemicals);
   const fields = chemicals
@@ -31,4 +41,4 @@ export async function GET() {
   return getServerSideSitemap(fields);
 }
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Disable caching

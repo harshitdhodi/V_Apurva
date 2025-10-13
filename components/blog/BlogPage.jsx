@@ -8,11 +8,11 @@ async function getBlogData() {
     const [headingResponse, blogsResponse] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pageHeading/heading?pageType=news`, {
         
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/getActiveNewsList`, {
         
-        next: { revalidate: 1800 },
+        next: { revalidate: 0 },
       }),
     ])
 

@@ -43,7 +43,7 @@ export default function BlogClient({ initialData }) {
             <div key={index} className="relative">
               <div
                 className="banner-background bg-white relative bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: `url(/api/image/download/${banner.photo})` }}
+                style={{ backgroundImage: `url(https://admin.apurvachemicals.com/api/image/download/${banner.photo})` }}
                 title={banner.title}
               >
                 <div className='flex justify-center items-center h-[40vh] md:h-[30vh]'>
@@ -114,7 +114,7 @@ export default function BlogClient({ initialData }) {
                 <div className="h-48 overflow-hidden">
                   <Link href={`/${post.slug}`}>
                     <Image
-                      src={`/api/image/download/${post.photo?.[0]}`}
+                      src={`http://localhost:3023/api/image/download/${post.photo?.[0]}`}
                       alt={post.alt?.[0] || post.title}
                       width={500}
                       height={500}

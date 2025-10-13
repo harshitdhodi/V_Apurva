@@ -1,7 +1,7 @@
 import { getServerSideSitemap } from 'next-sitemap';
 import axios from 'axios';
 
-const BASE_URL = "https://www.apurvachemicals.com/";
+const BASE_URL = "http://localhost:3059/";
 const BLOG_API_URL = `${BASE_URL}api/news/getActiveNews`;
 
 async function fetchBlogs() {
@@ -19,15 +19,17 @@ export async function GET() {
   const blogs = await fetchBlogs();
   
   const fields = blogs
-    .filter(blog => blog.slug && blog.updatedAt)
+    .filter(blog => blog.slug && blog.date)
     .map(blog => ({
-      loc: `${baseUrl}/${blog.slug}`,
-      lastmod: new Date(blog.updatedAt).toISOString(),
+      loc: `${baseUrl}/blog/${blog.slug}`,
+      lastmod: new Date(blog.date).toISOString(),
       changefreq: 'weekly',
-      priority: 0.8,
+      priority: 0.7,
     }));
 
+  // Generate the XML sitemap
   return getServerSideSitemap(fields);
 }
 
-export const dynamic = 'force-dynamic';
+// Prevents Next.js from adding default headers
+export const dynamic = 'force-dynamic'; // Disable caching

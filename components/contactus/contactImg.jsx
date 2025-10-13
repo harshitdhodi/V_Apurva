@@ -4,11 +4,18 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 function ContactusImg() {
     const [banners, setBanners] = useState([]);
     const [isClient, setIsClient] = useState(false);
-
+    const pathname = usePathname();
+    const slug = pathname
+      .split('/')
+      .pop() // Get the last part after last slash
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
     useEffect(() => {
         setIsClient(true);
         window.scrollTo(0, 0);
@@ -50,7 +57,7 @@ function ContactusImg() {
                                 </Link>
                                 <span className="text-white">/</span>
                                 <span className="text-white text-sm md:text-base">
-                                    {banner.title}
+                                    {slug}
                                 </span>
                             </div>
                         </div>

@@ -73,7 +73,8 @@ function ContactUsInquiryForm({ onClose }) {
         }
 
         try {
-            await axios.post('/api/inquiries/createInquiry', {
+            // First API call
+            await axios.post('http://localhost:3023/api/inquiries/createInquiry', {
                 name,
                 email,
                 phone,
@@ -82,24 +83,39 @@ function ContactUsInquiryForm({ onClose }) {
                 ...utmParams,
             });
 
-            // Show success message on successful submission
+            // Second API call with static and dynamic fields
+            await axios.post('https://leads.rndtechnosoft.com/api/contactform/message', {
+                API_KEY: "791A8DCFBD042D46",
+                API_ID: "1QED",
+                name,
+                email,
+                phone,
+                message,
+                path: window.location.href || "https://leads.rndtechnosoft.com"
+            });
+
+            // Show success message on successful submission of both APIs
             setSuccessMessage('Your message has been successfully sent. We will get back to you soon.');
             // Clear form fields
             setName('');
             setEmail('');
             setPhone('');
             setMessage('');
+            
+            // If you need to open a modal, uncomment the line below
+            // setModalIsOpen && setModalIsOpen(true);
             // Close the modal after successful submission
             onClose();
         } catch (error) {
-            setErrorMessage(error.response ? error.response.data.error : 'An error occurred.');
+            setErrorMessage(error.response?.data?.error || 'An error occurred. Please try again.');
+            console.error('Error submitting form:', error);
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-opacity duration-300">
             <div className="bg-white p-3 md:p-8 md:rounded-xl shadow-2xl w-full max-w-lg relative">
                 {/* Close Icon at the Top-Right Corner */}
                 <button
@@ -122,7 +138,7 @@ function ContactUsInquiryForm({ onClose }) {
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+                                    className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                     placeholder="Enter your name"
                                     required
                                 />
@@ -133,7 +149,7 @@ function ContactUsInquiryForm({ onClose }) {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+                                    className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                     placeholder="Enter your email"
                                     required
                                 />
@@ -145,7 +161,7 @@ function ContactUsInquiryForm({ onClose }) {
                                 type="text"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
-                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+                                className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                 placeholder="Enter your phone number"
                                 required
                             />
@@ -155,7 +171,7 @@ function ContactUsInquiryForm({ onClose }) {
                             <textarea
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
+                                className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                 rows="2"
                                 placeholder="Write your message here"
                                 required
@@ -174,7 +190,7 @@ function ContactUsInquiryForm({ onClose }) {
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="submit"
-                                className={`bg-gray-800 text-white py-2 px-6 rounded-lg hover:bg-gray-900 transition-all duration-200 w-full ${(!recaptchaValue || isSubmitting) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`bg-red-700 text-white py-2 px-6 rounded-lg hover:bg-red-700 cursor-pointer transition-all duration-200 w-full ${(!recaptchaValue || isSubmitting) ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 disabled={!recaptchaValue || isSubmitting}
                             >
                                 {isSubmitting ? 'Submitting...' : 'Submit'}

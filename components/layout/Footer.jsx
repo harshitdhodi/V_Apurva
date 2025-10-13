@@ -9,15 +9,15 @@ async function getFooterData() {
     const [footerResponse, headerResponse, logoResponse] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/footer/getFooter`, {
         
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/header/getHeader`, {
         
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/footerwhite`, {
         
-        next: { revalidate: 3600 },
+        next: { revalidate: 0 },
       }),
     ])
 
@@ -39,17 +39,17 @@ export default async function Footer() {
   return (
     <footer className="bg-gray-100 text-gray-800 pt-12 pb-8 lg:px-5 xl:px-10">
       <div className="px-4 md:px-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Logo & Description */}
-          <div>
+          <div className="col-span-2">
             <Link href="/">
               {whitelogo ? (
-                <div className="relative w-1/2 md:w-[6cm] h-16">
+                <div className="relative w-1/2 md:w-[10cm] h-16">
                   <Image
                     src={`/api/logo/download/${whitelogo.photo}`}
                     alt={whitelogo.alt || "Logo"}
                     title={whitelogo.imgTitle || "Company Logo"}
-                    width={200}
+                    width={250}
                     height={100}
                     className="object-contain"
                     loading="lazy"
@@ -59,7 +59,7 @@ export default async function Footer() {
                 <p className="text-gray-500">Logo unavailable</p>
               )}
             </Link>
-            <p className="mt-6 text-sm text-[#bf2e2e] font-semibold">
+            <p className="mt-6 text-sm md:text-md text-[#bf2e2e] font-semibold">
               "{footerData.description || "Company description goes here."}"
             </p>
           </div>
@@ -87,7 +87,7 @@ export default async function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div>
+          <div className="col-span-2">
             <h5 className="text-lg font-bold mb-4">Contact Info</h5>
             <ul className="space-y-3">
               <li>
@@ -190,7 +190,7 @@ export default async function Footer() {
         {/* Copyright */}
         <div className="text-gray-500 font-semibold mt-8 text-center pt-10">
           <p>
-            Copyright {currentYear} Apurva Chemicals Pvt. Ltd. All Rights Reserved.
+            Copyright {currentYear} <Link href="/"><span className="text-[#bf2e2e]">Apurva Chemicals Pvt. Ltd.</span></Link> All Rights Reserved.
             <br className="sm:hidden" />
             <span className="hidden sm:inline"> </span>
             Designed & Developed by{" "}
@@ -198,7 +198,7 @@ export default async function Footer() {
               href="https://rndtechnosoft.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 font-bold hover:underline"
+              className="text-[#bf2e2e] font-bold hover:underline"
             >
               RnD Technosoft
             </a>
