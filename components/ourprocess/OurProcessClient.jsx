@@ -16,7 +16,7 @@ function OurProcessClient({ missionData, visionData }) {
 
   if (!isClient) {
     return (
-      <div className="min-h-[400px] w-full flex items-center justify-center">
+      <div className="min-h-auto w-full flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#bf2e2e]"></div>
       </div>
     )
@@ -52,7 +52,7 @@ function OurProcessClient({ missionData, visionData }) {
           </button>
         </div>
 
-        <div className="min-h-[400px] w-full">
+        <div className="min-h-auto w-full">
           {activeSection === "process" && <ProcessSection />}
           {activeSection === "mission" && <MissionSection data={missionData} />}
           {activeSection === "value" && <VisionSection data={visionData} />}

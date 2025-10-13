@@ -36,7 +36,7 @@ function OurPeopleClient({ data }) {
           <div className="lg:w-[35%] w-full flex justify-center">
             <div className="relative w-full max-w-[500px] aspect-square">
               <Image
-                src={imageError ? '/images/placeholder-image.jpg' : `/api/logo/download/${currentPhoto}`}
+                src={imageError ? '/images/placeholder-image.jpg' : `http://localhost:3000/api/logo/download/${currentPhoto}`}
                 alt={imageError ? 'Placeholder image' : altText}
                 title={imageError ? 'Placeholder' : imgTitle}
                 className="w-full h-full object-contain rounded-lg"

@@ -114,7 +114,7 @@ export default function BlogClient({ initialData }) {
                 <div className="h-48 overflow-hidden">
                   <Link href={`/${post.slug}`}>
                     <Image
-                      src={`https://admin.apurvachemicals.com/api/image/download/${post.photo?.[0]}`}
+                      src={`http://localhost:3023/api/image/download/${post.photo?.[0]}`}
                       alt={post.alt?.[0] || post.title}
                       width={500}
                       height={500}

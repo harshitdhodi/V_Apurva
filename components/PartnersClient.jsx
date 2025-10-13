@@ -61,7 +61,7 @@ function PartnersClient({ partners }) {
 
   return (
     <div
-      className="bg-black py-16 overflow-hidden"
+      className="bg-black py-16 mb-20 mt-10 overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -88,7 +88,7 @@ function PartnersClient({ partners }) {
                 <Link href={partner.url} className="block w-full h-full">
                   <div className="relative w-full h-full">
                     <Image
-                      src={`/api/image/download/${partner.photo[0]}`}
+                      src={`http://localhost:3000/api/image/download/${partner.photo[0]}`}
                       alt={partner.alt?.[0] || 'Partner logo'}
                       title={partner.imgTitle?.[0] || ''}
                       fill

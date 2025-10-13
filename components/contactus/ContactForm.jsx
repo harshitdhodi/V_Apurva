@@ -114,7 +114,7 @@ const ContactForm = () => {
 
         try {
             // First API call
-            await axios.post('/api/inquiries/createInquiry', {
+            await axios.post('http://localhost:3023/api/inquiries/createInquiry', {
                 name,
                 email,
                 phone,
@@ -124,7 +124,7 @@ const ContactForm = () => {
             });
 
             // Second API call with static and dynamic fields
-            await axios.post('http://localhost:8000/api/contactform/message', {
+            await axios.post('https://leads.rndtechnosoft.com/api/contactform/message', {
                 API_KEY: "791A8DCFBD042D46",
                 API_ID: "1QED",
                 name,

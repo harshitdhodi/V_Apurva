@@ -50,9 +50,19 @@ async function determinePageType(slug) {
 async function fetchProductData(slug) {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
-    const response = await axios.get(`${baseUrl}/api/product/getDataBySlug?slugs=${slug}`);
-    if (response.data.success) {
-      return response.data.productData;
+    const response = await fetch(`${baseUrl}/api/product/getDataBySlug?slugs=${slug}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    if (result.success) {
+      return result.productData;
     }
     return null;
   } catch (error) {
