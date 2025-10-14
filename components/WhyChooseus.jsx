@@ -3,12 +3,12 @@ import { Suspense } from "react";
 // Simple HTML parser for description content
 function parseDescription(description) {
   if (!description) return null;
-  
+
   // Basic HTML sanitization - you might want to use a proper HTML sanitizer in production
   const cleanDescription = description
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '');
-  
+
   return cleanDescription;
 }
 
@@ -25,19 +25,19 @@ function FeatureCard({ icon, title, description }) {
           alt={title}
           loading="lazy"
         /> */}
-        <video  className="w-[2.3cm] object-cover transition-all duration-1000"
-  src={`/api/image/video/${icon}`}
-  autoPlay
-  muted
-  loop ></video>
+        <video className="w-[2.3cm] object-cover transition-all duration-1000"
+          src={`http://admin.apurvachemicals.com/api/image/video/${icon}`}
+          autoPlay
+          muted
+          loop ></video>
       </div>
       <h3 className="text-2xl mb-4 font-bold text-white font-daysOne text-center md:text-left">
         {title}
       </h3>
       {parsedDescription && (
-        <div 
-          className="prose prose-sm sm:prose-base max-w-none text-xl text-[#bf2e2e] font-semibold"
-          dangerouslySetInnerHTML={{ __html: parsedDescription }}
+        <div
+          className="prose prose-sm sm:prose-base font-sans max-w-none text-center md:text-left text-xl text-[#bf2e2e] font-semibold"
+          dangerouslySetInnerHTML={{ __html: parsedDescription }} 
         />
       )}
     </div>
@@ -70,7 +70,7 @@ function ErrorDisplay({ message }) {
 async function fetchWhyChooseUsData() {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-    
+
     const [headingsResponse, dataResponse] = await Promise.all([
       fetch(`${baseUrl}/api/pageHeading/heading?pageType=whychooseus`, {
         headers: {
@@ -99,7 +99,7 @@ async function fetchWhyChooseUsData() {
 
     const { heading = "Why Choose Us", subheading = "Discover What Makes Us Different" } = headingsData || {};
     const items = Array.isArray(responseData?.data) ? responseData.data : [];
-console.log("items",items)
+    console.log("items", items)
     return {
       heading,
       subheading,
@@ -138,12 +138,12 @@ async function WhyChooseUsContent() {
 
   return (
     <>
-        <h2 className="md:text-[20px] font-bold font-daysOne text-primary text-center mb-6 uppercase text-[#bf2e2e]">
-          {data.heading}
-        </h2>
-        <h2 className="text-3xl sm:text-4xl font-bold font-daysOne text-center mb-8 capitalize">
-          {data.subheading}
-        </h2>
+      <h2 className="md:text-[20px] pt-12 font-bold font-daysOne text-primary text-center mb-6 uppercase text-[#bf2e2e]">
+        {data.heading}
+      </h2>
+      <h2 className="text-3xl sm:text-4xl font-bold font-daysOne text-center mb-8 capitalize">
+        {data.subheading}
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {data.items.length === 0 ? (
           <div className="col-span-full text-center mt-12">

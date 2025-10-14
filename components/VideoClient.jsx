@@ -4,11 +4,91 @@ import Image from "next/image"
 import Link from "next/link"
 import TipTapViewerClient from "./TipTapViewer"
 import TipTapSkeleton from "./TipTapSkeleton"
-import { Suspense } from "react"
+import { Suspense, useState } from "react"
 import { usePathname } from 'next/navigation'
 
+// Helper function to extract YouTube video ID and create embed URL
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return null;
+  
+  let videoId = '';
+  
+  // Extract from youtube.com/watch?v=
+  if (url.includes('youtube.com/watch')) {
+    videoId = url.split('v=')[1]?.split('&')[0];
+  }
+  // Extract from youtu.be/
+  else if (url.includes('youtu.be/')) {
+    videoId = url.split('youtu.be/')[1]?.split('?')[0];
+  }
+  // Extract from youtube.com/embed/
+  else if (url.includes('youtube.com/embed/')) {
+    videoId = url.split('embed/')[1]?.split('?')[0];
+  }
+  // If it's just a video ID
+  else if (url.length === 11 && !url.includes('/')) {
+    videoId = url;
+  }
+  
+  return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null;
+};
+
+const VideoModal = ({ isOpen, onClose, videoUrl }) => {
+  if (!isOpen || !videoUrl) return null;
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/50 z-40 cursor-pointer"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg w-full mt-10 max-w-4xl relative">
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute -top-8 right-0 md:-right-10 bg-black/50 hover:bg-black/70 rounded-full p-2 text-white hover:text-gray-300 transition-all"
+            aria-label="Close video"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24" 
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+
+          {/* Video container */}
+          <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute top-0 left-0 w-full h-full rounded-lg"
+              src={videoUrl}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
 const VideoClient = ({ data }) => {
-    const pathname = usePathname();
+  const pathname = usePathname();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const embedUrl = getYouTubeEmbedUrl(data.video);
 
   return (
     <div className="flex justify-center relative items-center md:py-16 bg-gray-100 min-h-[300px]">
@@ -16,7 +96,7 @@ const VideoClient = ({ data }) => {
         <div className="xl:flex xl:gap-10">
           <div className="flex justify-center items-center xl:w-1/2">
             {data?.photo?.[0] ? (
-              <div className="relative w-[600px]">
+              <div className="relative lg:w-[600px] w-[400px]">
                 <Image
                   src={`/api/image/download/${data.photo[0]}`}
                   alt={data.alt?.[0] || "Video thumbnail"}
@@ -28,14 +108,12 @@ const VideoClient = ({ data }) => {
                   quality={85}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                {/* Static play button - links to video instead of modal */}
-                {data.video && (
+                {/* Static play button - opens modal */}
+                {data.video && embedUrl && (
                   <div className="absolute inset-0 flex justify-center items-center">
-                    <Link
-                      href={data.video}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative z-10 bg-[#bf2e2e] cursor-pointer text-white animate-pulse bg-primary hover:bg-secondary p-5 xl:p-10 rounded-full flex justify-center items-center md:text-xl"
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="group relative z-10 bg-[#bf2e2e] cursor-pointer text-white animate-pulse bg-primary hover:bg-secondary p-5 xl:p-10 rounded-full flex justify-center items-center md:text-xl transition-all"
                       aria-label="Play video"
                     >
                       <svg
@@ -51,7 +129,7 @@ const VideoClient = ({ data }) => {
                       >
                         <polygon points="5,3 19,12 5,21" />
                       </svg>
-                    </Link>
+                    </button>
                   </div>
                 )}
                 {/* Secondary image */}
@@ -88,8 +166,8 @@ const VideoClient = ({ data }) => {
                   value={data.shortDescription || ""}
                   className={
                     pathname === "/about-us"
-                      ? "justify-center mt-8 text-[18px] text-black"
-                      : "justify-center sm:my-8 text-black"
+                      ? "justify-center text-justify  mt-8 font-sans text-[18px] text-black"
+                      : "justify-center text-justify  sm:my-8 font-sans text-black"
                   }
                 />          
               </Suspense>
@@ -97,12 +175,11 @@ const VideoClient = ({ data }) => {
               <Suspense fallback={<TipTapSkeleton className="justify-center" />}>
                 <TipTapViewerClient
                   value={data.longDescription || ""}
-                  className="justify-center text-justify"
+                  className="justify-center text-justify pb-10 md:pb-5  font-sans text-[18px] text-black"
                 />
               </Suspense>
             )}
             </div>
-
 
             {pathname !== "/about-us" && (
               <div className="flex justify-center md:justify-start">
@@ -117,6 +194,13 @@ const VideoClient = ({ data }) => {
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      <VideoModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        videoUrl={embedUrl}
+      />
     </div>
   )
 }

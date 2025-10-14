@@ -169,6 +169,12 @@ export default function ProductDetail() {
         .product-content p {
           margin-bottom: 1rem;
         }
+
+        .product-content p:empty,
+.product-content p:has(br:only-child) {
+  display: none;
+}
+  
         .product-content h1 {
           font-size: 1.875rem;
           font-weight: 700;
@@ -295,7 +301,7 @@ export default function ProductDetail() {
 
                 {/* Product Description */}
                 {product?.productData.details && (
-                  <div ref={descriptionRef} className="mt-8 lg:-ml-3 mx-auto w-[90%] md:w-full ">
+                  <div ref={descriptionRef} className="mt-8 lg:-ml-3 mx-auto sm:w-[90%] md:w-full ">
                     <div className="bg-gray-100 p-5 rounded-lg">
                       <span className="text-xl font-bold text-red-700">Description:</span>
                       <div className="mt-3">
@@ -336,8 +342,8 @@ export default function ProductDetail() {
                                   }
                                 }
                               </style>
-                              ${showFullContent 
-                                ? product.productData.details 
+                              ${showFullContent
+                                ? product.productData.details
                                 : getPartialContent(product.productData.details)
                               }
                             `
@@ -358,7 +364,7 @@ export default function ProductDetail() {
 
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (
-                  <div className="mt-16 mx-7 w-full md:mx-0">
+                  <div className="mt-16 sm:mx-7 w-full md:mx-0">
                     {/* <h2 className="text-2xl font-bold mb-8">Related Products</h2> */}
                     <RelatedProducts
                       products={relatedProducts}

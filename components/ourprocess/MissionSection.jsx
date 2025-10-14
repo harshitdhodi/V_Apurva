@@ -1,27 +1,7 @@
 "use client";
 
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Placeholder } from '@tiptap/extension-placeholder';
-
 function MissionSection({ data }) {
   const { title, description, photo, alt, imgTitle } = data;
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: 'No content available',
-      }),
-    ],
-    content: description || '',
-    editable: false,
-    editorProps: {
-      attributes: {
-        class: 'prose max-w-none prose-sm sm:prose-base lg:prose-lg xl:prose-xl text-gray-600 focus:outline-none',
-      },
-    },
-  });
 
   return (
     <section className="w-full py-5">
@@ -29,7 +9,10 @@ function MissionSection({ data }) {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold text-gray-800">{title}</h2>
           {description && (
-            <EditorContent editor={editor} />
+            <div 
+              className="prose max-w-none prose-sm sm:prose-base lg:prose-lg xl:prose-xl text-justify text-gray-600"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
           )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 md:mt-0">

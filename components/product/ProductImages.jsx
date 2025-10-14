@@ -78,7 +78,7 @@ const ProductImages = ({ images = [] }) => {
           alt={getImageAlt(images[0], 0)}
           width={800}
           height={400}
-          className="w-full h-[9cm] bg-gray-100 lg:h-[10cm] object-cover md:rounded-lg"
+          className="w-full h-[9cm] bg-gray-100 lg:h-[10cm] object-contain md:rounded-lg"
         />
       </div>
     );

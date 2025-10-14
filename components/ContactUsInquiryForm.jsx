@@ -155,7 +155,7 @@ function ContactUsInquiryForm({ onClose }) {
                                 />
                             </div>
                         </div>
-                        <div className="mb-2">
+                        <div className="mb-6">
                             <label className="block text-gray-600 font-medium mb-2">Phone No</label>
                             <input
                                 type="text"
@@ -164,9 +164,11 @@ function ContactUsInquiryForm({ onClose }) {
                                 className="w-full border border-gray-300 p-2 text-black rounded-md focus:outline-none focus:border-blue-500"
                                 placeholder="Enter your phone number"
                                 required
+                                minLength={10}
+                                maxLength={10}
                             />
                         </div>
-                        <div className="mb-2">
+                        <div className="mb-6">
                             <label className="block text-gray-600 font-medium mb-2">Message</label>
                             <textarea
                                 value={message}
@@ -177,7 +179,7 @@ function ContactUsInquiryForm({ onClose }) {
                                 required
                             />
                         </div>
-                        <div className="mt-4 flex justify-center">
+                        <div className="mt-4 flex justify-start w-full">
                             <ReCAPTCHA
                                 ref={recaptchaRef}
                                 sitekey={RECAPTCHA_SITE_KEY}

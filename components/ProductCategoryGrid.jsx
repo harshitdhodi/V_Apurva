@@ -7,10 +7,10 @@ import { FileText, TestTube, Microscope, Heart, Dna, FlaskConical, ArrowRight } 
 
 // Safe HTML content renderer with proper list styling
 const HTMLContent = ({ html, className = "" }) => {
-   const cleanedHtml = (html || "").replace(/<p>(\s|&nbsp;)*<\/p>/gi, "");
+  const cleanedHtml = (html || "").replace(/<p>(\s|&nbsp;)*<\/p>/gi, "");
 
   return (
-   <div className={`html-content prose max-w-none ${className}`}>
+    <div className={`html-content prose max-w-none ${className}`}>
       <style jsx global>{`
         .html-content h1, 
         .html-content h2, 
@@ -70,13 +70,14 @@ const HTMLContent = ({ html, className = "" }) => {
           color: #6b7280 !important;
           font-weight: 600 !important;
         }
-        .html-content a {
-          color: #3182ce !important;
-          text-decoration: none !important;
-        }
-        .html-content a:hover {
-          text-decoration: underline !important;
-        }
+       .html-content a {
+  color: #bf2e2e !important;  /* Changed to red */
+  text-decoration: none !important;
+}
+.html-content a:hover {
+  color: #a02424 !important;  /* Darker red on hover */
+  text-decoration: underline !important;
+}
         .html-content strong {
           font-weight: 600 !important;
         }
@@ -96,6 +97,10 @@ const HTMLContent = ({ html, className = "" }) => {
           border-radius: 0.25rem !important;
           font-size: 0.875em !important;
           color: #dc2626 !important;
+        }
+        .html-content p:empty,
+        .html-content p:has(br:only-child) {
+          display: none !important;
         }
         .html-content pre {
           background-color: #f3f4f6 !important;
@@ -143,38 +148,38 @@ function ProductCategoryGrid() {
   const slug = params?.slug?.[params.slug.length - 1];
 
   const getPartialContent = (htmlContent = '') => {
-  if (!htmlContent) return '';
-  // Create a temporary element to extract text content properly
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = htmlContent;
-  const text = tempDiv.textContent || tempDiv.innerText || '';
+    if (!htmlContent) return '';
+    // Create a temporary element to extract text content properly
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    const text = tempDiv.textContent || tempDiv.innerText || '';
 
-  // If the content is short enough, return the full HTML
-  if (text.length <= 200) {
-    return htmlContent;
-  }
+    // If the content is short enough, return the full HTML
+    if (text.length <= 200) {
+      return htmlContent;
+    }
 
-  // Show first 25% of the content
-  const cutoffLength = Math.floor(text.length * 0.25);
-  const truncatedText = text.slice(0, cutoffLength);
+    // Show first 25% of the content
+    const cutoffLength = Math.floor(text.length * 0.25);
+    const truncatedText = text.slice(0, cutoffLength);
 
-  // Try to find a good breaking point in the HTML
-  const htmlLength = htmlContent.length;
-  const ratio = truncatedText.length / text.length;
-  const approximateHtmlCutoff = Math.floor(htmlLength * ratio);
+    // Try to find a good breaking point in the HTML
+    const htmlLength = htmlContent.length;
+    const ratio = truncatedText.length / text.length;
+    const approximateHtmlCutoff = Math.floor(htmlLength * ratio);
 
-  // Find the last complete tag before the cutoff
-  let cutoffPoint = approximateHtmlCutoff;
-  while (cutoffPoint > 0 && htmlContent[cutoffPoint] !== '>') {
-    cutoffPoint--;
-  }
+    // Find the last complete tag before the cutoff
+    let cutoffPoint = approximateHtmlCutoff;
+    while (cutoffPoint > 0 && htmlContent[cutoffPoint] !== '>') {
+      cutoffPoint--;
+    }
 
-  if (cutoffPoint > 0) {
-    return htmlContent.substring(0, cutoffPoint + 1) + '...';
-  }
+    if (cutoffPoint > 0) {
+      return htmlContent.substring(0, cutoffPoint + 1) + '...';
+    }
 
-  return truncatedText + '...';
-};
+    return truncatedText + '...';
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -245,7 +250,7 @@ function ProductCategoryGrid() {
   if (error) {
     return (
       <div className="text-center py-10">
-        <p className="text-red-500">{error}</p>
+        <p className="text-[#bf2e2e]">{error}</p>
         <button
           onClick={() => window.location.reload()}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -271,7 +276,7 @@ function ProductCategoryGrid() {
           {
             `
     .banner-background {
-      background-image: url(/api/logo/download/${category.photo});
+      background-image: url(https://www.admin.apurvachemicals.com/api/logo/download/${category.photo});
     }
   `
           }
@@ -298,7 +303,7 @@ function ProductCategoryGrid() {
             product.map((item) => (
               <ServiceCard
                 key={item.id || item._id}
-                imageSrc={item.photo?.[0] ? `/api/image/download/${item.photo[0]}` : '/placeholder-product.jpg'}
+                imageSrc={item.photo?.[0] ? `https://www.admin.apurvachemicals.com/api/image/download/${item.photo[0]}` : '/placeholder-product.jpg'}
                 icon={iconMap[Math.floor(Math.random() * iconMap.length)]}
                 title={item.title}
                 imgTitle={item.imgTitle}
@@ -312,38 +317,38 @@ function ProductCategoryGrid() {
           )}
         </div>
 
-      {category.description && (
-  <div className="mx-auto w-[95%] m-8">
-    <div className="bg-gray-50 p-6 rounded-lg">
-      {showFullContent ? (
-        <>
+        {category.description && (
+          <div className="mx-auto w-[95%] m-8">
+            <div className="bg-gray-50 p-6 rounded-lg">
+              {showFullContent ? (
+                <>
 
-        
-          <HTMLContent html={category.description} className="text-gray-800" />
-          <button
-            className="text-blue-500 mt-4 hover:underline font-medium"
-            onClick={() => setShowFullContent(false)}
-          >
-            Show Less
-          </button>
-        </>
-      ) : (
-        <>
-          <HTMLContent html={getPartialContent(category.description)} className="text-gray-800" />
-          {/* Show button if content is truncated (i.e., original text is longer than 25%) */}
-          {category.description.replace(/<[^>]+>/g, '').length > Math.floor(category.description.replace(/<[^>]+>/g, '').length * 0.25) && (
-            <button
-              className="text-blue-500 mt-4 hover:underline font-medium"
-              onClick={() => setShowFullContent(true)}
-            >
-              Read More
-            </button>
-          )}
-        </>
-      )}
-    </div>
-  </div>
-)}
+
+                  <HTMLContent html={category.description} className="text-gray-800" />
+                  <button
+                    className="text-[#bf2e2e] mt-4 hover:underline font-medium"
+                    onClick={() => setShowFullContent(false)}
+                  >
+                    Show Less
+                  </button>
+                </>
+              ) : (
+                <>
+                  <HTMLContent html={getPartialContent(category.description)} className="text-gray-800" />
+                  {/* Show button if content is truncated (i.e., original text is longer than 25%) */}
+                  {category.description.replace(/<[^>]+>/g, '').length > Math.floor(category.description.replace(/<[^>]+>/g, '').length * 0.25) && (
+                    <button
+                      className="text-[#bf2e2e] mt-4 hover:underline font-medium"
+                      onClick={() => setShowFullContent(true)}
+                    >
+                      Read More
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -375,7 +380,7 @@ const colorMap = {
   Heart: {
     bgColor: 'bg-red-100',
     textColor: 'text-red-600',
-    hoverBgColor: 'group-hover:bg-red-500',
+    hoverBgColor: 'group-hover:bg-[#bf2e2e]',
     hoverTextColor: 'group-hover:text-white',
   },
   Dna: {
@@ -417,14 +422,14 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
           <div className={`flex-shrink-0 flex justify-center items-center ${colors.bgColor} ${colors.hoverBgColor} rounded-full p-3`}>
             {Icon && <Icon className={`${colors.textColor} ${colors.hoverTextColor} transition-colors duration-300 text-lg`} />}
           </div>
-          <Link href={`/${slug}`} className="text-lg font-bold text-gray-800 hover:text-blue-600 transition-colors line-clamp-2">
+          <Link href={`/${slug}`} className="text-lg font-bold  text-gray-800 hover:text-red-600 transition-colors line-clamp-2">
             {title}
           </Link>
         </div>
         <div className="flex justify-end">
           <Link
             href={`/${slug}`}
-            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors"
+            className="inline-flex items-center text-red-600 hover:text-red-800 font-medium text-sm transition-colors"
           >
             READ MORE <ArrowRight className="ml-1 w-4 h-4" />
           </Link>

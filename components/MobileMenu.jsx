@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Grip, Menu, X, Plus, Minus, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
+import { Grip, Menu, X, Plus, Minus, Facebook, Twitter, Instagram, Youtube, ChevronDown, ChevronUp } from 'lucide-react';
 
 function MobileMenu({
     isMenuOpen,
@@ -51,7 +51,7 @@ function MobileMenu({
                 />
             </a>
             <div className='flex gap-8 justify-center items-center'>
-                <div className='hidden md:flex xl:hidden gap-2 justify-center items-center shadow-md py-4 px-6'>
+                <div className='hidden md:flex xl:hidden gap-2 justify-center items-center  py-4 px-6'>
                     <Grip className='text-[#BE2D2D]' size={20} />
                     <p className='uppercase text-gray-500 font-bold'>
                         Help Desk :
@@ -61,7 +61,7 @@ function MobileMenu({
                     </p>
                 </div>
                 <div onClick={toggleMenu}>
-                    <Menu size={32} className={`${isMenuOpen ? 'hidden' : 'block'}`} />
+                    <Menu size={32} className={`${isMenuOpen ? 'hidden' : 'block'} text-black` } />
                 </div>
             </div>
             {/* Mobile Menu Content */}
@@ -73,10 +73,10 @@ function MobileMenu({
                                 src={`/api/logo/download/${colorlogo.photo}`} 
                                 alt={colorlogo.alt} 
                                 title={colorlogo.imgTitle} 
-                                className='h-full'
+                                className='h-full object-contain'
                             />
                         </a>
-                        <X size={32} className='text-white' onClick={toggleMenu} />
+                        <X size={32} className='text-white relative -top-5' onClick={toggleMenu} />
                     </div>
                     <ul className='flex flex-col w-full'>
                         {menuItemsRef.current.map((item, index) => (
@@ -92,11 +92,11 @@ function MobileMenu({
                                         {item.pagename}
                                     </div>
                                     {item.subItems && (
-                                        <div className='border border-gray-700'>
+                                        <div className=''>
                                             {openDropdown === index ? (
-                                                <Plus size={25} className='text-primary rotate-45 transition-all duration-500' />
+                                                <ChevronUp size={25} className='text-primary transition-all duration-500' />
                                             ) : (
-                                                <Plus size={25} className='-rotate-45 transition-all duration-500' />
+                                                <ChevronDown size={25} className='transition-all duration-500' />
                                             )}
                                         </div>
                                     )}
@@ -116,11 +116,11 @@ function MobileMenu({
                                                         {subItem.title}
                                                     </div>
                                                     {subItem.subsubItems && (
-                                                        <div className='border border-gray-700'>
+                                                        <div className=''>
                                                             {openSubDropdown === subIndex ? (
-                                                                <Minus size={20} className='text-primary' />
+                                                                <ChevronUp size={20} className='text-primary' />
                                                             ) : (
-                                                                <Plus size={20} />
+                                                                <ChevronDown size={20} />
                                                             )}
                                                         </div>
                                                     )}

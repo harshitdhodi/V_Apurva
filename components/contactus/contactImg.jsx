@@ -40,10 +40,9 @@ function ContactusImg() {
             {banners.map((banner, index) => (
                 <div key={index}>
                     <div
-                        className="relative bg-cover bg-center bg-no-repeat"
+                        className="relative h-[40vh] md:h-[30vh] bg-cover bg-center bg-no-repeat"
                         style={{
                             backgroundImage: `url(/api/image/download/${banner.photo})`,
-                            height: '40vh'
                         }}
                         title={banner.title}
                     >
