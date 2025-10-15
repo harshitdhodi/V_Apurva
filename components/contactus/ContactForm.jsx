@@ -270,12 +270,15 @@ const ContactForm = () => {
                 path: window.location.href || "https://leads.rndtechnosoft.com"
             });
 
-            setModalIsOpen(true);
+            // Reset form
             setName('');
             setEmail('');
             setPhone('');
             setMessage('');
             setValidationErrors({ name: '', email: '', phone: '', message: '' });
+            
+            // Redirect to thank you page
+            window.location.href = '/thankyou';
         } catch (error) {
             setErrorMessage(error.response?.data?.error || 'An error occurred. Please try again.');
             console.error('Error submitting form:', error);

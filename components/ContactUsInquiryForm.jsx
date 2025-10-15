@@ -79,7 +79,7 @@ function ContactUsInquiryForm({ onClose }) {
                 email,
                 phone,
                 message,
-                ipaddress: clientIp,
+                ipaddress: clientIp,  
                 ...utmParams,
             });
 
@@ -94,18 +94,17 @@ function ContactUsInquiryForm({ onClose }) {
                 path: window.location.href || "https://leads.rndtechnosoft.com"
             });
 
-            // Show success message on successful submission of both APIs
-            setSuccessMessage('Your message has been successfully sent. We will get back to you soon.');
             // Clear form fields
             setName('');
             setEmail('');
             setPhone('');
             setMessage('');
             
-            // If you need to open a modal, uncomment the line below
-            // setModalIsOpen && setModalIsOpen(true);
-            // Close the modal after successful submission
+            // Close the modal
             onClose();
+            
+            // Redirect to thank you page
+            window.location.href = '/thankyou';
         } catch (error) {
             setErrorMessage(error.response?.data?.error || 'An error occurred. Please try again.');
             console.error('Error submitting form:', error);
