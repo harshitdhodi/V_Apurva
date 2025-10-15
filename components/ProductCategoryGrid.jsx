@@ -1,8 +1,6 @@
 "use client"
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { FileText, TestTube, Microscope, Heart, Dna, FlaskConical, ArrowRight } from 'lucide-react';
 
 // Safe HTML content renderer with proper list styling
@@ -53,7 +51,7 @@ const HTMLContent = ({ html, className = "" }) => {
           padding-left: 1.5em !important;
           margin: 1em 0 !important;
           display: block !important;
-           margin-left:10% !important;
+          margin-left:10% !important;
         }
         .html-content li {
           margin: 0.5em 0 !important;
@@ -70,14 +68,14 @@ const HTMLContent = ({ html, className = "" }) => {
           color: #6b7280 !important;
           font-weight: 600 !important;
         }
-       .html-content a {
-  color: #bf2e2e !important;  /* Changed to red */
-  text-decoration: none !important;
-}
-.html-content a:hover {
-  color: #a02424 !important;  /* Darker red on hover */
-  text-decoration: underline !important;
-}
+        .html-content a {
+          color: #bf2e2e !important;
+          text-decoration: none !important;
+        }
+        .html-content a:hover {
+          color: #a02424 !important;
+          text-decoration: underline !important;
+        }
         .html-content strong {
           font-weight: 600 !important;
         }
@@ -128,7 +126,7 @@ const HTMLContent = ({ html, className = "" }) => {
         .prose ol {
           padding-left: 1.5em;
           margin: 1em 0;
-          margin-left:10% !important
+          margin-left:10% !important;
           list-style-type: disc;
         }
       `}</style>
@@ -137,18 +135,16 @@ const HTMLContent = ({ html, className = "" }) => {
   );
 };
 
-function ProductCategoryGrid() {
-  const [product, setProduct] = useState([]);
-  const [category, setCategory] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+function ProductCategoryGrid({ initialData, slug }) {
   const [showFullContent, setShowFullContent] = useState(false);
-
-  const params = useParams();
-  const slug = params?.slug?.[params.slug.length - 1];
+  
+  // Use the data passed from server component
+  const product = initialData?.products || [];
+  const category = initialData?.category || null;
 
   const getPartialContent = (htmlContent = '') => {
     if (!htmlContent) return '';
+    
     // Create a temporary element to extract text content properly
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlContent;
@@ -181,86 +177,6 @@ function ProductCategoryGrid() {
     return truncatedText + '...';
   };
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchCategoryData = async () => {
-      try {
-        const response = await axios.get(`/api/product/getProductsByCategory?categorySlug=${slug}`, {
-          headers: { 'Cache-Control': 'no-store' }
-        });
-
-        if (isMounted) {
-          setProduct(response.data.products || []);
-          setCategory(response.data.category || null);
-
-          // Update metadata
-          if (response.data.category) {
-            const { metatitle, metadescription, metakeywords } = response.data.category;
-            document.title = metatitle || "Product Category";
-
-            let metaDesc = document.querySelector('meta[name="description"]');
-            if (!metaDesc) {
-              metaDesc = document.createElement('meta');
-              metaDesc.name = 'description';
-              document.head.appendChild(metaDesc);
-            }
-            metaDesc.content = metadescription || "Browse our product category";
-
-            let metaKeywords = document.querySelector('meta[name="keywords"]');
-            if (!metaKeywords) {
-              metaKeywords = document.createElement('meta');
-              metaKeywords.name = 'keywords';
-              document.head.appendChild(metaKeywords);
-            }
-            metaKeywords.content = metakeywords || "products, category";
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching category data:', err);
-        if (isMounted) {
-          setError('Failed to load category data');
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    if (slug) {
-      fetchCategoryData();
-    } else {
-      setIsLoading(false);
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [slug]);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-10">
-        <p className="text-[#bf2e2e]">{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
   if (!category) {
     return (
       <div className="text-center py-10">
@@ -273,13 +189,11 @@ function ProductCategoryGrid() {
     <>
       <div className="pb-14">
         <style>
-          {
-            `
-    .banner-background {
-      background-image: url(https://www.admin.apurvachemicals.com/api/logo/download/${category.photo});
-    }
-  `
-          }
+          {`
+            .banner-background {
+              background-image: url(https://admin.apurvachemicals.com/api/logo/download/${category.photo});
+            }
+          `}
         </style>
         <div
           className={`banner-background relative bg-cover bg-center bg-no-repeat`}
@@ -303,12 +217,13 @@ function ProductCategoryGrid() {
             product.map((item) => (
               <ServiceCard
                 key={item.id || item._id}
-                imageSrc={item.photo?.[0] ? `https://www.admin.apurvachemicals.com/api/image/download/${item.photo[0]}` : '/placeholder-product.jpg'}
+                imageSrc={`https://admin.apurvachemicals.com/api/image/download/${item.photo[0]}`}
                 icon={iconMap[Math.floor(Math.random() * iconMap.length)]}
                 title={item.title}
                 imgTitle={item.imgTitle}
                 alt={item.alt || item.title}
-                slug={item.slug} />
+                slug={item.slug} 
+              />
             ))
           ) : (
             <div className="col-span-full text-center py-10">
@@ -322,8 +237,6 @@ function ProductCategoryGrid() {
             <div className="bg-gray-50 p-6 rounded-lg">
               {showFullContent ? (
                 <>
-
-
                   <HTMLContent html={category.description} className="text-gray-800" />
                   <button
                     className="text-[#bf2e2e] mt-4 hover:underline font-medium"
@@ -335,7 +248,6 @@ function ProductCategoryGrid() {
               ) : (
                 <>
                   <HTMLContent html={getPartialContent(category.description)} className="text-gray-800" />
-                  {/* Show button if content is truncated (i.e., original text is longer than 25%) */}
                   {category.description.replace(/<[^>]+>/g, '').length > Math.floor(category.description.replace(/<[^>]+>/g, '').length * 0.25) && (
                     <button
                       className="text-[#bf2e2e] mt-4 hover:underline font-medium"
@@ -422,7 +334,7 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
           <div className={`flex-shrink-0 flex justify-center items-center ${colors.bgColor} ${colors.hoverBgColor} rounded-full p-3`}>
             {Icon && <Icon className={`${colors.textColor} ${colors.hoverTextColor} transition-colors duration-300 text-lg`} />}
           </div>
-          <Link href={`/${slug}`} className="text-lg font-bold  text-gray-800 hover:text-red-600 transition-colors line-clamp-2">
+          <Link href={`/${slug}`} className="text-lg font-bold text-gray-800 hover:text-red-600 transition-colors line-clamp-2">
             {title}
           </Link>
         </div>

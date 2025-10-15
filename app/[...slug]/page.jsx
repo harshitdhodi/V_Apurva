@@ -4,7 +4,6 @@ import ProductDetail from '@/components/product/ProductDetails';
 import ProductCategoryGrid from '@/components/ProductCategoryGrid';
 import SingleBlog from '@/components/SingleBlog';
 import Simple404Page from '../404/page';
-import axios from 'axios';
 
 // Server-side data fetching
 async function fetchSlugs() {
@@ -86,22 +85,47 @@ async function fetchBlogData(slug) {
     
     const result = await response.json();
     
-    // Check if we got valid data in the expected format
     if (!result || !result.productData) {
       console.error('Unexpected API response format:', result);
       return null;
     }
     
-    return result.productData; // Return the productData object directly
+    return result.productData;
   } catch (err) {
     console.error('Error fetching blog data:', err);
     return null;
   }
 }
 
+// NEW: Function to fetch category data
+async function fetchCategoryData(slug) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
+    const response = await fetch(`${baseUrl}/api/product/getProductsByCategory?categorySlug=${slug}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return {
+      products: data.products || [],
+      category: data.category || null
+    };
+  } catch (err) {
+    console.error('Error fetching category data:', err);
+    return { products: [], category: null };
+  }
+}
+
 // Generate metadata dynamically
 export async function generateMetadata({ params }) {
-  const slug = params?.slug?.join('/') || '';
+  const resolvedParams = await Promise.resolve(params);
+  const slug = resolvedParams?.slug?.join('/') || '';
   const pageType = await determinePageType(slug);
   
   // Handle product metadata
@@ -131,6 +155,31 @@ export async function generateMetadata({ params }) {
           description: productData.metadescription || '',
           images: productData.photo?.length > 0 ? 
             [`https://apurvachemicals.com/uploads/${productData.photo[0]}`] : [],
+        },
+      };
+    }
+  }
+
+  // Handle product category metadata
+  if (pageType === 'product-category') {
+    const { category } = await fetchCategoryData(slug);
+    if (category) {
+      return {
+        title: category.metatitle || category.category || 'Product Category',
+        description: category.metadescription || 'Browse our product category',
+        keywords: category.metakeywords || 'products, category',
+        alternates: {
+          canonical: `https://apurvachemicals.com/${slug}`,
+        },
+        openGraph: {
+          title: category.metatitle || category.category || 'Product Category',
+          description: category.metadescription || 'Browse our product category',
+          url: `https://apurvachemicals.com/${slug}`,
+          siteName: 'Apurva Chemicals',
+          images: category.photo ? 
+            [{ url: `https://www.admin.apurvachemicals.com/api/logo/download/${category.photo}` }] : [],
+          locale: 'en_US',
+          type: 'website',
         },
       };
     }
@@ -180,7 +229,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// ✅ Corrected async component usage
+// Main page component
 export default async function Page(props) {
   const params = await props.params;
   const slug = params?.slug?.join('/') || '';
@@ -204,12 +253,20 @@ export default async function Page(props) {
   switch (pageType) {
     case 'product':
       return <ProductDetail />;
-    case 'product-category':
-      return <ProductCategoryGrid />;
+    
+    case 'product-category': {
+      // Fetch data in server component and pass to client
+      const categorySlug = params?.slug?.[params.slug.length - 1];
+      const categoryData = await fetchCategoryData(categorySlug);
+      return <ProductCategoryGrid initialData={categoryData} slug={categorySlug} />;
+    }
+    
     case 'single-blog':
       return <SingleBlog />;
+    
     case 'blog':
       return <BlogPage />;
+    
     default:
       return <Simple404Page />;
   }
