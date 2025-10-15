@@ -20,7 +20,7 @@ function PackagingTypeClient({ data }) {
       
       {description && (
         <div 
-          className="md:text-[18px] text-black mb-8 prose max-w-none"
+          className="md:text-[18px] text-black mb-8 prose max-w-none "
           dangerouslySetInnerHTML={{ __html: description }}
         />
       )}

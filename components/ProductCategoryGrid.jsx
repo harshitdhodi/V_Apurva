@@ -1,8 +1,6 @@
 "use client"
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { FileText, TestTube, Microscope, Heart, Dna, FlaskConical, ArrowRight } from 'lucide-react';
 
 // Safe HTML content renderer with proper list styling
@@ -134,18 +132,12 @@ const HTMLContent = ({ html, className = "" }) => {
       `}</style>
       <div dangerouslySetInnerHTML={{ __html: cleanedHtml }} />
     </div>
+    </>
   );
 };
 
-function ProductCategoryGrid() {
-  const [product, setProduct] = useState([]);
-  const [category, setCategory] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+function ProductCategoryGrid({ initialProducts = [], initialCategory = null }) {
   const [showFullContent, setShowFullContent] = useState(false);
-
-  const params = useParams();
-  const slug = params?.slug?.[params.slug.length - 1];
 
   const getPartialContent = (htmlContent = '') => {
     if (!htmlContent) return '';
@@ -194,58 +186,29 @@ function ProductCategoryGrid() {
           setProduct(response.data.products || []);
           setCategory(response.data.category || null);
 
-          // Update metadata
-          if (response.data.category) {
-            const { metatitle, metadescription, metakeywords } = response.data.category;
-            document.title = metatitle || "Product Category";
-
-            let metaDesc = document.querySelector('meta[name="description"]');
-            if (!metaDesc) {
-              metaDesc = document.createElement('meta');
-              metaDesc.name = 'description';
-              document.head.appendChild(metaDesc);
-            }
-            metaDesc.content = metadescription || "Browse our product category";
-
-            let metaKeywords = document.querySelector('meta[name="keywords"]');
-            if (!metaKeywords) {
-              metaKeywords = document.createElement('meta');
-              metaKeywords.name = 'keywords';
-              document.head.appendChild(metaKeywords);
-            }
-            metaKeywords.content = metakeywords || "products, category";
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching category data:', err);
-        if (isMounted) {
-          setError('Failed to load category data');
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    if (slug) {
-      fetchCategoryData();
-    } else {
-      setIsLoading(false);
+    // If the content is short enough, return the full HTML
+    if (text.length <= 200) {
+      return htmlContent;
     }
 
-    return () => {
-      isMounted = false;
-    };
-  }, [slug]);
+    // Show first 25% of the content
+    const cutoffLength = Math.floor(text.length * 0.25);
+    const truncatedText = text.slice(0, cutoffLength);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
+    // Try to find a good breaking point in the HTML
+    const htmlLength = htmlContent.length;
+    const ratio = truncatedText.length / text.length;
+    const approximateHtmlCutoff = Math.floor(htmlLength * ratio);
+
+    // Find the last complete tag before the cutoff
+    let cutoffPoint = approximateHtmlCutoff;
+    while (cutoffPoint > 0 && htmlContent[cutoffPoint] !== '>') {
+      cutoffPoint--;
+    }
+
+    if (cutoffPoint > 0) {
+      return htmlContent.substring(0, cutoffPoint + 1) + '...';
+    }
 
   if (error) {
     return (
@@ -261,7 +224,7 @@ function ProductCategoryGrid() {
     );
   }
 
-  if (!category) {
+  if (!initialCategory) {
     return (
       <div className="text-center py-10">
         <p>No category found.</p>
@@ -283,24 +246,24 @@ function ProductCategoryGrid() {
         </style>
         <div
           className={`banner-background relative bg-cover bg-center bg-no-repeat`}
-          title={category.imgTitle}
+          title={initialCategory.imgTitle}
         >
           <div className='flex flex-col justify-center items-center h-[40vh] sm:h-[30vh] mb-10'>
             <h1 className='font-bold text-white sm:text-2xl md:text-3xl z-10 uppercase text-center'>
-              {category.category}
+              {initialCategory.category}
             </h1>
             <div className="absolute bottom-16 flex space-x-2 z-10">
               <Link href="/" className="text-white hover:text-gray-300 ">Home</Link>
               <span className="text-white">/</span>
-              <p className="text-white hover:text-gray-300 cursor-pointer ">{category.category}</p>
+              <p className="text-white hover:text-gray-300 cursor-pointer ">{initialCategory.category}</p>
             </div>
             <div className='absolute inset-0 bg-black opacity-40 z-1'></div>
           </div>
         </div>
 
         <div className='grid grid-cols-1 lg:mx-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-16 m-4'>
-          {product.length > 0 ? (
-            product.map((item) => (
+          {initialProducts.length > 0 ? (
+            initialProducts.map((item) => (
               <ServiceCard
                 key={item.id || item._id}
                 imageSrc={item.photo?.[0] ? `https://www.admin.apurvachemicals.com/api/image/download/${item.photo[0]}` : '/placeholder-product.jpg'}
@@ -402,6 +365,7 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
   const colors = colorMap[iconName] || colorMap.FileText;
 
   return (
+    <>
     <div className="bg-white shadow-lg group h-auto overflow-hidden rounded-lg transition-transform duration-300 hover:shadow-xl">
       <div className='overflow-hidden h-56'>
         <Link href={`/${slug}`} className="block h-full">
@@ -436,5 +400,6 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
         </div>
       </div>
     </div>
+    </>
   );
-}
+} 
