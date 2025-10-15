@@ -89,14 +89,14 @@ function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setSh
                         </div>
 
                         <div className='flex items-center h-full'>
-                            <Link href="/contact-us">
+                            {/* <Link href="/contact-us"> */}
                             <button
                                 onClick={() => setShowInquiryForm(true)}
-                                className='border border-gray-400 px-8 bg-[#bf2e2e] text-white h-full py-4 uppercase hover:bg-[#cd1d1d] transition-colors duration-300'
+                                className='border cursor-pointer border-gray-400 px-8 bg-[#bf2e2e] text-white h-full py-4 uppercase hover:bg-[#cd1d1d] transition-colors duration-300'
                             >
                                 Inquiry Now
                             </button>
-                            </Link>
+                            {/* </Link> */}
                         </div>
                     </div>
                 </div>

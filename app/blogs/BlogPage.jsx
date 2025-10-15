@@ -15,7 +15,8 @@ export default function BlogClient({ initialData }) {
   const filteredBlogs = useMemo(() => {
     return (blogs || []).filter(blog => {
       if (!blog) return false;
-      const matchesSearch = blog.title?.toLowerCase().includes((searchQuery || '').toLowerCase());
+      const trimmedQuery = (searchQuery || '').trim().toLowerCase();
+      const matchesSearch = blog.title?.toLowerCase().includes(trimmedQuery);
       const matchesCategory = selectedCategory === 'All' || 
         blog.categories?.includes(selectedCategory);
       return matchesSearch && matchesCategory;
@@ -74,9 +75,9 @@ export default function BlogClient({ initialData }) {
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pl-10 pr-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent"
+                className="w-full px-4 py-2 pl-10 pr-4 border rounded-lg placeholder:text-[#646060] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] text-[#bf2e2e] focus:border-transparent"
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#646060]" />
             </div>
           </div>
 
@@ -110,47 +111,61 @@ export default function BlogClient({ initialData }) {
           {/* Blog posts grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {filteredBlogs.map((post) => (
-              <article key={post._id} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-                <div className="h-48 overflow-hidden">
+              <article key={post._id} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow flex flex-col bg-white">
+                {/* Thumbnail Image with Unified Style */}
+                <div className="h-48 overflow-hidden bg-gradient-to-br from-[#f5f5f5] to-[#e8e8e8] relative">
                   <Link href={`/${post.slug}`}>
-                    <Image
-                      src={`http://admin.apurvachemicals.com/api/image/download/${post.photo?.[0]}`}
-                      alt={post.alt?.[0] || post.title}
-                      width={500}
-                      height={500}
-                      className="object-cover hover:scale-105 transition-transform duration-300"
-                    />
+                    <div className="w-full h-full relative">
+                      <Image
+                        src={`https://admin.apurvachemicals.com/api/image/download/${post.photo?.[0]}`}
+                        alt={post.alt?.[0] || post.title}
+                        width={500}
+                        height={500}
+                        className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                      />
+                      {/* Subtle overlay for brand consistency */}
+                      <div className="absolute inset-0 bg-black opacity-5 hover:opacity-10 transition-opacity duration-300"></div>
+                    </div>
                   </Link>
                 </div>
-                <div className="p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <UserCircle className="text-gray-400" size={24} />
-                    <div>
-                      <p className="font-sm text-gray-600">{post.postedBy || 'Admin'}</p>
-                      <time className="text-sm text-gray-500">
+
+                {/* Card Content */}
+                <div className="p-6 flex flex-col flex-grow">
+                  {/* Author and Date Section - Improved Contrast */}
+                  <div className="flex items-center space-x-3 mb-4 pb-4 border-b border-gray-200">
+                    <UserCircle className="text-[#bf2e2e] flex-shrink-0" size={24} />
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-900 text-sm truncate">
+                        {post.postedBy || 'Admin'}
+                      </p>
+                      <time className="text-xs text-gray-700 font-medium block">
                         {new Date(post.date).toLocaleDateString('en-US', {
                           year: 'numeric',
-                          month: 'long',
+                          month: 'short',
                           day: 'numeric'
                         })}
                       </time>
                     </div>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">
+
+                  {/* Blog Title */}
+                  <h3 className="font-semibold mb-3 flex-grow">
                     <Link 
                       href={`/${post.slug}`} 
-                      className="hover:text-[#bf2e2e] text-black text-lg transition-colors"
+                      className="hover:text-[#bf2e2e] text-gray-900 text-base transition-colors duration-200 line-clamp-3"
                     >
                       {post.title}
                     </Link>
                   </h3>
+
+                  {/* Read More Button */}
                   <Link
                     href={`/${post.slug}`}
-                    className="inline-flex items-center text-[#bf2e2e] font-medium mt-4 hover:underline"
+                    className="inline-flex items-center text-[#bf2e2e] font-semibold mt-auto hover:text-[#a02424] transition-colors duration-200 group"
                   >
                     Read more
                     <svg
-                      className="w-4 h-4 ml-1"
+                      className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -172,8 +187,8 @@ export default function BlogClient({ initialData }) {
           {/* No results message */}
           {filteredBlogs.length === 0 && (
             <div className="text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No posts found</h3>
-              <p className="text-gray-500">Try adjusting your search or category filter.</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No posts found</h3>
+              <p className="text-gray-700">Try adjusting your search or category filter.</p>
             </div>
           )}
         </div>

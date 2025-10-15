@@ -58,7 +58,7 @@ function InquiryForm({ productName, onClose }) {
 
         try {
             // First API call - Product Inquiry
-            const response = await axios.post('/api/productinquiry/createproductinquiries', {
+            const response = await axios.post('http://localhost:3023/api/productinquiry/createproductinquiries', {
                 name,
                 email,
                 phone,
@@ -115,8 +115,7 @@ function InquiryForm({ productName, onClose }) {
     };
 
     return (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-400/30  p-4">
-       
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-400/30  p-4">
             <div className="bg-white p-4 md:p-6 rounded-lg shadow-2xl w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
                 <button
                     onClick={onClose}
@@ -147,7 +146,7 @@ function InquiryForm({ productName, onClose }) {
                                     value={name}
                                     placeholder="Enter your name"
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    className="w-full pl-10 pr-3 py-2 border text-gray-500 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                     required
                                 />
                             </div>
@@ -167,7 +166,7 @@ function InquiryForm({ productName, onClose }) {
                                     value={email}
                                     placeholder="Enter your email"
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    className="w-full pl-10 pr-3 py-2 border text-gray-500 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                     required
                                 />
                             </div>
@@ -188,8 +187,10 @@ function InquiryForm({ productName, onClose }) {
                                 value={phone}
                                 placeholder="Enter your phone number"
                                 onChange={(e) => setPhone(e.target.value)}
-                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                className="w-full pl-10 pr-3 py-2 border text-gray-500 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                 required
+                                maxLength={10}
+                                minLength={10}
                             />
                         </div>
                     </div>
@@ -207,7 +208,7 @@ function InquiryForm({ productName, onClose }) {
                                 value={message}
                                 placeholder="Enter your message"
                                 onChange={(e) => setMessage(e.target.value)}
-                                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                className="w-full pl-10 pr-3 py-2 border text-gray-500  border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                 rows="4"
                                 required
                             />
@@ -231,7 +232,7 @@ function InquiryForm({ productName, onClose }) {
                         <button
                             type="submit"
                             disabled={!captchaValue || isSubmitting}
-                            className={`w-full flex items-center justify-center gap-2 px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
+                            className={`w-full flex items-center justify-center gap-2 px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-[#bf2e2e] hover:bg-[#bf2e2e]/80 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
                                 (!captchaValue || isSubmitting) ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
                         >

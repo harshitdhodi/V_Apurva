@@ -42,10 +42,10 @@ export default async function BlogPage() {
       <div className='md:px-20 p-4 bg-white pt-16'>
         <p className='text-[#bf2e2e] md:text-[20px] font-bold pb-8 uppercase text-center md:text-left'>{heading}</p>
         <div className='py-4 lg:flex lg:items-center lg:justify-between gap-2'>
-          <h2 className='text-3xl sm:text-4xl text-gray-800 font-bold text-center md:text-left'>{subheading}</h2>
-          <p className='py-3 text-gray-500 font-semibold flex flex-wrap gap-2'>
+          <h2 className='text-3xl sm:text-4xl text-gray-800 font-sans font-bold text-center md:text-left'>{subheading}</h2>
+          <p className='py-3 text-gray-500 font-semibold text-center md:text-left flex flex-wrap gap-2'>
             Explore Fresh Perspectives on Products and Industry Innovations. 
-            <Link href="/blogs" className='flex items-center gap-2 text-[#bf2e2e] font-semibold'>
+            <Link href="/blogs" className='flex items-center  gap-2 text-[#bf2e2e] font-semibold'>
               View All <ArrowRight className="h-4 w-4" />
             </Link>
           </p>

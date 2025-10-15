@@ -1,7 +1,7 @@
 import { getServerSideSitemap } from 'next-sitemap';
 import axios from 'axios';
 
-const BASE_URL = "https://www.apurvachemicals.com/";
+const BASE_URL = "http://localhost:3059/";
 const BLOG_API_URL = `${BASE_URL}api/news/getActiveNews`;
 
 async function fetchBlogs() {

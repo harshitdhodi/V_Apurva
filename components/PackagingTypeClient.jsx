@@ -10,11 +10,11 @@ function PackagingTypeClient({ data }) {
   }
 
   return (
-    <div className="p-4 md:px-16 py-16 bg-gray-100">  
-      <p className='md:text-[20px] text-primary font-bold mb-4 uppercase text-center md:text-left'>
+    <div className="p-4 md:px-16 py-8 pb-16 bg-gray-100">
+      <p className='md:text-[18px] text-[#bf2e2e] font-bold mb-4 uppercase  text-center md:text-left'>
         {heading ? `____${heading}` : ''}
       </p>
-      <h2 className="sm:text-4xl text-3xl font-daysOne mb-6 text-center font-bold md:text-left text-gray-800">
+      <h2 className="sm:text-4xl text-3xl font-daysOne mb-6 text-center font-bold md:text-left text-[#bf2e2e]">
         {subheading}
       </h2>
       
@@ -26,7 +26,7 @@ function PackagingTypeClient({ data }) {
       )}
 
       {heading2 && (
-        <p className='md:text-2xl text-xl font-daysOne mb-6 font-bold text-gray-800'>
+        <p className='md:text-2xl text-xl font-daysOne mb-6 font-bold text-[#bf2e2e]'>
           {heading2}
         </p>
       )}
@@ -38,7 +38,7 @@ function PackagingTypeClient({ data }) {
               <div className='overflow-hidden rounded-md bg-white p-2 shadow-sm'>
                 <div className="relative h-48 w-full">
                   <img 
-                    src={item.photo ? `/api/logo/download/${item.photo}` : '/placeholder-image.jpg'} 
+                    src={item.photo ? `https://admin.apurvachemicals.com/api/logo/download/${item.photo}` : '/placeholder-image.jpg'} 
                     alt={item.alt || item.title} 
                     title={item.imgTitle || item.title}
                     className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"

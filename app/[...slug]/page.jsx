@@ -9,34 +9,7 @@ import { getMetadataBySlug, getProductCategoryMetadata } from '@/lib/getMetadata
 // Function to fetch category data by slug - SERVER SIDE
 async function fetchCategoryData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
-    const response = await fetch(
-      `${baseUrl}/api/product/getProductsByCategory?categorySlug=${slug}`,
-      {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    return {
-      products: result.products || [],
-      category: result.category || null,
-    };
-  } catch (error) {
-    console.error('Error fetching category data:', error);
-    return null;
-  }
-}
-
-// Function to fetch all slugs
-async function fetchSlugs() {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
     const response = await fetch(`${baseUrl}/api/dynamicSlug/getAllSlugs`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -73,15 +46,20 @@ async function determinePageType(slug) {
 // Function to fetch product data by slug
 async function fetchProductData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
     const response = await fetch(`${baseUrl}/api/product/getDataBySlug?slugs=${slug}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
-
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    if (result.success) {
+      return result.productData;
     }
 
     const result = await response.json();
@@ -117,7 +95,7 @@ async function fetchRelatedProducts(slug) {
 // Function to fetch blog data by slug - SERVER SIDE
 async function fetchBlogData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
     const response = await fetch(`${baseUrl}/api/news/getDataBySlug?slugs=${slug}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },

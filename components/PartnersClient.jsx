@@ -24,7 +24,7 @@ function PartnersClient({ partners }) {
 
     intervalRef.current = setInterval(() => {
       nextSlide()
-    }, 3023)
+    }, 3000)
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
@@ -60,49 +60,44 @@ function PartnersClient({ partners }) {
     : ""
 
   return (
+<div className="bg-black py-8 md:py-16 mb-10 md:mb-20 mt-10 overflow-hidden">
+  <div className="container mx-auto px-2 sm:px-4">
     <div
-      className="bg-black py-16 overflow-hidden"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      ref={sliderRef}
+      className="relative w-full overflow-hidden"
+      style={{ height: "8rem" }} // Reduced height for mobile
     >
-      <div className="container mx-auto px-4">
-        <div
-          ref={sliderRef}
-          className="relative w-full overflow-hidden"
-          style={{ height: "10rem" }}
-        >
+      <div
+        className={`flex ${transitionClass}`}
+        style={{
+          width: `${(extendedPartners.length) * 20}%`, // Adjusted width for better mobile display
+          transform: `translateX(-${(currentIndex * 100) / extendedPartners.length}%)`,
+        }}
+        onTransitionEnd={handleTransitionEnd}
+      >
+        {extendedPartners.map((partner, index) => (
           <div
-            className={`flex ${transitionClass}`}
-            style={{
-              width: `${(extendedPartners.length) * 15}%`,
-              transform: `translateX(-${(currentIndex * 100) / extendedPartners.length}%)`,
-            }}
-            onTransitionEnd={handleTransitionEnd}
+            key={index}
+            className="flex-shrink-0 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 xl:w-[10%] flex justify-center items-center h-32 sm:h-40 rounded-lg p-2 sm:p-4 transition-transform duration-300 hover:scale-105"
           >
-            {extendedPartners.map((partner, index) => (
-              <div
-                key={index}
-                className="flex-shrink-0 w-[10%] flex justify-center items-center h-40 rounded-lg p-4 transition-transform duration-300 hover:scale-105"
-                style={{ minWidth: "15%" }}
-              >
-                <Link href={partner.url} className="block w-full h-full">
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={`/api/image/download/${partner.photo[0]}`}
-                      alt={partner.alt?.[0] || 'Partner logo'}
-                      title={partner.imgTitle?.[0] || ''}
-                      fill
-                      className="object-contain p-2"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                    />
-                  </div>
-                </Link>
+            <Link href={partner.url} className="block w-full h-full">
+              <div className="relative w-full h-full">
+                <Image
+                  src={`https://admin.apurvachemicals.com/api/image/download/${partner.photo[0]}`}
+                  alt={partner.alt?.[0] || 'Partner logo'}
+                  title={partner.imgTitle?.[0] || ''}
+                  fill
+                  className="object-contain p-1 sm:p-2"
+                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33.33vw, (max-width: 1024px) 25vw, 20vw"
+                />
               </div>
-            ))}
+            </Link>
           </div>
-        </div>
+        ))}
       </div>
     </div>
+  </div>
+</div>
   )
 }
 
