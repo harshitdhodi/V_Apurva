@@ -1,3 +1,30 @@
+import { getMetadataBySlug } from '@/lib/getMetadata';
+
+
+
+export async function generateMetadata({ params, searchParams }, parent) {
+  const slug = (await params).slug
+  const metadata = await getMetadataBySlug( slug || 'terms-and-conditions', true)
+  return {
+    ...metadata,
+    // Ensure these are always present for SEO
+    title: metadata?.title || 'About Us - Apurva Chemicals',
+    description: metadata?.description || 'Learn more about Apurva Chemicals - a leading manufacturer and exporter of specialty chemicals.',
+    openGraph: {
+      title: metadata?.title || 'About Us - Apurva Chemicals',
+      description: metadata?.description || 'Learn more about Apurva Chemicals - a leading manufacturer and exporter of specialty chemicals.',
+      type: 'website',
+      ...metadata?.openGraph,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: metadata?.title || 'About Us - Apurva Chemicals',
+      description: metadata?.description || 'Learn more about Apurva Chemicals - a leading manufacturer and exporter of specialty chemicals.',
+      ...metadata?.twitter,
+    },
+  };
+}
+
 const TermsAndConditions = () => {
   return (
     <>

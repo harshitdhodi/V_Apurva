@@ -74,7 +74,7 @@ export async function GET(request, { params }) {
       });
     }
 
-    console.log(`Serving file from: ${filePath}`);
+    // console.log(`Serving file from: ${filePath}`);
     
     try {
       const fileBuffer = await fs.readFile(filePath);

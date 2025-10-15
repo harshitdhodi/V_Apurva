@@ -41,14 +41,14 @@ export default function sitemap() {
       changeFrequency: 'daily',
       priority: 1.0,
     },
-    {
-      url: `${baseUrl}/blogs.xml`,
+     {
+      url: `${baseUrl}/chemical.xml`,
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/chemical.xml`,
+      url: `${baseUrl}/blogs.xml`,
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 0.9,

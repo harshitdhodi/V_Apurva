@@ -15,7 +15,6 @@ export default function SingleBlog() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-  const slug = pathname.split('/').pop();
 
   const fetchNews = async () => {
     try {
@@ -31,7 +30,8 @@ export default function SingleBlog() {
 
   const fetchBlogData = async () => {
     try {
-      const response = await fetch(`/api/news/getDataBySlug?slugs=${slug}`);
+      const currentSlug = slug || pathname.split('/').pop();
+      const response = await fetch(`/api/news/getDataBySlug?slugs=${currentSlug}`);
       const result = await response.json();
       setBlogData(result.productData || {});
       setLoading(false);

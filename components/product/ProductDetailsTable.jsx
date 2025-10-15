@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const ProductDetailsTable = ({ details = {} }) => {
-  console.log(details);
+  // console.log(details);
   const rows = [
     { label: "CAS No.", value: details.CASNo || "" },
     { label: "Formula", value: details.formula || "N/A" },

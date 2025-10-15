@@ -371,7 +371,7 @@ const ContactForm = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 text-black md:grid-cols-2 gap-8">
                         <div>
                             <input
                                 type="text"
@@ -469,7 +469,7 @@ const ContactForm = () => {
 
             {/* Success Modal */}
             {modalIsOpen && (
-                <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black bg-opacity-60 backdrop-blur-sm">
+                <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-gray-500/30  ">
                     <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative">
                         <button
                             onClick={() => setModalIsOpen(false)}
