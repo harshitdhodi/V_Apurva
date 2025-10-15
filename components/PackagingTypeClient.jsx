@@ -10,11 +10,11 @@ function PackagingTypeClient({ data }) {
   }
 
   return (
-    <div className="p-4 md:px-16 py-8 pb-16 bg-gray-100">
+    <div className="p-4 md:px-20 py-8  pb-16 bg-gray-100">
       <p className='md:text-[18px] text-[#bf2e2e] font-bold mb-4 uppercase  text-center md:text-left'>
         {heading ? `____${heading}` : ''}
       </p>
-      <h2 className="sm:text-4xl text-3xl font-daysOne mb-6 text-center font-bold md:text-left text-[#bf2e2e]">
+      <h2 className=" text-lg font-sans mb-6 text-center  md:text-left text-gray-900">
         {subheading}
       </h2>
       
@@ -26,7 +26,7 @@ function PackagingTypeClient({ data }) {
       )}
 
       {heading2 && (
-        <p className='md:text-2xl text-xl font-daysOne mb-6 font-bold text-[#bf2e2e]'>
+        <p className='md:text-2xl text-xl font-sans mb-6 font-bold text-[#bf2e2e]'>
           {heading2}
         </p>
       )}

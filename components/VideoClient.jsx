@@ -167,7 +167,7 @@ const VideoClient = ({ data }) => {
                   className={
                     pathname === "/about-us"
                       ? "justify-center text-justify  mt-8 font-sans text-[18px] text-black"
-                      : "justify-center text-justify  sm:my-8 font-sans text-black"
+                      : "justify-center text-justify  sm:my-8 text-lg font-sans text-black"
                   }
                 />          
               </Suspense>

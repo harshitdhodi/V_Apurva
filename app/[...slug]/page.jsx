@@ -47,22 +47,19 @@ async function determinePageType(slug) {
 // Function to fetch product data by slug
 async function fetchProductData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
     const response = await fetch(`${baseUrl}/api/product/getDataBySlug?slugs=${slug}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const result = await response.json();
-    if (result.success) {
-      return result.productData;
-    }
-    return null;
+    return result;
   } catch (error) {
     console.error('Error fetching product data:', error);
     return null;
@@ -250,10 +247,47 @@ export default async function Page(props) {
     notFound();
   }
 
-  switch (pageType) {
+// Function to fetch related products
+async function fetchRelatedProducts(slug) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const response = await fetch(`${baseUrl}/api/product/getRelatedProducts?slugs=${slug}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error fetching related products:', error);
+    return [];
+  }
+}
+
+ switch (pageType) {
     case 'product':
-      return <ProductDetail />;
-    
+      const [productData, relatedProducts] = await Promise.all([
+        fetchProductData(slug),
+        fetchRelatedProducts(slug),
+      ]);
+
+      if (!productData) {
+        notFound();
+      }
+
+      return (
+        <ProductDetail
+          initialProduct={productData}
+          initialRelatedProducts={relatedProducts}
+          slug={slug}
+        />
+      );
+
     case 'product-category': {
       // Fetch data in server component and pass to client
       const categorySlug = params?.slug?.[params.slug.length - 1];

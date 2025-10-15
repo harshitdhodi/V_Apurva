@@ -22,6 +22,7 @@ async function getBanners() {
     })
     if (!response.ok) throw new Error("Failed to fetch banners")
     const data = await response.json()
+    console.log("banner",data)
     return data.data || []
   } catch (error) {
     console.error("Error fetching banners:", error)

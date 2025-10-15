@@ -21,7 +21,7 @@ const iconMap = [
 export default function ProductDetail({ initialProduct, initialRelatedProducts = [], slug }) {
   const [showFullContent, setShowFullContent] = useState(false);
   const descriptionRef = useRef(null);
-
+console.log("product",initialProduct)
   // Use the data passed from server-side
   const product = initialProduct;
   const relatedProducts = initialRelatedProducts;
@@ -197,7 +197,7 @@ export default function ProductDetail({ initialProduct, initialRelatedProducts =
         }
       `}</style>
       
-      <div className="w-full bg-white">
+      <div className="w-full bg-white" suppressHydrationWarning>
         <div className="max-w-8xl lg:pl-16 bg-white mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Breadcrumb */}
           <nav className="flex items-center text-sm text-gray-500 mb-8">
