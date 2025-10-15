@@ -10,11 +10,14 @@ import { usePathname } from 'next/navigation';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-export default function SingleBlog() {
-  const [blogData, setBlogData] = useState(null);
-  const [news, setNews] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function SingleBlog({ initialBlogData, initialLatestNews, slug }) {
+  const [blogData, setBlogData] = useState(initialBlogData || null);
+  const [news, setNews] = useState(initialLatestNews || []);
+  const [loading, setLoading] = useState(!initialBlogData);
   const pathname = usePathname();
+  
+  // Use the slug from props or extract from pathname if not provided
+  const blogSlug = slug || pathname.split('/').pop();
 
   const fetchNews = async () => {
     try {

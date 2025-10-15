@@ -226,6 +226,27 @@ export async function generateMetadata({ params }) {
   };
 }
 
+// Function to fetch latest news - SERVER SIDE
+async function fetchLatestNews() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const response = await fetch(`${baseUrl}/api/news/getLatestActiveNews`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result?.data || [];
+  } catch (err) {
+    console.error('Error fetching latest news:', err);
+    return [];
+  }
+}
 // Main page component
 export default async function Page(props) {
   const params = await props.params;
@@ -295,8 +316,24 @@ async function fetchRelatedProducts(slug) {
       return <ProductCategoryGrid initialData={categoryData} slug={categorySlug} />;
     }
     
-    case 'single-blog':
-      return <SingleBlog />;
+   case 'single-blog':
+      const [blogData, latestNews] = await Promise.all([
+        fetchBlogData(slug),
+        fetchLatestNews(),
+      ]);
+
+      if (!blogData) {
+        notFound();
+      }
+
+      return (
+        <SingleBlog
+          initialBlogData={blogData}
+          initialLatestNews={latestNews}
+          slug={slug}
+        />
+      );
+
     
     case 'blog':
       return <BlogPage />;
