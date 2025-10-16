@@ -159,7 +159,7 @@ export default function ClientCarousel({ banners }) {
                 </div>
 
                 <div
-                  className="flex gap-2 mb-12 md:mb-0 sm:justify-start justify-center items-center py-4 lg:pl-10 flex-row md:gap-6"
+                  className="flex gap-2 mb-12 md:mb-0 sm:justify-start md:justify-center justify-center items-center py-4 lg:pl-10 flex-row md:gap-6"
                   ref={(el) => (buttonRefs.current[index] = el)}
                 >
                   <button
