@@ -58,7 +58,7 @@ function InquiryForm({ productName, onClose }) {
 
         try {
             // First API call - Product Inquiry
-            const response = await axios.post('http://localhost:3023/api/productinquiry/createproductinquiries', {
+            const response = await axios.post('https://admin.apurvachemicals.com/api/productinquiry/createproductinquiries', {
                 name,
                 email,
                 phone,
