@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { X } from 'lucide-react';
+import { useClickTracking } from '@/lib/useClickTracking';
 
 // This component handles ONLY the interactive parts of the form
 const ContactFormClient = ({ initialHeaderData = {}, initialFooterData = {} }) => {
@@ -21,6 +22,9 @@ const ContactFormClient = ({ initialHeaderData = {}, initialFooterData = {} }) =
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [isMapVisible, setIsMapVisible] = useState(false);
+    
+    // Click tracking
+    const { trackEvent } = useClickTracking();
     
     // Refs
     const mapRef = useRef(null);
@@ -72,13 +76,25 @@ const ContactFormClient = ({ initialHeaderData = {}, initialFooterData = {} }) =
             const formMessage = formData.get('message');
 
             try {
-                await axios.post('/api/inquiries/createInquiry', {
+                // Track form submission
+                await trackEvent('form_submission', {
+                    formType: 'contact',
+                    formData: { name: formName, email: formEmail, phone: formPhone }
+                });
+
+                const response = await axios.post('/api/inquiries/createInquiry', {
                     name: formName,
                     email: formEmail,
                     phone: formPhone,
                     message: formMessage,
                     ipaddress: clientIp,
                     ...utmParams,
+                });
+
+                // Track successful submission
+                await trackEvent('form_submission_success', {
+                    formType: 'contact',
+                    inquiryId: response.data._id
                 });
 
                 setModalIsOpen(true);
@@ -88,8 +104,15 @@ const ContactFormClient = ({ initialHeaderData = {}, initialFooterData = {} }) =
                 setPhone('');
                 setMessage('');
             } catch (error) {
-                setErrorMessage(error.response?.data?.error || 'An error occurred. Please try again.');
+                const errorMsg = error.response?.data?.error || 'An error occurred. Please try again.';
+                setErrorMessage(errorMsg);
                 console.error('Error submitting form:', error);
+                
+                // Track form submission error
+                await trackEvent('form_submission_error', {
+                    formType: 'contact',
+                    error: errorMsg
+                });
             } finally {
                 setIsSubmitting(false);
             }
@@ -109,7 +132,17 @@ const ContactFormClient = ({ initialHeaderData = {}, initialFooterData = {} }) =
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    setIsMapVisible(true);
+                    const toggleMap = () => {
+                        const newState = !isMapVisible;
+                        setIsMapVisible(newState);
+                        
+                        // Track map toggle
+                        trackEvent(newState ? 'map_opened' : 'map_closed', {
+                            component: 'contact_form',
+                            location: 'contact_page'
+                        });
+                    };
+                    toggleMap();
                     observer.disconnect();
                 }
             },

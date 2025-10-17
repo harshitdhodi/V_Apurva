@@ -5,12 +5,12 @@ import ProductsGrid from "@/components/product/ProductsGrid"
 import BlogPage from "@/components/blog/BlogPage"
 
 import LoadingSpinner from "@/components/home/LoadingSpinner"
-import { getMetadataBySlug } from '@/lib/getMetadata';
+import { getHomePageMetadata } from '@/lib/getMetadata';
 import WhyChooseUs from "@/components/WhyChooseus"
 
 // Adding metadata to the page
 export async function generateMetadata() {
-  return await getMetadataBySlug('/');
+  return await getHomePageMetadata();
 }
 
 // Server-side data fetching functions

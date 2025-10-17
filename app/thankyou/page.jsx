@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import img from '@/public/thank-you.webp';
 const ThankYouPage = () => {
 
     return (
@@ -11,7 +11,7 @@ const ThankYouPage = () => {
             <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg text-center">
                 <div className="mb-4">
                     <Image
-                        src="/thank-you.webp"
+                        src={img}
                         alt="Thank You"
                         width={500}  // specify width
                         height={300} // specify height

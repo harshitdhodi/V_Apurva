@@ -4,14 +4,38 @@ import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { Grip ,ArrowDown } from 'lucide-react';
 import Link from 'next/link';
+import { useClickTracking } from '@/lib/useClickTracking';
 
 function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setShowInquiryForm, productCategories = [], isLoading = false }) {
-// console.log(menuItems)
+    // Click tracking hook
+    const { trackEvent } = useClickTracking();
+    
     const logoUrl = colorlogo?.photo ? `/api/logo/download/${colorlogo.photo}` : '';
-
 
     // Ensure productCategories is always an array
     const safeProductCategories = Array.isArray(productCategories) ? productCategories : [];
+
+    const handlePhoneClick = () => {
+        trackEvent('button_click', {
+            buttonName: 'desktop_contact_phone',
+            metadata: {
+                phone: phoneNo,
+                device: 'desktop',
+                source: 'navbar'
+            }
+        });
+    };
+
+    const handleInquiryClick = () => {
+        trackEvent('button_click', {
+            buttonName: 'desktop_inquiry_button',
+            metadata: {
+                source: 'navbar',
+                device: 'desktop'
+            }
+        });
+        setShowInquiryForm(true);
+    };
 
     if (isLoading) {
         return (
@@ -71,7 +95,13 @@ function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setSh
                                 <Grip className='text-[#bf2e2e] w-5 h-5' />
                                 <p className='uppercase text-gray-500 font-bold'>
                                     Help Desk :
-                                    <a href={`tel:${phoneNo}`} className='ml-1 text-black hover:text-blue-500'>{phoneNo}</a>
+                                    <a 
+                                        href={`tel:${phoneNo}`} 
+                                        className='ml-1 text-black hover:text-blue-500'
+                                        onClick={handlePhoneClick}
+                                    >
+                                        {phoneNo}
+                                    </a>
                                 </p>
                             </div>
                         </div>
@@ -84,19 +114,19 @@ function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setSh
                                     key={index}
                                     item={item}
                                     productCategories={safeProductCategories}
+                                    trackEvent={trackEvent}
+                                    handleMenuItemClick={handleMenuItemClick}
                                 />
                             ))}
                         </div>
 
                         <div className='flex items-center h-full'>
-                            {/* <Link href="/contact-us"> */}
                             <button
-                                onClick={() => setShowInquiryForm(true)}
+                                onClick={handleInquiryClick}
                                 className='border cursor-pointer border-gray-400 px-8 bg-[#bf2e2e] text-white h-full py-4 uppercase hover:bg-[#cd1d1d] transition-colors duration-300'
                             >
                                 Inquiry Now
                             </button>
-                            {/* </Link> */}
                         </div>
                     </div>
                 </div>
@@ -105,7 +135,7 @@ function DesktopMenu({ menuItems, handleMenuItemClick, colorlogo, phoneNo, setSh
     );
 }
 
-function DesktopMenuItem({ item, productCategories = [] }) {
+function DesktopMenuItem({ item, productCategories = [], trackEvent, handleMenuItemClick }) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
     const hoverTimeoutRef = useRef(null);
@@ -144,6 +174,14 @@ function DesktopMenuItem({ item, productCategories = [] }) {
         }
         if (hasSubItems) {
             hoverTimeoutRef.current = setTimeout(() => {
+                trackEvent('button_click', {
+                    buttonName: `desktop_dropdown_open_${item.pagename}`,
+                    metadata: {
+                        menuItem: item.pagename,
+                        device: 'desktop',
+                        action: 'dropdown_hover_open'
+                    }
+                });
                 setIsDropdownOpen(true);
             }, 200);
         }
@@ -164,14 +202,46 @@ function DesktopMenuItem({ item, productCategories = [] }) {
             e.preventDefault();
             e.stopPropagation();
             
+            // Track menu item click
+            trackEvent('button_click', {
+                buttonName: `desktop_menu_item_${item.pagename}`,
+                metadata: {
+                    menuItem: item.pagename,
+                    device: 'desktop',
+                    action: 'click'
+                }
+            });
+            
             // If it's the Products menu, redirect to dye-intermediate
             if (isProductsMenu) {
                 window.location.href = '/dye-intermediate';
-            } else {
-                // For other menus with sub-items, toggle the dropdown
-                setIsDropdownOpen(!isDropdownOpen);
             }
+        } else {
+            // Track menu item click
+            trackEvent('button_click', {
+                buttonName: `desktop_menu_item_${item.pagename}`,
+                metadata: {
+                    menuItem: item.pagename,
+                    path: item.path,
+                    device: 'desktop',
+                    action: 'click'
+                }
+            });
         }
+    };
+
+    const handleSubItemClick = (subItem) => {
+        // Track sub-item click
+        trackEvent('button_click', {
+            buttonName: `desktop_submenu_item_${subItem.pagename || subItem.title}`,
+            metadata: {
+                menuItem: item.pagename,
+                subMenuItem: subItem.pagename || subItem.title,
+                path: subItem.path,
+                device: 'desktop',
+                action: 'click'
+            }
+        });
     };
 
     return (
@@ -209,7 +279,18 @@ function DesktopMenuItem({ item, productCategories = [] }) {
                                 key={index}
                                 href={`/${category.slug || ''}`}
                                 className="block px-4 py-2 text-md text-[#a31010] hover:bg-gray-100 hover:text-secondary uppercase"
-                                onClick={() => setIsDropdownOpen(false)}
+                                onClick={() => {
+                                    trackEvent('button_click', {
+                                        buttonName: `desktop_product_category_${category.category}`,
+                                        metadata: {
+                                            category: category.category,
+                                            slug: category.slug,
+                                            device: 'desktop',
+                                            source: 'product_dropdown'
+                                        }
+                                    });
+                                    setIsDropdownOpen(false);
+                                }}
                             >
                                 {category.category || 'Unnamed Category'}
                             </Link>
@@ -224,9 +305,12 @@ function DesktopMenuItem({ item, productCategories = [] }) {
                                 key={index}
                                 href={subItem.path || '#'}
                                 className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100 hover:text-secondary"
-                                onClick={() => setIsDropdownOpen(false)}
+                                onClick={() => {
+                                    handleSubItemClick(subItem);
+                                    setIsDropdownOpen(false);
+                                }}
                             >
-                                {subItem.pagename}
+                                {subItem.pagename || subItem.title}
                             </Link>
                         ))}
                     </div>

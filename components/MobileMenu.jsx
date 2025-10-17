@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Grip, Menu, X, Plus, Minus, Facebook, Twitter, Instagram, Youtube, ChevronDown, ChevronUp } from 'lucide-react';
+import { useClickTracking } from '@/lib/useClickTracking';
 
 function MobileMenu({
     isMenuOpen,
@@ -24,6 +25,9 @@ function MobileMenu({
     const [openSubDropdown, setOpenSubDropdown] = useState(null);
     const menuItemsRef = useRef(menuItems);
     const productCategoriesRef = useRef(Array.isArray(productCategories) ? productCategories : []);
+    
+    // Click tracking hook
+    const { trackEvent } = useClickTracking();
 
     // Update refs when props change
     useEffect(() => {
@@ -31,14 +35,99 @@ function MobileMenu({
         productCategoriesRef.current = Array.isArray(productCategories) ? productCategories : [];
     }, [menuItems, productCategories]);
 
-    const toggleDropdown = useCallback((index) => {
+    const toggleDropdown = useCallback((index, itemName) => {
+        const isOpening = openDropdown !== index;
+        
+        // Track dropdown toggle
+        trackEvent('button_click', {
+            buttonName: `mobile_menu_dropdown_${itemName}`,
+            metadata: {
+                menuItem: itemName,
+                device: 'mobile',
+                action: isOpening ? 'open' : 'close',
+                dropdownLevel: 'primary'
+            }
+        });
+        
         setOpenDropdown(prev => prev === index ? null : index);
         setOpenSubDropdown(null);
-    }, []);
+    }, [openDropdown, trackEvent]);
 
-    const toggleSubDropdown = useCallback((index) => {
+    const toggleSubDropdown = useCallback((index, subItemName) => {
+        const isOpening = openSubDropdown !== index;
+        
+        // Track sub-dropdown toggle
+        trackEvent('button_click', {
+            buttonName: `mobile_menu_subdropdown_${subItemName}`,
+            metadata: {
+                subMenuItem: subItemName,
+                device: 'mobile',
+                action: isOpening ? 'open' : 'close',
+                dropdownLevel: 'secondary'
+            }
+        });
+        
         setOpenSubDropdown(prev => prev === index ? null : index);
-    }, []);
+    }, [openSubDropdown, trackEvent]);
+
+    const handleMenuItemClickWithTracking = (path, itemName, level) => {
+        // Track menu item click
+        trackEvent('button_click', {
+            buttonName: `mobile_menu_item_${itemName}`,
+            metadata: {
+                menuItem: itemName,
+                path: path,
+                device: 'mobile',
+                level: level
+            }
+        });
+        
+        handleMenuItemClick(path);
+    };
+
+    const handleAddressClick = () => {
+        trackEvent('button_click', {
+            buttonName: 'mobile_contact_address',
+            metadata: {
+                address: address,
+                device: 'mobile',
+                source: 'mobile_menu_contact'
+            }
+        });
+    };
+
+    const handlePhoneClick = () => {
+        trackEvent('button_click', {
+            buttonName: 'mobile_contact_phone',
+            metadata: {
+                phone: phoneNo,
+                device: 'mobile',
+                source: 'mobile_menu_contact'
+            }
+        });
+    };
+
+    const handleEmailClick = (emailAddress) => {
+        trackEvent('button_click', {
+            buttonName: 'mobile_contact_email',
+            metadata: {
+                email: emailAddress,
+                device: 'mobile',
+                source: 'mobile_menu_contact'
+            }
+        });
+    };
+
+    const handleSocialClick = (socialName) => {
+        trackEvent('button_click', {
+            buttonName: `mobile_social_${socialName}`,
+            metadata: {
+                social: socialName,
+                device: 'mobile',
+                source: 'mobile_menu_footer'
+            }
+        });
+    };
 
     return (
         <div className='flex items-center justify-between px-4 py-1 lg:px-6 lg:py-4 w-full lg:hidden'>
@@ -56,7 +145,13 @@ function MobileMenu({
                     <p className='uppercase text-gray-500 font-bold'>
                         Help Desk :
                         <span className='font-bold text-black'>
-                            <a href={`tel:${phoneNo}`} className='text-black'>{phoneNo}</a>
+                            <a 
+                                href={`tel:${phoneNo}`} 
+                                className='text-black'
+                                onClick={handlePhoneClick}
+                            >
+                                {phoneNo}
+                            </a>
                         </span>
                     </p>
                 </div>
@@ -76,7 +171,20 @@ function MobileMenu({
                                 className='h-full object-contain'
                             />
                         </a>
-                        <X size={32} className='text-white relative -top-5' onClick={toggleMenu} />
+                        <X 
+                            size={32} 
+                            className='text-white relative -top-5 cursor-pointer' 
+                            onClick={() => {
+                                trackEvent('button_click', {
+                                    buttonName: 'mobile_menu_close',
+                                    metadata: {
+                                        device: 'mobile',
+                                        action: 'close'
+                                    }
+                                });
+                                toggleMenu();
+                            }}
+                        />
                     </div>
                     <ul className='flex flex-col w-full'>
                         {menuItemsRef.current.map((item, index) => (
@@ -86,13 +194,24 @@ function MobileMenu({
                             >
                                 <div 
                                     className='flex justify-between items-center text-white w-full uppercase' 
-                                    onClick={() => toggleDropdown(index)}
                                 >
-                                    <div onClick={() => handleMenuItemClick(item.path)}>
+                                    <div 
+                                        onClick={() => {
+                                            if (item.subItems && item.subItems.length > 0) {
+                                                toggleDropdown(index, item.pagename);
+                                            } else {
+                                                handleMenuItemClickWithTracking(item.path, item.pagename, 'primary');
+                                            }
+                                        }}
+                                        className='flex-1'
+                                    >
                                         {item.pagename}
                                     </div>
                                     {item.subItems && (
-                                        <div className=''>
+                                        <div 
+                                            className='cursor-pointer'
+                                            onClick={() => toggleDropdown(index, item.pagename)}
+                                        >
                                             {openDropdown === index ? (
                                                 <ChevronUp size={25} className='text-primary transition-all duration-500' />
                                             ) : (
@@ -109,14 +228,25 @@ function MobileMenu({
                                                 className={`w-full py-2 ${subIndex !== item.subItems.length - 1 ? 'border-b border-gray-700' : ''}`}
                                             >
                                                 <div 
-                                                    className='flex justify-between items-center' 
-                                                    onClick={() => toggleSubDropdown(subIndex)}
+                                                    className='flex justify-between items-center'
                                                 >
-                                                    <div onClick={() => handleMenuItemClick(subItem.path)}>
+                                                    <div 
+                                                        onClick={() => {
+                                                            if (subItem.subsubItems && subItem.subsubItems.length > 0) {
+                                                                toggleSubDropdown(subIndex, subItem.title);
+                                                            } else {
+                                                                handleMenuItemClickWithTracking(subItem.path, subItem.title, 'secondary');
+                                                            }
+                                                        }}
+                                                        className='flex-1'
+                                                    >
                                                         {subItem.title}
                                                     </div>
                                                     {subItem.subsubItems && (
-                                                        <div className=''>
+                                                        <div 
+                                                            className='cursor-pointer'
+                                                            onClick={() => toggleSubDropdown(subIndex, subItem.title)}
+                                                        >
                                                             {openSubDropdown === subIndex ? (
                                                                 <ChevronUp size={20} className='text-primary' />
                                                             ) : (
@@ -130,7 +260,7 @@ function MobileMenu({
                                                         {subItem.subsubItems.map((subsubItem, subsubIndex) => (
                                                             <li key={subsubIndex} className='w-full py-2'>
                                                                 <div 
-                                                                    onClick={() => handleMenuItemClick(subsubItem.path)}
+                                                                    onClick={() => handleMenuItemClickWithTracking(subsubItem.path, subsubItem.title, 'tertiary')}
                                                                 >
                                                                     {subsubItem.title}
                                                                 </div>
@@ -149,23 +279,76 @@ function MobileMenu({
                         <div className='text-white space-y-3 pt-10'>
                             <p className='text-xl uppercase text-gray-400'>Contact Us</p>
                             <div className='flex gap-2 items-center'>
-                                <a href={addresslink} target='_blank' className='hover:text-blue-500 w-[90%]'>{address}</a>
+                                <a 
+                                    href={addresslink} 
+                                    target='_blank' 
+                                    className='hover:text-blue-500 w-[90%]'
+                                    onClick={handleAddressClick}
+                                >
+                                    {address}
+                                </a>
                             </div>
                             <div className='flex gap-2 items-center'>
-                                <a href={`tel:${phoneNo}`} className='hover:text-blue-500 w-[90%]'>{phoneNo}</a>
+                                <a 
+                                    href={`tel:${phoneNo}`} 
+                                    className='hover:text-blue-500 w-[90%]'
+                                    onClick={handlePhoneClick}
+                                >
+                                    {phoneNo}
+                                </a>
                             </div>
                             <div className='flex gap-2 items-center'>
-                                <a href={`mailto:${email}`} className='hover:text-blue-500 w-[90%]'>{email}</a>
+                                <a 
+                                    href={`mailto:${email}`} 
+                                    className='hover:text-blue-500 w-[90%]'
+                                    onClick={() => handleEmailClick(email)}
+                                >
+                                    {email}
+                                </a>
                             </div>
                             <div className='flex gap-2 items-center'>
-                                <a href={`mailto:${email2}`} className='hover:text-blue-500 w-[90%]'>{email2}</a>
+                                <a 
+                                    href={`mailto:${email2}`} 
+                                    className='hover:text-blue-500 w-[90%]'
+                                    onClick={() => handleEmailClick(email2)}
+                                >
+                                    {email2}
+                                </a>
                             </div>
                         </div>
                         <div className='flex justify-center items-center space-x-5'>
-                            <a href={facebooklink} target='_blank' className="text-gray-400 hover:text-blue-500"><Facebook /></a>
-                            <a href={twitterlink} target='_blank' className="text-gray-400 hover:text-blue-500"><Twitter /></a>
-                            <a href={linkedinlink} target='_blank' className="text-gray-400 hover:text-blue-500"><Instagram /></a>
-                            <a href={youtubelink} target='_blank' className="text-gray-400 hover:text-blue-500"><Youtube /></a>
+                            <a 
+                                href={facebooklink} 
+                                target='_blank' 
+                                className="text-gray-400 hover:text-blue-500"
+                                onClick={() => handleSocialClick('facebook')}
+                            >
+                                <Facebook />
+                            </a>
+                            <a 
+                                href={twitterlink} 
+                                target='_blank' 
+                                className="text-gray-400 hover:text-blue-500"
+                                onClick={() => handleSocialClick('twitter')}
+                            >
+                                <Twitter />
+                            </a>
+                            <a 
+                                href={linkedinlink} 
+                                target='_blank' 
+                                className="text-gray-400 hover:text-blue-500"
+                                onClick={() => handleSocialClick('linkedin')}
+                            >
+                                <Instagram />
+                            </a>
+                            <a 
+                                href={youtubelink} 
+                                target='_blank' 
+                                className="text-gray-400 hover:text-blue-500"
+                                onClick={() => handleSocialClick('youtube')}
+                            >
+                                <Youtube />
+                            </a>
                         </div>
                     </div>  
                 </div>

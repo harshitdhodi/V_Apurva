@@ -1,4 +1,4 @@
-// app/components/ClientCarousel.jsx (Client Component)
+// app/components/ClientCarousel.jsx (Client Component with Click Tracking)
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -7,6 +7,7 @@ import Image from "next/image"
 import gsap from 'gsap'
 import ContactUsInquiryForm from "../ContactUsInquiryForm"
 import { X } from 'lucide-react'
+import { useClickTracking } from "@/lib/useClickTracking"
 
 // Simple HTML content renderer component
 const HTMLContent = ({ html, className = "" }) => {
@@ -21,6 +22,9 @@ export default function ClientCarousel({ banners }) {
   const imgRefs = useRef([])
   const smallImgRefs = useRef([])
   const buttonRefs = useRef([])
+  
+  // Click tracking hook
+  const { trackEvent } = useClickTracking()
 
   // Scroll to top on mount
   useEffect(() => {
@@ -78,6 +82,56 @@ export default function ClientCarousel({ banners }) {
       )
     }
   }, [currentSlide, banners.length])
+
+  // Handle Inquiry Button Click
+  const handleInquiryClick = () => {
+    trackEvent('button_click', {
+      buttonName: 'inquiry_now',
+      metadata: {
+        slideIndex: currentSlide,
+        slideTitle: banners[currentSlide]?.title || `Slide ${currentSlide}`,
+        source: 'carousel_banner'
+      }
+    })
+    setShowInquiryForm(true)
+  }
+
+  // Handle About Us Button Click
+  const handleAboutUsClick = () => {
+    trackEvent('button_click', {
+      buttonName: 'about_us',
+      metadata: {
+        slideIndex: currentSlide,
+        slideTitle: banners[currentSlide]?.title || `Slide ${currentSlide}`,
+        source: 'carousel_banner'
+      }
+    })
+  }
+
+  // Handle Modal Close
+  const handleFormClose = () => {
+    trackEvent('button_click', {
+      buttonName: 'inquiry_form_close',
+      metadata: {
+        slideIndex: currentSlide,
+        action: 'modal_closed'
+      }
+    })
+    setShowInquiryForm(false)
+  }
+
+  // Handle Modal Open
+  const handleFormOpen = () => {
+    trackEvent('form_view', {
+      buttonName: 'contact_inquiry_form',
+      metadata: {
+        slideIndex: currentSlide,
+        action: 'modal_opened'
+      }
+    })
+  }
+
+
 
   return (
     <>
@@ -164,12 +218,15 @@ export default function ClientCarousel({ banners }) {
                 >
                   <button
                     className="bg-[#bf2e2e] hover:bg-[#cd1d1d] text-white text-base sm:text-lg font-medium cursor-pointer p-3 sm:p-4 rounded lg:px-7 transition-colors duration-300"
-                    onClick={() => setShowInquiryForm(true)}
+                    onClick={handleInquiryClick}
                   >
                     INQUIRY NOW
                   </button>
                   <Link href="/about-us" passHref>
-                    <button className="bg-gray-700 hover:bg-gray-600 text-white text-base sm:text-lg font-medium cursor-pointer p-3 sm:p-4 rounded lg:px-7 transition-colors duration-300">
+                    <button 
+                      className="bg-gray-700 hover:bg-gray-600 text-white text-base sm:text-lg font-medium cursor-pointer p-3 sm:p-4 rounded lg:px-7 transition-colors duration-300"
+                      onClick={handleAboutUsClick}
+                    >
                       ABOUT US
                     </button>
                   </Link>
@@ -183,11 +240,10 @@ export default function ClientCarousel({ banners }) {
       {/* Modal */}
       {showInquiryForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 bg-opacity-50 p-4">
-                     {/* Modal Content */}
-            <div className="p-6 md:p-8">
-              <ContactUsInquiryForm onClose={() => setShowInquiryForm(false)} />
-            </div>
-         
+          {/* Modal Content */}
+          <div className="p-6 md:p-8">
+            <ContactUsInquiryForm onClose={handleFormClose} />
+          </div>
         </div>
       )}
     </>

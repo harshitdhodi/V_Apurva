@@ -1,14 +1,16 @@
-// src/app/blogs/BlogClient.jsx (Client Component)
+// src/app/blogs/BlogClient.jsx (Client Component with Click Tracking)
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, UserCircle } from 'lucide-react';
+import { Eye, Search, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useClickTracking } from '@/lib/useClickTracking';
 
 export default function BlogClient({ initialData }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const { trackEvent } = useClickTracking();
 
   const { blogs = [], categories = [], banners = [] } = initialData || {};
 
@@ -23,6 +25,108 @@ export default function BlogClient({ initialData }) {
     });
   }, [blogs, searchQuery, selectedCategory]);
 
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    // Track search input
+    if (query.trim().length > 0) {
+      trackEvent('button_click', {
+        buttonName: 'blog_search',
+        metadata: {
+          searchQuery: query,
+          page: 'blogs',
+          action: 'search',
+          resultsFound: filteredBlogs.length
+        }
+      });
+    }
+  };
+
+  const handleCategoryFilter = (categoryId, categoryName) => {
+    setSelectedCategory(categoryId);
+
+    // Track category filter click
+    trackEvent('button_click', {
+      buttonName: 'blog_category_filter',
+      metadata: {
+        category: categoryName || categoryId,
+        categoryId: categoryId,
+        page: 'blogs',
+        action: 'filter_by_category',
+        resultsFound: filteredBlogs.filter(blog => {
+          const matchesCategory = categoryId === 'All' || 
+            blog.categories?.includes(categoryId);
+          return matchesCategory;
+        }).length
+      }
+    });
+  };
+
+  const handleBlogCardClick = (blogSlug, blogTitle) => {
+    // Track blog card click
+    trackEvent('button_click', {
+      buttonName: 'blog_card_click',
+      metadata: {
+        blogTitle: blogTitle,
+        blogSlug: blogSlug,
+        page: 'blogs',
+        action: 'navigate_to_blog'
+      }
+    });
+  };
+
+  const handleBlogImageClick = (blogSlug, blogTitle) => {
+    // Track blog image click
+    trackEvent('button_click', {
+      buttonName: 'blog_image_click',
+      metadata: {
+        blogTitle: blogTitle,
+        blogSlug: blogSlug,
+        page: 'blogs',
+        action: 'click_image'
+      }
+    });
+  };
+
+  const handleBlogTitleClick = (blogSlug, blogTitle) => {
+    // Track blog title click
+    trackEvent('button_click', {
+      buttonName: 'blog_title_click',
+      metadata: {
+        blogTitle: blogTitle,
+        blogSlug: blogSlug,
+        page: 'blogs',
+        action: 'click_title'
+      }
+    });
+  };
+
+  const handleReadMoreClick = (blogSlug, blogTitle) => {
+    // Track read more button click
+    trackEvent('button_click', {
+      buttonName: 'blog_read_more',
+      metadata: {
+        blogTitle: blogTitle,
+        blogSlug: blogSlug,
+        page: 'blogs',
+        action: 'read_more'
+      }
+    });
+  };
+
+  const handleBreadcrumbClick = (breadcrumbName) => {
+    // Track breadcrumb navigation
+    trackEvent('button_click', {
+      buttonName: 'blog_breadcrumb_click',
+      metadata: {
+        breadcrumb: breadcrumbName,
+        page: 'blogs',
+        action: 'breadcrumb_navigation'
+      }
+    });
+  };
+
   if (!blogs || blogs.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -36,7 +140,6 @@ export default function BlogClient({ initialData }) {
 
   return (
     <>
-      {/* <Navbar /> */}
       <main className="bg-white min-h-screen">
         {/* Banner Section */}
         <div>
@@ -44,7 +147,7 @@ export default function BlogClient({ initialData }) {
             <div key={index} className="relative">
               <div
                 className="banner-background bg-white relative bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: `url(https://admin.apurvachemicals.com/api/image/download/${banner.photo})` }}
+                style={{ backgroundImage: `url(${process.env.NEXT_PUBLIC_ADMIN_API_URL}/api/image/download/${banner.photo})` }}
                 title={banner.title}
               >
                 <div className='flex justify-center items-center h-[40vh] md:h-[30vh]'>
@@ -52,7 +155,13 @@ export default function BlogClient({ initialData }) {
                     {banner.title}
                   </h1>
                   <div className="absolute bottom-16 flex space-x-2 z-10">
-                    <Link href="/" className="text-white hover:text-gray-300">Home</Link>
+                    <Link 
+                      href="/" 
+                      className="text-white hover:text-gray-300"
+                      onClick={() => handleBreadcrumbClick('home')}
+                    >
+                      Home
+                    </Link>
                     <span className="text-white">/</span>
                     <span className="text-white hover:text-gray-300 cursor-pointer">
                       {banner.title}
@@ -74,7 +183,7 @@ export default function BlogClient({ initialData }) {
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
                 className="w-full px-4 py-2 pl-10 pr-4 border rounded-lg placeholder:text-[#646060] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] text-[#bf2e2e] focus:border-transparent"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#646060]" />
@@ -84,11 +193,11 @@ export default function BlogClient({ initialData }) {
           {/* Categories */}
           <div className="flex flex-wrap gap-2 mb-8">
             <button
-              onClick={() => setSelectedCategory('All')}
+              onClick={() => handleCategoryFilter('All', 'All')}
               className={`px-4 py-2 rounded-full transition-colors ${
                 selectedCategory === 'All' 
                   ? 'bg-[#bf2e2e] text-white' 
-                  : 'bg-gray-100 hover:bg-gray-200'
+                  : 'bg-gray-100 hover:bg-gray-200 text-[#bf2e2e]'
               }`}
             >
               All
@@ -96,7 +205,7 @@ export default function BlogClient({ initialData }) {
             {categories.map((category) => (
               <button
                 key={category._id}
-                onClick={() => setSelectedCategory(category._id)}
+                onClick={() => handleCategoryFilter(category._id, category.category)}
                 className={`px-4 py-2 rounded-full shadow-md transition-colors ${
                   selectedCategory === category._id 
                     ? 'bg-[#bf2e2e] text-white' 
@@ -114,7 +223,7 @@ export default function BlogClient({ initialData }) {
               <article key={post._id} className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow flex flex-col bg-white">
                 {/* Thumbnail Image with Unified Style */}
                 <div className="h-48 overflow-hidden bg-gradient-to-br from-[#f5f5f5] to-[#e8e8e8] relative">
-                  <Link href={`/${post.slug}`}>
+                  <Link href={`/${post.slug}`} onClick={() => handleBlogImageClick(post.slug, post.title)}>
                     <div className="w-full h-full relative">
                       <Image
                         src={`https://admin.apurvachemicals.com/api/image/download/${post.photo?.[0]}`}
@@ -151,7 +260,8 @@ export default function BlogClient({ initialData }) {
                   {/* Blog Title */}
                   <h3 className="font-semibold mb-3 flex-grow">
                     <Link 
-                      href={`/${post.slug}`} 
+                      href={`/${post.slug}`}
+                      onClick={() => handleBlogTitleClick(post.slug, post.title)}
                       className="hover:text-[#bf2e2e] text-gray-900 text-base transition-colors duration-200 line-clamp-3"
                     >
                       {post.title}
@@ -159,8 +269,10 @@ export default function BlogClient({ initialData }) {
                   </h3>
 
                   {/* Read More Button */}
-                  <Link
+                 <div className="flex items-center space-x-3 justify-between">
+                   <Link
                     href={`/${post.slug}`}
+                    onClick={() => handleReadMoreClick(post.slug, post.title)}
                     className="inline-flex items-center text-[#bf2e2e] font-semibold mt-auto hover:text-[#a02424] transition-colors duration-200 group"
                   >
                     Read more
@@ -179,6 +291,11 @@ export default function BlogClient({ initialData }) {
                       />
                     </svg>
                   </Link>
+                  <div className="flex items-center space-x-2">
+                    <Eye className="text-[#bf2e2e] flex-shrink-0" size={24} />
+                    <p className="text-gray-700">{post.visits || 0}</p>
+                  </div>
+                 </div>
                 </div>
               </article>
             ))}
@@ -193,7 +310,6 @@ export default function BlogClient({ initialData }) {
           )}
         </div>
       </main>
-      {/* <Footer /> */}
     </>
   );
 }

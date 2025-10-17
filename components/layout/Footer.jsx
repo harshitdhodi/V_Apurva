@@ -66,7 +66,7 @@ export default async function Footer() {
 
           {/* Useful Links */}
           <div>
-            <h5 className="text-lg font-bold mb-4">Useful Links</h5>
+            <h5 className="text-lg font-bold mb-6 text-gray-800 border-b w-fit  xl:w-full pb-2">Useful Links</h5>
             <ul className="space-y-2">
               <li>
                 <Link href="/about-us" className="hover:text-[#bf2e2e]">
@@ -88,19 +88,61 @@ export default async function Footer() {
 
           {/* Contact Info */}
           <div className="col-span-2">
-            <h5 className="text-lg font-bold mb-4">Contact Info</h5>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href={footerData.addresslink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-[#bf2e2e] flex items-start"
-                >
-                  <MapPin className="mr-2 h-5 w-5 mt-0.5 flex-shrink-0" />
-                  <span>{footerData.address || "Company Address"}</span>
-                </a>
-              </li>
+            <h5 className="text-lg font-bold  text-gray-800 border-b w-fit xl:w-full pb-2">Our Offices</h5>
+            <div className="">
+               {/* Corporate Office */}
+              <div className="  py-4 rounded-lg  border border-gray-100">
+                <div className="flex items-center mb-2">
+                  <div className=" rounded-full mr-3">
+                    <MapPin className="h-5 w-5 text-[#bf2e2e]" />
+                  </div>
+                  <h6 className="font-bold text-[#bf2e2e] text-base">Corporate Office</h6>
+                </div>
+                <div className="pl-11">
+                  <address className="not-italic text-gray-700 leading-relaxed">
+                    <p className="font-medium">{footerData.CorporateAddress}</p>
+                  </address>
+                </div>
+              </div>
+
+              {/* Sales Office */}
+              <div className=" py-4 rounded-lg  border border-gray-100">
+                <div className="flex items-center mb-2">
+                  <div className=" rounded-full mr-3">
+                    <MapPin className="h-5 w-5 text-[#bf2e2e]" />
+                  </div>
+                  <h6 className="font-bold text-[#bf2e2e] text-base">Sales Office</h6>
+                </div>
+                <div className="pl-11">
+                  <address className="not-italic text-gray-700 leading-relaxed">
+                    <p className="font-medium">{footerData.SalesAddress}</p>
+                  </address>
+                </div>
+              </div>
+
+              {/* Factory Address */}
+              <div className=" py-4 rounded-lg  border border-gray-100">
+                <div className="flex items-center mb-2">
+                  <div className="  rounded-full mr-3">
+                    <MapPin className="h-5 w-5 text-[#bf2e2e]" />
+                  </div>
+                  <h6 className="font-bold text-[#bf2e2e] text-base">Factory</h6>
+                </div>
+                <div className="pl-11">
+                  <p className="text-gray-700 leading-relaxed">
+                    {footerData.FactoryAddress || "Company Address"}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Location Map */}
+          <div className="col-span-2">
+          <div className="">
+            <h3 className="text-lg font-bold mb-6 text-gray-800 border-b w-fit xl:w-full pb-2">Contact Info</h3>
+            <ul className="space-y-2">
               <li>
                 <a href={`tel:${footerData.phoneNo}`} className="hover:text-[#bf2e2e] flex items-center">
                   <Phone className="mr-2 h-4 w-4" />
@@ -123,10 +165,7 @@ export default async function Footer() {
               )}
             </ul>
           </div>
-
-          {/* Location Map */}
-          <div className="col-span-2">
-            <h5 className="text-lg font-bold mb-4">Location</h5>
+            <h5 className="text-lg font-bold mb-6 text-gray-800 border-b w-fit xl:w-full mt-5 pb-2">Location</h5>
             <div className="aspect-video">
               <MapClient location={footerData.location} />
             </div>

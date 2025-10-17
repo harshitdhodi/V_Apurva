@@ -2,7 +2,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { FileText, TestTube, Microscope, Heart, Dna, FlaskConical, ArrowRight } from 'lucide-react';
-
+import { useClickTracking } from '@/lib/useClickTracking';
+import Image from 'next/image';
+import img from "../public/logo.png"
 // Safe HTML content renderer with proper list styling
 const HTMLContent = ({ html, className = "" }) => {
   const cleanedHtml = (html || "").replace(/<p>(\s|&nbsp;)*<\/p>/gi, "");
@@ -137,6 +139,7 @@ const HTMLContent = ({ html, className = "" }) => {
 
 function ProductCategoryGrid({ initialData, slug }) {
   const [showFullContent, setShowFullContent] = useState(false);
+  const { trackEvent } = useClickTracking();
   
   // Use the data passed from server component
   const product = initialData?.products || [];
@@ -177,6 +180,40 @@ function ProductCategoryGrid({ initialData, slug }) {
     return truncatedText + '...';
   };
 
+  const handleReadMore = () => {
+    trackEvent('button_click', {
+      buttonName: 'read_more_category_description',
+      metadata: {
+        category: category?.category,
+        action: 'expand',
+        page: 'product_category_grid'
+      }
+    });
+    setShowFullContent(true);
+  };
+
+  const handleReadLess = () => {
+    trackEvent('button_click', {
+      buttonName: 'read_less_category_description',
+      metadata: {
+        category: category?.category,
+        action: 'collapse',
+        page: 'product_category_grid'
+      }
+    });
+    setShowFullContent(false);
+  };
+
+  const handleHomeClick = () => {
+    trackEvent('button_click', {
+      buttonName: 'breadcrumb_home',
+      metadata: {
+        breadcrumb: 'home',
+        page: 'product_category_grid'
+      }
+    });
+  };
+
   if (!category) {
     return (
       <div className="text-center py-10">
@@ -204,9 +241,15 @@ function ProductCategoryGrid({ initialData, slug }) {
               {category.category}
             </h1>
             <div className="absolute bottom-16 flex space-x-2 z-10">
-              <Link href="/" className="text-white hover:text-gray-300 ">Home</Link>
+              <Link 
+                href="/" 
+                className="text-white hover:text-gray-300"
+                onClick={handleHomeClick}
+              >
+                Home
+              </Link>
               <span className="text-white">/</span>
-              <p className="text-white hover:text-gray-300 cursor-pointer ">{category.category}</p>
+              <p className="text-white hover:text-gray-300 cursor-pointer">{category.category}</p>
             </div>
             <div className='absolute inset-0 bg-black opacity-40 z-1'></div>
           </div>
@@ -222,7 +265,9 @@ function ProductCategoryGrid({ initialData, slug }) {
                 title={item.title}
                 imgTitle={item.imgTitle}
                 alt={item.alt || item.title}
-                slug={item.slug} 
+                slug={item.slug}
+                categoryName={category.category}
+                trackEvent={trackEvent}
               />
             ))
           ) : (
@@ -240,7 +285,7 @@ function ProductCategoryGrid({ initialData, slug }) {
                   <HTMLContent html={category.description} className="text-gray-800" />
                   <button
                     className="text-[#bf2e2e] mt-4 hover:underline font-medium"
-                    onClick={() => setShowFullContent(false)}
+                    onClick={handleReadLess}
                   >
                     Show Less
                   </button>
@@ -251,7 +296,7 @@ function ProductCategoryGrid({ initialData, slug }) {
                   {category.description.replace(/<[^>]+>/g, '').length > Math.floor(category.description.replace(/<[^>]+>/g, '').length * 0.25) && (
                     <button
                       className="text-[#bf2e2e] mt-4 hover:underline font-medium"
-                      onClick={() => setShowFullContent(true)}
+                      onClick={handleReadMore}
                     >
                       Read More
                     </button>
@@ -309,14 +354,51 @@ const colorMap = {
   },
 };
 
-function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
+function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categoryName, trackEvent }) {
   const iconName = Icon?.displayName || Icon?.name || 'FileText';
   const colors = colorMap[iconName] || colorMap.FileText;
+
+  const handleProductImageClick = () => {
+    trackEvent('button_click', {
+      buttonName: 'product_image_click',
+      metadata: {
+        productTitle: title,
+        productSlug: slug,
+        category: categoryName,
+        page: 'product_category_grid'
+      }
+    });
+  };
+
+  const handleProductTitleClick = () => {
+    trackEvent('button_click', {
+      buttonName: 'product_title_click',
+      metadata: {
+        productTitle: title,
+        productSlug: slug,
+        category: categoryName,
+        page: 'product_category_grid'
+      }
+    });
+  };
+
+  const handleReadMoreClick = () => {
+    trackEvent('button_click', {
+      buttonName: 'product_read_more',
+      metadata: {
+        productTitle: title,
+        productSlug: slug,
+        category: categoryName,
+        page: 'product_category_grid',
+        action: 'navigate_to_product'
+      }
+    });
+  };
 
   return (
     <div className="bg-white shadow-lg group h-auto overflow-hidden rounded-lg transition-transform duration-300 hover:shadow-xl">
       <div className='overflow-hidden h-56'>
-        <Link href={`/${slug}`} className="block h-full">
+        <Link href={`/${slug}`} className="block h-full" onClick={handleProductImageClick}>
           <img
             src={imageSrc}
             alt={alt}
@@ -331,10 +413,27 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
       </div>
       <div className="p-5">
         <div className='flex items-center gap-4 mb-3'>
-          <div className={`flex-shrink-0 flex justify-center items-center ${colors.bgColor} ${colors.hoverBgColor} rounded-full p-3`}>
-            {Icon && <Icon className={`${colors.textColor} ${colors.hoverTextColor} transition-colors duration-300 text-lg`} />}
+          <div className={`flex-shrink-0 flex justify-center items-center bg-red-100 rounded-full p-3`}>
+            {/* {Icon && <Icon className={`${colors.textColor} ${colors.hoverTextColor} transition-colors duration-300 text-lg`} />} */}
+
+          <Image
+            src={img}
+            alt={alt}
+            title={imgTitle}
+            width={50}
+            height={50}
+            className="w-10 h-10 object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/placeholder-product.jpg';
+            }}
+          />
           </div>
-          <Link href={`/${slug}`} className="text-lg font-bold text-gray-800 hover:text-red-600 transition-colors line-clamp-2">
+          <Link 
+            href={`/${slug}`} 
+            className="text-lg font-bold text-gray-800 hover:text-red-600 transition-colors line-clamp-2"
+            onClick={handleProductTitleClick}
+          >
             {title}
           </Link>
         </div>
@@ -342,6 +441,7 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
           <Link
             href={`/${slug}`}
             className="inline-flex items-center text-red-600 hover:text-red-800 font-medium text-sm transition-colors"
+            onClick={handleReadMoreClick}
           >
             READ MORE <ArrowRight className="ml-1 w-4 h-4" />
           </Link>

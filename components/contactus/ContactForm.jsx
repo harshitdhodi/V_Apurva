@@ -7,7 +7,9 @@ import { X, AlertCircle } from 'lucide-react';
 const ContactForm = () => {
     const [phoneNo, setPhoneNo] = useState("");
     const [openingHours, setOpeningHours] = useState("");
-    const [address, setAddress] = useState("");
+    const [CorporateAddress, setCorporateAddress] = useState("");
+    const [FactoryAddress, setFactoryAddress] = useState("");
+    const [SalesAddress, setSalesAddress] = useState("");
     const [addresslink, setAddresslink] = useState("");
     const [location, setLocation] = useState('');
     const [name, setName] = useState('');
@@ -35,91 +37,91 @@ const ContactForm = () => {
     // Validation functions
     const validateName = (value) => {
         const trimmedValue = value.trim();
-        
+
         if (!trimmedValue) {
             return 'Name is required.';
         }
-        
+
         // Check for only alphabets and spaces
         const nameRegex = /^[a-zA-Z\s]+$/;
         if (!nameRegex.test(trimmedValue)) {
             return 'Please enter a valid name using letters only.';
         }
-        
+
         if (trimmedValue.length > 50) {
             return 'Name is too long. Please limit to 50 characters.';
         }
-        
+
         if (trimmedValue.length < 2) {
             return 'Name must be at least 2 characters.';
         }
-        
+
         return '';
     };
 
     const validateEmail = (value) => {
         const trimmedValue = value.trim();
-        
+
         if (!trimmedValue) {
             return 'Email is required.';
         }
-        
+
         // RFC 5322 compliant email regex
         const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        
+
         if (!emailRegex.test(trimmedValue)) {
             return 'Please enter a valid email address.';
         }
-        
+
         return '';
     };
 
     const validatePhone = (value) => {
         const trimmedValue = value.trim();
-        
+
         if (!trimmedValue) {
             return 'Phone number is required.';
         }
-        
+
         // Remove common phone number characters for validation
         const cleanedPhone = trimmedValue.replace(/[\s\-\(\)]/g, '');
-        
+
         // Check if it contains only digits and optional + at the start
         const phoneRegex = /^\+?\d+$/;
         if (!phoneRegex.test(cleanedPhone)) {
             return 'Phone number must contain digits only.';
         }
-        
+
         // Check length (10-13 digits)
         const digitsOnly = cleanedPhone.replace(/\+/g, '');
         if (digitsOnly.length < 10 || digitsOnly.length > 13) {
             return 'Please enter a valid phone number (10-13 digits).';
         }
-        
+
         return '';
     };
 
     const validateMessage = (value) => {
         const trimmedValue = value.trim();
-        
+
         if (!trimmedValue) {
             return 'Message is required.';
         }
-        
+
         if (trimmedValue.length < 10) {
             return 'Message must be at least 10 characters.';
         }
-        
+
         if (trimmedValue.length > 500) {
             return 'Message is too long. Please limit to 500 characters.';
         }
-        
+
         // Check for script tags and potentially malicious code
         const dangerousPattern = /<script|javascript:|onerror=|onclick=|<iframe/i;
         if (dangerousPattern.test(trimmedValue)) {
             return 'Invalid characters detected. Please remove any HTML or script tags.';
         }
-        
+
         return '';
     };
 
@@ -206,7 +208,10 @@ const ContactForm = () => {
             try {
                 const response = await axios.get('/api/footer/getAddressAndLocation', { withCredentials: true });
                 const footer = response.data;
-                setAddress(footer.address || "");
+                console.log("footer",footer);
+                setCorporateAddress(footer.CorporateAddress || "");
+                setFactoryAddress(footer.FactoryAddress || "");
+                setSalesAddress(footer.SalesAddress || "");
                 setAddresslink(footer.addresslink || "");
                 setLocation(footer.location || DEFAULT_MAP_URL);
             } catch (error) {
@@ -222,17 +227,17 @@ const ContactForm = () => {
         if (!mapRef.current) return;
 
         const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) {
-              setIsMapVisible(true);
-              observer.disconnect();
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsMapVisible(true);
+                    observer.disconnect();
+                }
+            },
+            {
+                root: null,
+                rootMargin: '200px',
+                threshold: 0.1,
             }
-          },
-          {
-            root: null,
-            rootMargin: '200px',
-            threshold: 0.1,
-          }
         );
 
         observer.observe(mapRef.current);
@@ -276,7 +281,7 @@ const ContactForm = () => {
             setPhone('');
             setMessage('');
             setValidationErrors({ name: '', email: '', phone: '', message: '' });
-            
+
             // Redirect to thank you page
             window.location.href = '/thankyou';
         } catch (error) {
@@ -301,30 +306,55 @@ const ContactForm = () => {
         <div className="flex flex-col md:flex-row justify-center lg:items-start items-center p-4 gap-8">
             {/* Left Column - Contact Info */}
             <div className="w-full md:w-1/3 lg:w-[25%] lg:mt-20 flex flex-col gap-8">
-                <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
-                    <div className="flex flex-col items-center mb-4">
-                        <div className="w-16 h-16 flex items-center justify-center mb-4">
-                            <svg className="w-12 h-12 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-8 transition-colors">
+                    <div className="flex items-center justify-center mb-6">
+                        <svg className="w-16 h-16 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-800 text-center">Address</h3>
                     </div>
-                    <p className="text-gray-700 text-center">
-                        {addresslink ? (
-                            <a 
-                                href={addresslink} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="hover:text-[#bf2e2e] transition-colors"
-                            >
-                                {address}
-                            </a>
-                        ) : (
-                            <span>{address || 'N/A'}</span>
-                        )}
-                    </p>
+                    <h3 className="text-xl font-bold text-gray-800 text-center mb-6">Our Offices</h3>
+                    <div className="space-y-6">
+                        {/* Corporate Office */}
+                        <div className="flex items-start">
+                            <div className="bg-red-50 p-2 rounded-full mr-3 mt-1">
+                                <svg className="w-5 h-5 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-gray-800">Corporate Office</h4>
+                                <p className="text-gray-700 whitespace-pre-line">{CorporateAddress || 'N/A'}</p>
+                            </div>
+                        </div>
+
+                        {/* Factory */}
+                        <div className="flex items-start">
+                            <div className="bg-red-50 p-2 rounded-full mr-3 mt-1">
+                                <svg className="w-5 h-5 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-gray-800">Factory</h4>
+                                <p className="text-gray-700 whitespace-pre-line">{FactoryAddress || 'N/A'}</p>
+                            </div>
+                        </div>
+
+                        {/* Sales Office */}
+                        <div className="flex items-start">
+                            <div className="bg-red-50 p-2 rounded-full mr-3 mt-1">
+                                <svg className="w-5 h-5 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-gray-800">Sales Office</h4>
+                                <p className="text-gray-700 whitespace-pre-line">{SalesAddress || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </div>
+                   
                 </div>
 
                 <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
@@ -338,8 +368,8 @@ const ContactForm = () => {
                     </div>
                     <p className="text-gray-700 text-center">
                         {phoneNo ? (
-                            <a 
-                                href={`tel:${phoneNo}`} 
+                            <a
+                                href={`tel:${phoneNo}`}
                                 className="hover:text-[#bf2e2e] transition-colors"
                             >
                                 {phoneNo}
@@ -366,7 +396,7 @@ const ContactForm = () => {
             {/* Right Column - Contact Form */}
             <div className="w-full md:w-2/3 bg-white p-6 rounded-lg">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h2>
-                
+
                 {errorMessage && (
                     <div className="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
                         <p>{errorMessage}</p>
@@ -379,11 +409,10 @@ const ContactForm = () => {
                             <input
                                 type="text"
                                 placeholder="Enter your Name"
-                                className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${
-                                    validationErrors.name 
-                                        ? 'border-red-500 focus:ring-red-500' 
+                                className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${validationErrors.name
+                                        ? 'border-red-500 focus:ring-red-500'
                                         : 'border-gray-200 hover:border-[#bf2e2e] focus:ring-[#bf2e2e] focus:border-transparent'
-                                }`}
+                                    }`}
                                 value={name}
                                 onChange={handleNameChange}
                             />
@@ -393,11 +422,10 @@ const ContactForm = () => {
                             <input
                                 type="email"
                                 placeholder="Enter your Email address"
-                                className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${
-                                    validationErrors.email 
-                                        ? 'border-red-500 focus:ring-red-500' 
+                                className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${validationErrors.email
+                                        ? 'border-red-500 focus:ring-red-500'
                                         : 'border-gray-200 hover:border-[#bf2e2e] focus:ring-[#bf2e2e] focus:border-transparent'
-                                }`}
+                                    }`}
                                 value={email}
                                 onChange={handleEmailChange}
                             />
@@ -409,11 +437,10 @@ const ContactForm = () => {
                         <input
                             type="tel"
                             placeholder="Enter your Phone number"
-                            className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${
-                                validationErrors.phone 
-                                    ? 'border-red-500 focus:ring-red-500' 
+                            className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${validationErrors.phone
+                                    ? 'border-red-500 focus:ring-red-500'
                                     : 'border-gray-200 hover:border-[#bf2e2e] focus:ring-[#bf2e2e] focus:border-transparent'
-                            }`}
+                                }`}
                             value={phone}
                             onChange={handlePhoneChange}
                             minLength={10}
@@ -426,11 +453,10 @@ const ContactForm = () => {
                         <textarea
                             placeholder="Type your message"
                             rows="5"
-                            className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${
-                                validationErrors.message 
-                                    ? 'border-red-500 focus:ring-red-500' 
+                            className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${validationErrors.message
+                                    ? 'border-red-500 focus:ring-red-500'
                                     : 'border-gray-200 hover:border-[#bf2e2e] focus:ring-[#bf2e2e] focus:border-transparent'
-                            }`}
+                                }`}
                             value={message}
                             onChange={handleMessageChange}
                         ></textarea>
@@ -440,15 +466,14 @@ const ContactForm = () => {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`px-8 py-4 bg-[#bf2e2e] text-white font-medium rounded-lg hover:bg-[#a82626] transition-colors ${
-                            isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-                        }`}
+                        className={`px-8 py-4 bg-[#bf2e2e] text-white font-medium rounded-lg hover:bg-[#a82626] transition-colors ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                            }`}
                     >
                         {isSubmitting ? 'Sending...' : 'SEND MESSAGE'}
                     </button>
                 </form>
 
-                <div 
+                <div
                     ref={mapRef}
                     className="mt-12 rounded-lg overflow-hidden bg-gray-100 min-h-[300px] flex items-center justify-center"
                 >
@@ -481,7 +506,7 @@ const ContactForm = () => {
                         >
                             <X size={24} className="stroke-2" />
                         </button>
-                        
+
                         <div className="text-center">
                             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

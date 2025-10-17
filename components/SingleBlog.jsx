@@ -6,6 +6,7 @@ import Slider from 'react-slick';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useClickTracking } from '@/lib/useClickTracking';
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -15,6 +16,7 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
   const [news, setNews] = useState(initialLatestNews || []);
   const [loading, setLoading] = useState(!initialBlogData);
   const pathname = usePathname();
+  const { trackEvent } = useClickTracking();
   
   // Use the slug from props or extract from pathname if not provided
   const blogSlug = slug || pathname.split('/').pop();
@@ -51,11 +53,79 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
     }
   }, [slug]);
 
+  // Increment visit count with client IP
+  useEffect(() => {
+    const incrementVisitWithIP = async () => {
+      if (loading || !blogData?._id) {
+        console.log('Skipping API call: isLoading=', loading, 'blogData._id=', blogData?._id);
+        return;
+      }
+
+      try {
+        console.log('Fetching IP...');
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        const clientIP = ipData.ip;
+        console.log('Client IP:', clientIP);
+
+        console.log('Calling incrementBlogVisits API...');
+        const response = await fetch(
+          `${NEXT_PUBLIC_ADMIN_API_URL}/api/news/incrementBlogVisits?id=${blogData._id}&clientIP=${clientIP}`,
+          { method: 'PUT' }
+        );
+        const result = await response.json();
+        console.log('API call successful:', result);
+      } catch (err) {
+        console.error('Failed to get IP or increment visit:', err.message);
+      }
+    };
+
+    incrementVisitWithIP();
+  }, [blogData, loading]);
+
   useEffect(() => {
     if (blogData?.metatitle) {
       document.title = blogData.metatitle;
     }
   }, [blogData]);
+
+  const handleBreadcrumbClick = (breadcrumbName) => {
+    trackEvent('button_click', {
+      buttonName: 'blog_breadcrumb_click',
+      metadata: {
+        breadcrumb: breadcrumbName,
+        currentBlog: blogData?.title,
+        page: 'single_blog',
+        action: 'breadcrumb_navigation'
+      }
+    });
+  };
+
+  const handleLatestPostImageClick = (postSlug, postTitle) => {
+    trackEvent('button_click', {
+      buttonName: 'latest_post_image_click',
+      metadata: {
+        postTitle: postTitle,
+        postSlug: postSlug,
+        currentBlog: blogData?.title,
+        page: 'single_blog',
+        action: 'click_latest_post_image'
+      }
+    });
+  };
+
+  const handleLatestPostTitleClick = (postSlug, postTitle) => {
+    trackEvent('button_click', {
+      buttonName: 'latest_post_title_click',
+      metadata: {
+        postTitle: postTitle,
+        postSlug: postSlug,
+        currentBlog: blogData?.title,
+        page: 'single_blog',
+        action: 'click_latest_post_title'
+      }
+    });
+  };
 
   const sliderSettings = {
     dots: true,
@@ -453,6 +523,16 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
           margin-bottom: 0.75rem;
         }
 
+        .post-visits {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #6b7280;
+          font-family: 'Nunito', sans-serif;
+          font-size: 0.875rem;
+          margin-bottom: 0.75rem;
+        }
+
         .post-title-link {
           display: flex;
           align-items: flex-start;
@@ -468,10 +548,12 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
         .post-title-link:hover {
           color: #bf2e2e;
         }
-.ql-editor p:empty,
-.ql-editor p:has(br:only-child) {
-  display: none;
-}
+
+        .ql-editor p:empty,
+        .ql-editor p:has(br:only-child) {
+          display: none;
+        }
+
         .post-title-text {
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -508,7 +590,9 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
         <div className="hero-content">
           <h1 className="hero-title">{blogData.title}</h1>
           <div className="hero-breadcrumb">
-            <Link href="/blogs">Blog</Link>
+            <Link href="/blogs" onClick={() => handleBreadcrumbClick('blogs')}>
+              Blog
+            </Link>
             <span>/</span>
             <p>{blogData.title}</p>
           </div>
@@ -548,7 +632,10 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
                       <div key={post.id}>
                         <div className="post-card-wrapper">
                           <div className="post-card-image-container">
-                            <Link href={`/${post.slug}`}>
+                            <Link 
+                              href={`/${post.slug}`}
+                              onClick={() => handleLatestPostImageClick(post.slug, post.title)}
+                            >
                               <Image
                                 src={`https://admin.apurvachemicals.com/api/image/download/${post.photo[0] || post.photo}`}
                                 width={400}
@@ -567,7 +654,15 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
                             <Calendar className="w-4 h-4" />
                             {post.date}
                           </div>
-                          <Link href={`/${post.slug}`} className="post-title-link">
+                          <div className="post-visits">
+                            <span className="text-[#6b7280]">👁️</span>
+                            {post.visits || 0}
+                          </div>
+                          <Link 
+                            href={`/${post.slug}`}
+                            onClick={() => handleLatestPostTitleClick(post.slug, post.title)}
+                            className="post-title-link"
+                          >
                             <span className="post-title-text">{post.title}</span>
                             <ArrowRight className="post-arrow-icon" />
                           </Link>

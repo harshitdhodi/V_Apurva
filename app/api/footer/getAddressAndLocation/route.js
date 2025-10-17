@@ -5,7 +5,7 @@ export async function GET() {
   try {
     await connectDB();
     
-    const footer = await Footer.findOne({}, 'address addresslink location');
+    const footer = await Footer.findOne();
     
     if (!footer) {
       return new Response(
