@@ -88,10 +88,10 @@ const VideoModal = ({ isOpen, onClose, videoUrl }) => {
 const VideoClient = ({ data }) => {
   const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const embedUrl = getYouTubeEmbedUrl(data.video);
+  const embedUrl = getYouTubeEmbedUrl(data.video || null);
 
   return (
-    <div className="flex justify-center relative items-center md:py-16 bg-gray-100 min-h-[300px]">
+      <div className="flex justify-center relative items-center md:py-16 bg-gray-100 min-h-[300px]">
       <div className="p-4 md:px-20 w-full max-w-8xl">
         <div className="xl:flex xl:gap-10">
           <div className="flex justify-center items-center xl:w-1/2">
@@ -108,8 +108,8 @@ const VideoClient = ({ data }) => {
                   quality={85}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                {/* Static play button - opens modal */}
-                {data.video && embedUrl && (
+                {/* Rest of your component remains the same */}
+                {data?.video && embedUrl && (  // Add optional chaining here
                   <div className="absolute inset-0 flex justify-center items-center">
                     <button
                       onClick={() => setIsModalOpen(true)}

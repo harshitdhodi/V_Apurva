@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 import TerserPlugin from 'terser-webpack-plugin';
 
-// Conditionally require the bundle analyzer plugin
+// Conditionally import the bundle analyzer plugin
 const withBundleAnalyzer = process.env.ANALYZE
-  ? (await import('@next/bundle-analyzer'))({
+  ? (await import('@next/bundle-analyzer')).default({
       enabled: process.env.ANALYZE === 'true' || process.env.ANALYZE === 'browser',
       openAnalyzer: false,
     })
@@ -40,15 +40,7 @@ const nextConfig = {
   
   // Enable React's experimental features
   experimental: {
-    // Enable modularize imports for better tree shaking
-    modularizeImports: {
-      'react-icons': {
-        transform: 'react-icons/{{member}}',
-      },
-    },
-    // Enable optimized package imports
     optimizePackageImports: ['lucide-react', 'react-icons'],
-    // Enable server components
     serverComponents: true,
   },
 
@@ -141,7 +133,6 @@ const nextConfig = {
   // API routes configuration
   async rewrites() {
     return [
-      // Your existing rewrite rules
       {
         source: '/api/image/download/:path*',
         destination: '/api/image/download/:path*',

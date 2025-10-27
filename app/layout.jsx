@@ -148,7 +148,7 @@ export default async function RootLayout({ children }) {
 
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="preconnect" href="https://www.apurvachemicals.com" crossOrigin="anonymous" />
@@ -225,7 +225,7 @@ export default async function RootLayout({ children }) {
           `}
         </Script>
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <NavbarServer
                 headerData={headerData}
                 footerData={footerData}
