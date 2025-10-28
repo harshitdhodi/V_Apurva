@@ -13,7 +13,7 @@ export const ProductDetailsTable = ({ details = {} }) => {
     { label: "Purity", value: details.purity || "N/A" },
     { label: "Packing", value: details.packing || "N/A" },
   ]
-
+console.log("details.synonym",details.synonym);
   // Add Synonym conditionally if it exists
   if (details.synonym) {
     rows.push({ label: "Synonym", value: details.synonym })
@@ -29,9 +29,9 @@ export const ProductDetailsTable = ({ details = {} }) => {
               <td className="px-3 py-2 text-gray-800">
                 {row.label === "Synonym" ? (
                   <ul className="flex flex-wrap gap-3 list-inside">
-                    {String(row.value).split(",").map((synonym, i) => (
+                    {row.value.map((synonym, i) => (
                       <li key={i} className="mb-1 px-2 rounded-md bg-gray-100">
-                        {synonym.trim()}
+                        {synonym}
                       </li>
                     ))}
                   </ul>
