@@ -109,7 +109,7 @@ const VideoClient = ({ data }) => {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 {/* Rest of your component remains the same */}
-                {data?.video && embedUrl && (  // Add optional chaining here
+                {/* {data?.video && embedUrl && (  // Add optional chaining here
                   <div className="absolute inset-0 flex justify-center items-center">
                     <button
                       onClick={() => setIsModalOpen(true)}
@@ -131,7 +131,7 @@ const VideoClient = ({ data }) => {
                       </svg>
                     </button>
                   </div>
-                )}
+                )} */}
                 {/* Secondary image */}
                 {data.photo[1] && (
                   <div className="hidden md:block absolute bottom-0 -left-[6rem] md:w-[40%]">
