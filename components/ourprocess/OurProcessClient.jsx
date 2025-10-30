@@ -7,7 +7,7 @@ import MissionSection from "./MissionSection"
 import VisionSection from "./VisionSection"
 
 function OurProcessClient({ missionData, visionData }) {
-  const [activeSection, setActiveSection] = useState("process")
+  const [activeSection, setActiveSection] = useState("mission")
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -26,14 +26,14 @@ function OurProcessClient({ missionData, visionData }) {
     <div className="flex justify-center bg-white items-center pt-8 md:pt-16">
       <div className="px-4 pb-0 w-full">
         <div className="flex md:flex-row flex-col gap-6 md:gap-0 justify-center md:space-x-2 mb-6">
-          <button
+          {/* <button
             onClick={() => setActiveSection("process")}
             className={`bg-gray-200 p-2 md:px-16 md:py-6 xl:px-32 rounded hover:border-b-4 border-b-[#bf2e2e] hover:text-gray-800 hover:bg-white hover:shadow-lg text-gray-500 font-bold transition-all duration-300 ${
               activeSection === "process" ? "border-b-4 border-b-[#bf2e2e] text-gray-800 bg-white shadow-lg" : ""
             }`}
           >
             OUR PROCESS
-          </button>
+          </button> */}
           <button
             onClick={() => setActiveSection("mission")}
             className={`bg-gray-200 p-2 md:px-16 md:py-6 xl:px-32 rounded hover:border-b-4 border-b-[#bf2e2e] hover:text-gray-800 hover:bg-white hover:shadow-lg text-gray-500 font-bold transition-all duration-300 ${
@@ -53,7 +53,7 @@ function OurProcessClient({ missionData, visionData }) {
         </div>
 
         <div className="min-h-auto w-full">
-          {activeSection === "process" && <ProcessSection />}
+          {/* {activeSection === "process" && <ProcessSection />} */}
           {activeSection === "mission" && <MissionSection data={missionData} />}
           {activeSection === "value" && <VisionSection data={visionData} />}
         </div>
