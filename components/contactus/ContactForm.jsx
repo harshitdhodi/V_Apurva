@@ -6,7 +6,8 @@ import { X, AlertCircle } from 'lucide-react';
 
 const ContactForm = () => {
     const [phoneNo, setPhoneNo] = useState("");
-    const [openingHours, setOpeningHours] = useState("");
+    const [email2, setemail2] = useState("");
+    const[email1, setEmail1] = useState("");
     const [CorporateAddress, setCorporateAddress] = useState("");
     const [FactoryAddress, setFactoryAddress] = useState("");
     const [SalesAddress, setSalesAddress] = useState("");
@@ -197,8 +198,9 @@ const ContactForm = () => {
             try {
                 const response = await axios.get('/api/header/getPhoneAndHours', { withCredentials: true });
                 const header = response.data;
+                console.log("header",header);
                 setPhoneNo(header.phoneNo || "");
-                setOpeningHours(header.openingHours || "");
+                // setemail2(header.email2 || "");
             } catch (error) {
                 console.error('Error fetching header:', error);
             }
@@ -213,6 +215,8 @@ const ContactForm = () => {
                 setFactoryAddress(footer.FactoryAddress || "");
                 setSalesAddress(footer.SalesAddress || "");
                 setAddresslink(footer.addresslink || "");
+                setemail2(footer.email2 || "");
+                setEmail1(footer.email || "");
                 setLocation(footer.location || DEFAULT_MAP_URL);
             } catch (error) {
                 console.error('Error fetching footer:', error);
@@ -387,8 +391,9 @@ const ContactForm = () => {
                         </div>
                         <h3 className="text-xl font-bold text-gray-800 text-center">Email Address</h3>
                     </div>
+                    <p className="text-gray-700 text-center">{email1 || 'N/A'}</p>
                     <p className="text-gray-700 text-center">
-                        {openingHours || 'N/A'}
+                        {email2 || 'N/A'}
                     </p>
                 </div>
             </div>
