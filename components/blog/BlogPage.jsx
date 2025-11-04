@@ -60,7 +60,7 @@ export default async function BlogPage() {
                   <Link href={`/${post?.slug || ''}`}>
                     <div className="relative  w-full h-48">
                       <Image
-                        src={post?.photo?.[0] ? `/api/image/download/${post.photo[0]}` : '/placeholder-image.jpg'}
+                        src={post?.photo?.[0] ? `https://admin.apurvachemicals.com/api/image/download/${post.photo[0]}` : '/placeholder-image.jpg'}
                         alt={post?.alt?.[0] || post?.title || 'Blog post image'}
                         title={post?.imgTitle?.[0] || post?.title || ''}
                         width={378}
