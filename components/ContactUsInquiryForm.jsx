@@ -74,7 +74,7 @@ function ContactUsInquiryForm({ onClose }) {
 
         try {
             // First API call
-            await axios.post('https://admin.apurvachemicals.com/api/inquiries/createInquiry', {
+            await axios.post('/api/inquiries/createInquiry', {
                 name,
                 email,
                 phone,

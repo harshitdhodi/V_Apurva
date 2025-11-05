@@ -260,7 +260,7 @@ const ContactForm = () => {
         setIsSubmitting(true);
 
         try {
-            await axios.post('https://admin.apurvachemicals.com/api/inquiries/createInquiry', {
+            await axios.post('/api/inquiries/createInquiry', {
                 name: name.trim(),
                 email: email.trim(),
                 phone: phone.trim(),
