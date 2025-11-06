@@ -90,6 +90,7 @@ function InquiryForm({ productName, onClose }) {
                 message,
                 productName,
                 ipaddress: clientIp,
+                path: window.location.href,
                 ...utmParams,
             });
 
@@ -119,7 +120,7 @@ function InquiryForm({ productName, onClose }) {
                     email,
                     phone,
                     message: `Product: ${productName}\n${message}`,
-                    path: window.location.href || "https://leads.rndtechnosoft.com"
+                    path: window.location.href
                 });
 
                 // Track successful submission

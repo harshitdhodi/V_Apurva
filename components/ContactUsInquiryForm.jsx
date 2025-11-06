@@ -16,6 +16,7 @@ const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || '6LcUsy
 function ContactUsInquiryForm({ onClose }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+
     const [phone, setPhone] = useState('');
     const [message, setMessage] = useState('');
     const [captchaValue, setCaptchaValue] = useState(null);
@@ -79,7 +80,8 @@ function ContactUsInquiryForm({ onClose }) {
                 email,
                 phone,
                 message,
-                ipaddress: clientIp,  
+                ipaddress: clientIp,
+                path: window.location.href,
                 ...utmParams,
             });
 
@@ -91,7 +93,7 @@ function ContactUsInquiryForm({ onClose }) {
                 email,
                 phone,
                 message,
-                path: window.location.href || "https://leads.rndtechnosoft.com"
+                path: window.location.href
             });
 
             // Clear form fields

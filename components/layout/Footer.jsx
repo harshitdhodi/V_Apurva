@@ -2,21 +2,19 @@ import Link from "next/link"
 import { MapPin, Phone, Mail, Facebook, Instagram, Youtube, Twitter } from "lucide-react"
 import Image from "next/image"
 import MapClient from "./MapClient"
+import CopyButton from "./CopyButton"
 
 // Server-side data fetching
 async function getFooterData() {
   try {
     const [footerResponse, headerResponse, logoResponse] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/footer/getFooter`, {
-        
         next: { revalidate: 0 },
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/header/getHeader`, {
-        
         next: { revalidate: 0 },
       }),
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/footerwhite`, {
-        
         next: { revalidate: 0 },
       }),
     ])
@@ -144,23 +142,41 @@ export default async function Footer() {
             <h3 className="text-lg font-bold mb-6 text-gray-800 border-b w-fit xl:w-full pb-2">Contact Info</h3>
             <ul className="space-y-2">
               <li>
-                <a href={`tel:${footerData.phoneNo}`} className="hover:text-[#bf2e2e] flex items-center">
-                  <Phone className="mr-2 h-4 w-4" />
-                  <span>{footerData.phoneNo || "N/A"}</span>
-                </a>
+                <div className="flex items-center  group">
+                  <a href={`tel:${footerData.phoneNo}`} className="hover:text-[#bf2e2e] flex items-center flex-1">
+                    <Phone className="mr-2 h-4 w-4" />
+                    <span>{footerData.phoneNo || "N/A"}</span>
+                  </a>
+                  <CopyButton 
+                    textToCopy={footerData.phoneNo || ''} 
+                    ariaLabel="Copy phone number" 
+                  />
+                </div>
               </li>
               <li>
-                <a href={`mailto:${footerData.email}`} className="hover:text-[#bf2e2e] flex items-center">
-                  <Mail className="mr-2 h-4 w-4" />
-                  <span>{footerData.email || "N/A"}</span>
-                </a>
+                <div className="flex items-center group">
+                  <a href={`mailto:${footerData.email}`} className="hover:text-[#bf2e2e] flex items-center flex-1">
+                    <Mail className="mr-2 h-4 w-4" />
+                    <span>{footerData.email || "N/A"}</span>
+                  </a>
+                  <CopyButton 
+                    textToCopy={footerData.email || ''} 
+                    ariaLabel="Copy email" 
+                  />
+                </div>
               </li>
               {footerData.email2 && (
                 <li>
-                  <a href={`mailto:${footerData.email2}`} className="hover:text-[#bf2e2e] flex items-center">
-                    <Mail className="mr-2 h-4 w-4" />
-                    <span>{footerData.email2}</span>
-                  </a>
+                  <div className="flex items-center group">
+                    <a href={`mailto:${footerData.email2}`} className="hover:text-[#bf2e2e] flex items-center flex-1">
+                      <Mail className="mr-2 h-4 w-4" />
+                      <span>{footerData.email2}</span>
+                    </a>
+                    <CopyButton 
+                      textToCopy={footerData.email2} 
+                      ariaLabel="Copy secondary email" 
+                    />
+                  </div>
                 </li>
               )}
             </ul>

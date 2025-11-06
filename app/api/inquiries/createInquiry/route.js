@@ -12,6 +12,7 @@ export async function POST(req) {
       email: data.email,
       phone: data.phone,
       message: data.message,
+      path: data.path,
       ipaddress: data.ipaddress,
       utm_source: data.utm_source,
       utm_medium: data.utm_medium,
