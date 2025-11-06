@@ -137,7 +137,7 @@ export default function Footer() {
               {whitelogo ? (
                 <div className="relative w-1/2 md:w-[10cm] h-16">
                   <Image
-                    src={`/api/logo/download/${whitelogo.photo}`}
+                    src={`https://admin.apurvachemicals.com/api/logo/download/${whitelogo.photo}`}
                     alt={whitelogo.alt || "Logo"}
                     title={whitelogo.imgTitle || "Company Logo"}
                     width={250}
@@ -203,7 +203,7 @@ export default function Footer() {
                 </div>
                 <div className="pl-11">
                   <address className="not-italic text-gray-700 leading-relaxed">
-                    <p className="font-medium">{footerData.CorporateAddress}</p>
+                    <p className="font-medium">{footerData.CorporateAddress|| "Plot No 3, Vibrant Business Park, Beside Hp Petrol Pump, N H 8, Vapi - 396195"} </p>
                   </address>
                 </div>
               </div>
@@ -218,7 +218,7 @@ export default function Footer() {
                 </div>
                 <div className="pl-11">
                   <address className="not-italic text-gray-700 leading-relaxed">
-                    <p className="font-medium">{footerData.SalesAddress}</p>
+                    <p className="font-medium">{footerData.SalesAddress || "Apurva Chemicals Private Limited 1514, 15th Floor, Chandak Unicorn, Dattaji Salvi Marg, Office Veera Desai Road, Andheri West, Mumbai - 400 053"}</p>
                   </address>
                 </div>
               </div>
@@ -233,7 +233,7 @@ export default function Footer() {
                 </div>
                 <div className="pl-11">
                   <p className="text-gray-700 leading-relaxed">
-                    {footerData.FactoryAddress || "Company Address"}
+                    {footerData.FactoryAddress || "Plot No. 2806, 2807/1, 3rd Phase G.I.D.C, Vapi, Gujarat- 396195, India"}
                   </p>
                 </div>
               </div>
