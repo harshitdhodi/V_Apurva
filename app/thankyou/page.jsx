@@ -1,10 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import img from '@/public/thank-you.webp';
+import { useClickTracking } from '@/lib/useClickTracking';
+
 const ThankYouPage = () => {
+
+    const { trackEvent } = useClickTracking();
+
+    // Track page view on component mount
+    useEffect(() => {
+        trackEvent('page_view', {
+            page: '/thank-you',
+            metadata: {
+                section: 'thankyou',
+                action: 'page_loaded'
+            }
+        });
+    }, [trackEvent]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -24,6 +39,14 @@ const ThankYouPage = () => {
                 </p>
                 <Link
                     href="/"
+                    onClick={() => trackEvent('button_click', {
+                        buttonName: 'return_to_homepage',
+                        page: '/thank-you',
+                        metadata: {
+                            section: 'thankyou',
+                            action: 'navigate_home'
+                        }
+                    })}
                     className="bg-[#bf2e2e] text-white cursor-pointer font-semibold py-2 px-4 rounded hover:bg-[#bf2e2e] transition duration-300"
                 >
                     Return to Homepage
