@@ -69,8 +69,7 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
         console.log('Client IP:', clientIP);
 
         console.log('Calling incrementBlogVisits API...');
-        const response = await fetch(
-          `${NEXT_PUBLIC_ADMIN_API_URL}/api/news/incrementBlogVisits?id=${blogData._id}&clientIP=${clientIP}`,
+        const response = await fetch(`/api/news/incrementBlogVisits?id=${blogData._id}&clientIP=${clientIP}`,
           { method: 'PUT' }
         );
         const result = await response.json();
