@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import img from '@/public/thank-you.webp';
+import img from '@/public/thankyou.png';
 import { useClickTracking } from '@/lib/useClickTracking';
 
 const ThankYouPage = () => {
@@ -22,19 +22,19 @@ const ThankYouPage = () => {
     }, [trackEvent]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg text-center">
+        <div className="min-h-screen  flex items-start mt-12 justify-center ">
+            <div className="bg-white  rounded-lg   max-w-2xl text-center">
                 <div className="mb-4">
                     <Image
                         src={img}
                         alt="Thank You"
-                        width={500}  // specify width
+                        width={300}  // specify width
                         height={300} // specify height
-                        className="mx-auto  w-auto mb-4"
+                        className="mx-auto object-contain  w-auto mb-4 "
                         priority
                     />
                 </div>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 font-semibold mb-6">
                     Your message has been successfully received. We appreciate your interest and will get back to you shortly.
                 </p>
                 <Link
