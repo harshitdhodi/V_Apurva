@@ -14,7 +14,7 @@ export default function Footer() {
   const [whitelogo, setWhitelogo] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const currentYear = new Date().getFullYear()
-  
+
   // Click tracking hook
   const { trackEvent } = useClickTracking()
 
@@ -23,13 +23,13 @@ export default function Footer() {
     async function fetchData() {
       try {
         const [footerResponse, headerResponse, logoResponse] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/footer/getFooter`, {
+          fetch(`/api/footer/getFooter`, {
             cache: 'no-store',
           }),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/header/getHeader`, {
+          fetch(`/api/header/getHeader`, {
             cache: 'no-store',
           }),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/footerwhite`, {
+          fetch(`/api/logo/footerwhite`, {
             cache: 'no-store',
           }),
         ])
@@ -37,7 +37,7 @@ export default function Footer() {
         const footerData = footerResponse.ok ? await footerResponse.json() : {}
         const headerData = headerResponse.ok ? await headerResponse.json() : {}
         const logoData = logoResponse.ok ? await logoResponse.json() : null
-
+        console.log("footerData", footerData)
         setFooterData(footerData)
         setHeaderData(headerData)
         setWhitelogo(logoData)
@@ -137,7 +137,7 @@ export default function Footer() {
               {whitelogo ? (
                 <div className="relative w-1/2 md:w-[10cm] h-16">
                   <Image
-                    src={`https://admin.apurvachemicals.com/api/logo/download/${whitelogo.photo}`}
+                    src={`/api/logo/download/${whitelogo.photo}`}
                     alt={whitelogo.alt || "Logo"}
                     title={whitelogo.imgTitle || "Company Logo"}
                     width={250}
@@ -160,8 +160,8 @@ export default function Footer() {
             <h5 className="text-lg font-bold mb-6 text-gray-800 border-b w-fit  xl:w-full pb-2">Useful Links</h5>
             <ul className="space-y-2">
               <li>
-                <Link 
-                  href="/about-us" 
+                <Link
+                  href="/about-us"
                   className="hover:text-[#bf2e2e]"
                   onClick={() => handleLinkClick('about_us', '/about-us')}
                 >
@@ -169,8 +169,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/blogs" 
+                <Link
+                  href="/blogs"
                   className="hover:text-[#bf2e2e]"
                   onClick={() => handleLinkClick('blogs', '/blogs')}
                 >
@@ -178,8 +178,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/contact-us" 
+                <Link
+                  href="/contact-us"
                   className="hover:text-[#bf2e2e]"
                   onClick={() => handleLinkClick('contact_us', '/contact-us')}
                 >
@@ -193,7 +193,7 @@ export default function Footer() {
           <div className="col-span-2">
             <h5 className="text-lg font-bold  text-gray-800 border-b w-fit xl:w-full pb-2">Our Offices</h5>
             <div className="">
-               {/* Corporate Office */}
+              {/* Corporate Office */}
               <div className="  py-4 rounded-lg  border border-gray-100">
                 <div className="flex items-center mb-2">
                   <div className=" rounded-full mr-3">
@@ -203,7 +203,7 @@ export default function Footer() {
                 </div>
                 <div className="pl-11">
                   <address className="not-italic text-gray-700 leading-relaxed">
-                    <p className="font-medium">{footerData.CorporateAddress|| "Plot No 3, Vibrant Business Park, Beside Hp Petrol Pump, N H 8, Vapi - 396195"} </p>
+                    <p className="font-medium">{footerData.CorporateAddress} </p>
                   </address>
                 </div>
               </div>
@@ -218,7 +218,7 @@ export default function Footer() {
                 </div>
                 <div className="pl-11">
                   <address className="not-italic text-gray-700 leading-relaxed">
-                    <p className="font-medium">{footerData.SalesAddress || "Apurva Chemicals Private Limited 1514, 15th Floor, Chandak Unicorn, Dattaji Salvi Marg, Office Veera Desai Road, Andheri West, Mumbai - 400 053"}</p>
+                    <p className="font-medium">{footerData.SalesAddress}</p>
                   </address>
                 </div>
               </div>
@@ -233,7 +233,7 @@ export default function Footer() {
                 </div>
                 <div className="pl-11">
                   <p className="text-gray-700 leading-relaxed">
-                    {footerData.FactoryAddress || "Plot No. 2806, 2807/1, 3rd Phase G.I.D.C, Vapi, Gujarat- 396195, India"}
+                    {footerData.FactoryAddress || "Company Address"}
                   </p>
                 </div>
               </div>
@@ -243,78 +243,78 @@ export default function Footer() {
 
           {/* Location Map */}
           <div className="col-span-2">
-          <div className="">
-            <h3 className="text-lg font-bold mb-6 text-gray-800 border-b w-fit xl:w-full pb-2">Contact Info</h3>
-            <ul className="space-y-2">
-              <li>
-                <div className="flex items-center  group">
-                  <a 
-                    href={`tel:${footerData.phoneNo}`} 
-                    className="hover:text-[#bf2e2e] flex items-center flex-1"
-                    onClick={() => handleContactClick('phone', footerData.phoneNo)}
-                  >
-                    <Phone className="mr-2 h-4 w-4" />
-                    <span>{footerData.phoneNo || "N/A"}</span>
-                  </a>
-                  <CopyButton 
-                    textToCopy={footerData.phoneNo || ''} 
-                    ariaLabel="Copy phone number"
-                    onCopy={() => handleCopyClick('phone', footerData.phoneNo)}
-                  />
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center group">
-                  <a 
-                    href={`mailto:${footerData.email}`} 
-                    className="hover:text-[#bf2e2e] flex items-center flex-1"
-                    onClick={() => handleContactClick('email', footerData.email)}
-                  >
-                    <Mail className="mr-2 h-4 w-4" />
-                    <span>{footerData.email || "N/A"}</span>
-                  </a>
-                  <CopyButton 
-                    textToCopy={footerData.email || ''} 
-                    ariaLabel="Copy email"
-                    onCopy={() => handleCopyClick('email', footerData.email)}
-                  />
-                </div>
-              </li>
-              {footerData.email2 && (
+            <div className="">
+              <h3 className="text-lg font-bold mb-6 text-gray-800 border-b w-fit xl:w-full pb-2">Contact Info</h3>
+              <ul className="space-y-2">
                 <li>
-                  <div className="flex items-center group">
-                    <a 
-                      href={`mailto:${footerData.email2}`} 
+                  <div className="flex items-center  group">
+                    <a
+                      href={`tel:${footerData.phoneNo}`}
                       className="hover:text-[#bf2e2e] flex items-center flex-1"
-                      onClick={() => handleContactClick('email2', footerData.email2)}
+                      onClick={() => handleContactClick('phone', footerData.phoneNo)}
                     >
-                      <Mail className="mr-2 h-4 w-4" />
-                      <span>{footerData.email2}</span>
+                      <Phone className="mr-2 h-4 w-4" />
+                      <span>{footerData.phoneNo || "N/A"}</span>
                     </a>
-                    <CopyButton 
-                      textToCopy={footerData.email2} 
-                      ariaLabel="Copy secondary email"
-                      onCopy={() => handleCopyClick('email2', footerData.email2)}
+                    <CopyButton
+                      textToCopy={footerData.phoneNo || ''}
+                      ariaLabel="Copy phone number"
+                      onCopy={() => handleCopyClick('phone', footerData.phoneNo)}
                     />
                   </div>
                 </li>
-              )}
-            </ul>
-          </div>
+                <li>
+                  <div className="flex items-center group">
+                    <a
+                      href={`mailto:${footerData.email}`}
+                      className="hover:text-[#bf2e2e] flex items-center flex-1"
+                      onClick={() => handleContactClick('email', footerData.email)}
+                    >
+                      <Mail className="mr-2 h-4 w-4" />
+                      <span>{footerData.email || "N/A"}</span>
+                    </a>
+                    <CopyButton
+                      textToCopy={footerData.email || ''}
+                      ariaLabel="Copy email"
+                      onCopy={() => handleCopyClick('email', footerData.email)}
+                    />
+                  </div>
+                </li>
+                {footerData.email2 && (
+                  <li>
+                    <div className="flex items-center group">
+                      <a
+                        href={`mailto:${footerData.email2}`}
+                        className="hover:text-[#bf2e2e] flex items-center flex-1"
+                        onClick={() => handleContactClick('email2', footerData.email2)}
+                      >
+                        <Mail className="mr-2 h-4 w-4" />
+                        <span>{footerData.email2}</span>
+                      </a>
+                      <CopyButton
+                        textToCopy={footerData.email2}
+                        ariaLabel="Copy secondary email"
+                        onCopy={() => handleCopyClick('email2', footerData.email2)}
+                      />
+                    </div>
+                  </li>
+                )}
+              </ul>
+            </div>
             <h5 className="text-lg font-bold mb-6 text-gray-800 border-b w-fit xl:w-full mt-5 pb-2">Location</h5>
             <div className="aspect-video">
               <MapClient location={footerData.location} />
             </div>
             <div className="flex justify-between items-center space-x-4 float-end max-w-5xl text-gray-500 mt-6 text-sm space-y-2">
-              <Link 
-                href="/privacy-policy" 
+              <Link
+                href="/privacy-policy"
                 className="hover:text-gray-700 pt-1 sm:pt-0"
                 onClick={() => handleLinkClick('privacy_policy', '/privacy-policy')}
               >
                 Privacy Policy
               </Link>
-              <Link 
-                href="/terms-and-conditions" 
+              <Link
+                href="/terms-and-conditions"
                 className="hover:text-gray-700"
                 onClick={() => handleLinkClick('terms_conditions', '/terms-and-conditions')}
               >
@@ -324,13 +324,13 @@ export default function Footer() {
           </div>
         </div>
 
-        
+
 
         {/* Copyright */}
         <div className="text-gray-500 font-semibold mt-8 text-center sm:pt-10">
           <p>
             Copyright {currentYear}{" "}
-            <Link 
+            <Link
               href="/"
               onClick={handleLogoClick}
             >
