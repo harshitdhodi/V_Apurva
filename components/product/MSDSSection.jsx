@@ -94,9 +94,9 @@ const MSDSSection = ({ msds, specs, name }) => {
 
   return (
     <div className="mt-12 bg-gradient-to-r from-gray-100 to-gray-100 p-5 shadow-md">
-      <h2 className="text-xl font-semibold mb-6 text-black border-b border-red-600 pb-3">
+      <p className="text-xl font-semibold mb-6 text-black border-b border-red-600 pb-3">
         {name} MSDS (Material Safety Data Sheet) or SDS, COA and Specs
-      </h2>
+      </p>
       <div className="flex flex-wrap gap-4 mb-3">
        
         <button 
