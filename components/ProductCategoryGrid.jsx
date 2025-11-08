@@ -148,37 +148,48 @@ function ProductCategoryGrid({ initialData, slug }) {
   const getPartialContent = (htmlContent = '') => {
     if (!htmlContent) return '';
     
-    // Create a temporary element to extract text content properly
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlContent;
-    const text = tempDiv.textContent || tempDiv.innerText || '';
+    // Check if we're in a browser environment
+    if (typeof document === 'undefined') return htmlContent.substring(0, 200) + '...';
+    
+    try {
+      // Create a temporary element to extract text content properly
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlContent;
+      const text = tempDiv.textContent || tempDiv.innerText || '';
 
-    // If the content is short enough, return the full HTML
-    if (text.length <= 200) {
-      return htmlContent;
+      // If the content is short enough, return the full HTML
+      if (text.length <= 200) {
+        return htmlContent;
+      }
+
+      // Otherwise, find a good breaking point and add a "Read more" link
+      const words = text.split(' ');
+      let preview = '';
+      let charCount = 0;
+      
+      for (const word of words) {
+        if (charCount + word.length > 200) break;
+        preview += (preview ? ' ' : '') + word;
+        charCount += word.length + 1;
+      }
+      
+      // Find the last space or punctuation to make a clean break
+      const lastSpace = Math.max(
+        preview.lastIndexOf(' '),
+        preview.lastIndexOf('.'),
+        preview.lastIndexOf(',')
+      );
+      
+      if (lastSpace > 0) {
+        preview = preview.substring(0, lastSpace + 1);
+      }
+      
+      return `${preview}...`;
+    } catch (error) {
+      console.error('Error processing HTML content:', error);
+      return htmlContent.substring(0, 200) + '...';
     }
-
-    // Show first 25% of the content
-    const cutoffLength = Math.floor(text.length * 0.25);
-    const truncatedText = text.slice(0, cutoffLength);
-
-    // Try to find a good breaking point in the HTML
-    const htmlLength = htmlContent.length;
-    const ratio = truncatedText.length / text.length;
-    const approximateHtmlCutoff = Math.floor(htmlLength * ratio);
-
-    // Find the last complete tag before the cutoff
-    let cutoffPoint = approximateHtmlCutoff;
-    while (cutoffPoint > 0 && htmlContent[cutoffPoint] !== '>') {
-      cutoffPoint--;
-    }
-
-    if (cutoffPoint > 0) {
-      return htmlContent.substring(0, cutoffPoint + 1) + '...';
-    }
-
-    return truncatedText + '...';
-  };
+  }
 
   const handleReadMore = () => {
     trackEvent('button_click', {

@@ -14,30 +14,49 @@ async function fetchSlugs() {
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
-    if (!response.ok) throw new Error('Failed to fetch slugs');
+
+    if (!response.ok) {
+      console.error(`Slugs API error: ${response.status} ${response.statusText}`);
+      return null;
+    }
+
     const data = await response.json();
     return data;
   } catch (err) {
     console.error('Error fetching slugs:', err);
-    throw err;
+    return null; // Don't throw — let caller handle
   }
 }
 
 async function determinePageType(slug) {
   try {
-    const { data } = await fetchSlugs();
-    const { productSlugs, productCategorySlugs, newsSlugs, newsCategorySlugs } = data;
+    const result = await fetchSlugs();
+    const data = result?.data || result; // Handle both { data } and direct object
+
+    if (!data) {
+      console.warn('No data from fetchSlugs');
+      return '404';
+    }
+
+    const { 
+      productSlugs = [], 
+      productCategorySlugs = [], 
+      newsSlugs = [], 
+      newsCategorySlugs = [] 
+    } = data;
+
     const slugString = Array.isArray(slug) ? slug.join('/') : slug;
     const validNewsCategorySlugs = newsCategorySlugs.filter(Boolean);
-    
+
     if (productSlugs.includes(slugString)) return 'product';
     if (productCategorySlugs.includes(slugString)) return 'product-category';
     if (newsSlugs.includes(slugString)) return 'single-blog';
     if (validNewsCategorySlugs.includes(slugString)) return 'blog';
+
     return '404';
   } catch (err) {
     console.error('Error determining page type:', err);
-    return 'error';
+    return '404'; // Return 404 instead of 'error' to avoid custom error UI
   }
 }
 
@@ -371,12 +390,17 @@ export async function generateMetadata({ params }) {
 export default async function Page(props) {
   const params = await props.params;
   const slug = params?.slug?.join('/') || '';
-  
+
   if (!slug) {
     notFound();
   }
-  
+
   const pageType = await determinePageType(slug);
+
+  // If we can't determine type → 404
+  if (pageType === '404' || !pageType) {
+    notFound();
+  }
   
   // Handle error state
   if (pageType === 'error') {
@@ -389,11 +413,7 @@ export default async function Page(props) {
       </div>
     );
   }
-  
-  // Handle 404
-  if (pageType === '404') {
-    notFound();
-  }
+
   
   // Render the appropriate component based on page type
   switch (pageType) {

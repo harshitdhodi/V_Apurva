@@ -45,14 +45,22 @@ console.log("product",initialProduct)
     return `${product?.productData?.title || 'Product'} - High quality dye intermediate product`;
   };
 
-  const getPartialContent = (htmlContent = '') => {
-    if (!htmlContent) return '';
-    const contentLength = htmlContent.length;
-    const partialLength = Math.floor(contentLength * 0.3);
-    const partialContent = htmlContent.substring(0, partialLength);
-    const lastTagEnd = partialContent.lastIndexOf('>');
-    if (lastTagEnd === -1) return partialContent + '...';
-    return partialContent.substring(0, lastTagEnd + 1) + '...';
+  const getPartialContent = (htmlContent = '', maxLength = 300) => {
+    if (!htmlContent) return { __html: '' };
+
+    // Strip HTML for length check, works on server and client
+    const plainText = htmlContent.replace(/<[^>]*>?/gm, '');
+
+    if (plainText.length <= maxLength) {
+      return { __html: htmlContent };
+    }
+
+    // Find a good place to break the string
+    const truncatedText = plainText.substring(0, maxLength);
+    const lastSpace = truncatedText.lastIndexOf(' ');
+    const finalPreview = lastSpace > 0 ? truncatedText.substring(0, lastSpace) : truncatedText;
+
+    return { __html: `${finalPreview}...` };
   };
 
   // Format image URLs before passing to ProductImages
@@ -254,11 +262,9 @@ console.log("product",initialProduct)
                       WebkitOverflowScrolling: 'touch',
                       msOverflowStyle: '-ms-autohiding-scrollbar',
                     }}
-                    dangerouslySetInnerHTML={{
-                      __html: showFullContent
-                        ? product.productData.details
-                        : getPartialContent(product.productData.details)
-                    }}
+                    dangerouslySetInnerHTML={showFullContent
+                        ? { __html: product.productData.details }
+                        : getPartialContent(product.productData.details, 300)}
                   />
                   {product.productData.details.length > 300 && (
                     <button
