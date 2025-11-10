@@ -4,12 +4,12 @@ import React, { useEffect } from 'react';
 const Chatbot = () => {
   useEffect(() => {
     // Tawk.to chatbot script
-    var Tawk_API = Tawk_API || {};
-    var Tawk_LoadStart = new Date();
+    window.Tawk_API = window.Tawk_API || {};
+    window.Tawk_LoadStart = new Date();
 
     const script = document.createElement("script");
     script.async = true;
-    script.src = "https://embed.tawk.to/6911a2edd1b5f51958931be1/1j9me8s7i";
+    script.src = "https://embed.tawk.to/6911a8861b866219575e58de/1j9mfkjh1";
     script.charset = "UTF-8";
     script.setAttribute("crossorigin", "*");
 
@@ -30,9 +30,9 @@ const Chatbot = () => {
     document.head.appendChild(style);
 
     // Optional Tawk.to API customization
-    Tawk_API.onLoad = function () {
-      if (Tawk_API.setAttributes) {
-        Tawk_API.setAttributes(
+    window.Tawk_API.onLoad = function () {
+      if (window.Tawk_API.setAttributes) {
+        window.Tawk_API.setAttributes(
           {
             widgetColor: '#ec2127',
           },
