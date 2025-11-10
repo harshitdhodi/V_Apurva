@@ -5,6 +5,7 @@ import ClientLayout from './client-layout';
 import Footer from "@/components/layout/Footer"
 import NavbarServer from "@/components/NavbarServer"
 import { getHomePageMetadata } from '@/lib/getMetadata';
+import Chatbot from '@/components/Chatbot';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -237,6 +238,7 @@ export default async function RootLayout({ children }) {
           {children}
         </ClientLayout>
         <Footer />
+        <Chatbot />
       </body>
     </html>
   );
