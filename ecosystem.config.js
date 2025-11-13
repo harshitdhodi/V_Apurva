@@ -6,8 +6,8 @@ module.exports = {
         args: "run start",
         env: {
           NODE_ENV: "production",
-          NEXT_PUBLIC_API_URL: "http://localhost:3023"
+          NEXT_PUBLIC_API_URL: "http://localhost:3059"
         }
       }
-    ]
+    ]   
   };
