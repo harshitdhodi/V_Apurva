@@ -265,7 +265,28 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
         .slick-initialized .slick-slide {
           display: block;
         }
+ // Update your existing style to this:
+.ql-editor p a,
+.ql-editor a {
+  color: #bf2e2e !important;  /* Force the color with !important */
+  
+  transition: color 0.2s ease;
+}
 
+.ql-editor p a:hover,
+.ql-editor a:hover {
+  color: #bf2e2e !important;  /* Slightly darker red on hover */
+  text-decoration: underline;
+}
+
+  /* Make sure links are visible in dark mode if you have it */
+  @media (prefers-color-scheme: dark) {
+    .ql-editor a {
+      color: #ff6b6b;
+    }
+    .ql-editor a:hover {
+      color: #ff8e8e;
+    }
         .custom-dots {
           bottom: -40px !important;
           text-align: center;
