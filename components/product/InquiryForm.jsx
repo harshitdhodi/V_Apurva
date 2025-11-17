@@ -5,7 +5,7 @@ import { X, User, Mail, Phone, MessageSquare, Send } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useClickTracking } from '@/lib/useClickTracking';
 
-function InquiryForm({ productName, onClose }) {
+function InquiryForm({ productName, onClose, initialName = '', initialEmail = '', initialPhone = '' }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -20,6 +20,10 @@ function InquiryForm({ productName, onClose }) {
     const { trackEvent } = useClickTracking();
 
     useEffect(() => {
+        // initialize fields from props when provided
+        if (initialName) setName(initialName);
+        if (initialEmail) setEmail(initialEmail);
+        if (initialPhone) setPhone(initialPhone);
         // Fetch the client's IP address
         const fetchClientIp = async () => {
             try {

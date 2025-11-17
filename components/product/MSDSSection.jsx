@@ -4,12 +4,17 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Download, FileText, MessageSquare } from "lucide-react";
 import InquiryForm from './InquiryForm';
+import SimpleInquiryModal from './SimpleInquiryModal';
 import { useClickTracking } from '@/lib/useClickTracking';
 import { BsWhatsapp } from 'react-icons/bs';
 
 const MSDSSection = ({ msds, specs, name }) => {
   const [isInquiryFormVisible, setIsInquiryFormVisible] = useState(false);
   const [headerNumber, setHeaderNumber] = useState(null);
+  const [initialName, setInitialName] = useState('');
+  const [initialEmail, setInitialEmail] = useState('');
+  const [initialPhone, setInitialPhone] = useState('');
+  const [isSimpleInquiryVisible, setIsSimpleInquiryVisible] = useState(false);
   const { trackEvent } = useClickTracking();
 
   useEffect(() => {
@@ -17,6 +22,8 @@ const MSDSSection = ({ msds, specs, name }) => {
       try {
         const response = await axios.get('/api/header/getHeader');
         setHeaderNumber(response.data.phoneNo);
+        // prefill phone for inquiry modal if available
+        setInitialPhone(response.data.phoneNo || '');
       } catch (error) {
         console.error("Error fetching header number:", error);
       }
@@ -37,7 +44,30 @@ const MSDSSection = ({ msds, specs, name }) => {
       }
     });
 
-    const baseUrl = type === 'msds' 
+    const file = type === 'msds' ? msds : specs;
+
+    // If file is missing/undefined, open inquiry modal (prefill phone if available)
+    if (!file) {
+      // Track attempted download when file missing
+      trackEvent('button_click', {
+        buttonName: `${type}_download_missing`,
+        metadata: {
+          productName: name,
+          documentType: type.toUpperCase(),
+          page: 'product_details',
+          action: 'open_inquiry_for_missing_document'
+        }
+      });
+
+      setInitialName('');
+      setInitialEmail('');
+      setInitialPhone(headerNumber || '');
+      // Open the simple modal for quick contact
+      setIsSimpleInquiryVisible(true);
+      return;
+    }
+
+    const baseUrl = type === 'msds'
       ? `/api/image/msds/view/${encodeURIComponent(msds)}`
       : `/api/image/spec/view/${encodeURIComponent(specs)}`;
     window.open(baseUrl, '_blank');
@@ -133,9 +163,21 @@ const MSDSSection = ({ msds, specs, name }) => {
       </div>
 
       {isInquiryFormVisible && (
-        <InquiryForm 
-          productName={name} 
-          onClose={handleCloseInquiryForm} 
+        <InquiryForm
+          productName={name}
+          onClose={handleCloseInquiryForm}
+          initialName={initialName}
+          initialEmail={initialEmail}
+          initialPhone={initialPhone}
+        />
+      )}
+
+      {isSimpleInquiryVisible && (
+        <SimpleInquiryModal
+          productName={name}
+          initialPhone={initialPhone}
+          initialEmail={initialEmail}
+          onClose={() => setIsSimpleInquiryVisible(false)}
         />
       )}
     </div>
