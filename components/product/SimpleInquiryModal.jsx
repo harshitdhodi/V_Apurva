@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { X, User, Mail, Phone, Send } from 'lucide-react';
+import { X, User, Mail, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useClickTracking } from '@/lib/useClickTracking';
 
-function SimpleInquiryModal({ productName, initialPhone = '', initialEmail = '', onClose }) {
+function SimpleInquiryModal({ productName, initialPhone = '', initialEmail = '', onClose, docType = '' }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState(initialEmail || '');
   const [phone, setPhone] = useState(initialPhone || '');
@@ -29,13 +29,14 @@ function SimpleInquiryModal({ productName, initialPhone = '', initialEmail = '',
     });
 
     try {
-      const response = await axios.post('/api/productInquiry/createproductinquiries', {
+      const response = await axios.post('/api/msds-req', {
         name,
         email,
         phone,
         subject: `Inquiry about ${productName}`,
         message: '',
         productName,
+        docType,
         path: typeof window !== 'undefined' ? window.location.href : ''
       });
 
@@ -84,7 +85,7 @@ function SimpleInquiryModal({ productName, initialPhone = '', initialEmail = '',
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 text-gray-700 rounded-md"
                 required
               />
             </div>
@@ -100,7 +101,7 @@ function SimpleInquiryModal({ productName, initialPhone = '', initialEmail = '',
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-gray-700 "
                 required
               />
             </div>
@@ -116,8 +117,10 @@ function SimpleInquiryModal({ productName, initialPhone = '', initialEmail = '',
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-gray-700 "
                 required
+                minLength={10}
+                maxLength={10}
               />
             </div>
           </div>
@@ -139,7 +142,7 @@ function SimpleInquiryModal({ productName, initialPhone = '', initialEmail = '',
               disabled={isSubmitting}
               className="flex-1 px-4 py-2 rounded-md bg-[#bf2e2e] text-white"
             >
-              {isSubmitting ? 'Submitting...' : <><Send className="w-4 h-4 mr-2 inline" />Send</>}
+              {isSubmitting ? 'Submitting...' : 'Request'}
             </button>
           </div>
         </form>

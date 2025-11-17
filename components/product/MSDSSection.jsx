@@ -15,6 +15,7 @@ const MSDSSection = ({ msds, specs, name }) => {
   const [initialEmail, setInitialEmail] = useState('');
   const [initialPhone, setInitialPhone] = useState('');
   const [isSimpleInquiryVisible, setIsSimpleInquiryVisible] = useState(false);
+  const [missingDocType, setMissingDocType] = useState('');
   const { trackEvent } = useClickTracking();
 
   useEffect(() => {
@@ -33,12 +34,14 @@ const MSDSSection = ({ msds, specs, name }) => {
   }, []);
 
   const openPdf = (type) => {
+    const resolvedDocType = type === 'msds' ? 'MSDS' : 'Specification';
     // Track PDF download click
     trackEvent('button_click', {
       buttonName: `${type}_download`,
       metadata: {
         productName: name,
         documentType: type.toUpperCase(),
+        docType: type === 'msds' ? 'MSDS' : 'Specification',
         page: 'product_details',
         action: 'document_download'
       }
@@ -54,6 +57,7 @@ const MSDSSection = ({ msds, specs, name }) => {
         metadata: {
           productName: name,
           documentType: type.toUpperCase(),
+          docType: resolvedDocType,
           page: 'product_details',
           action: 'open_inquiry_for_missing_document'
         }
@@ -62,6 +66,7 @@ const MSDSSection = ({ msds, specs, name }) => {
       setInitialName('');
       setInitialEmail('');
       setInitialPhone(headerNumber || '');
+      setMissingDocType(resolvedDocType);
       // Open the simple modal for quick contact
       setIsSimpleInquiryVisible(true);
       return;
@@ -177,6 +182,7 @@ const MSDSSection = ({ msds, specs, name }) => {
           productName={name}
           initialPhone={initialPhone}
           initialEmail={initialEmail}
+          docType={missingDocType}
           onClose={() => setIsSimpleInquiryVisible(false)}
         />
       )}
