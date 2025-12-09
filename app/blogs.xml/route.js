@@ -1,8 +1,8 @@
 import { getServerSideSitemap } from 'next-sitemap';
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:3003/";
-const BLOG_API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/news/getActiveNews`;
+const BASE_URL = "http://localhost:3023/";
+const BLOG_API_URL = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023'}/api/news/getActiveNews`;
 
 async function fetchBlogs() {
   try {

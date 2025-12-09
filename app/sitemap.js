@@ -2,7 +2,7 @@
 import { MetadataRoute } from 'next'
 import axios from 'axios'
 
-const BASE_URL = "http://localhost:3003/";
+const BASE_URL = "http://localhost:3023/";
 const BLOG_API_URL = `${BASE_URL}api/news/getActiveNews`;
 const CHEMICAL_API_URL = `${BASE_URL}api/product/getProductsByCategory?categorySlug=dye-intermediate`;
 

@@ -37,7 +37,7 @@ export async function generateMetadata() {
 
 // --- Data fetching functions (copied from components) ---
 async function getBanners() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/banner/getBannersBySectionAboutus`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
@@ -50,7 +50,7 @@ async function getBanners() {
 }
 
 async function getAboutUsData() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/aboutus/active`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
@@ -62,7 +62,7 @@ async function getAboutUsData() {
 }
 
 async function getHeadings() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/pageHeading/heading?pageType=ourpeople`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch headings")
@@ -73,7 +73,7 @@ async function getHeadings() {
   }
 }
 async function getOurPeopleData() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/ourpeople/getOurPeople`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch our people data")
@@ -86,7 +86,7 @@ async function getOurPeopleData() {
 }
 
 async function getPackagingDetail() {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/packagingdetail/getPackagingDetail`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch packaging detail")
@@ -97,7 +97,7 @@ async function getPackagingDetail() {
   }
 }
 async function getPackagingPageHeadings() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/pageHeading/heading?pageType=packagingType`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch page headings")
@@ -108,7 +108,7 @@ async function getPackagingPageHeadings() {
   }
 }
 async function getPackagingTypes() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/packaging-types`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch packaging types")
@@ -121,7 +121,7 @@ async function getPackagingTypes() {
 }
 
 async function getPartners() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/partners/getActivePartners`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch partners")
@@ -135,7 +135,7 @@ async function getPartners() {
 
 // app/about-us/page.jsx
 async function getMissionData() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/mission/getAllActiveMissions`, { 
       next: { revalidate: 60 },
@@ -157,7 +157,7 @@ async function getMissionData() {
 }
 
 async function getVisionData() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
     const response = await fetch(`${apiUrl}/api/vision/getAllActiveVisions`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch vision data")
