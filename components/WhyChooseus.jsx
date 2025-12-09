@@ -77,14 +77,14 @@ async function fetchWhyChooseUsData() {
           "Cache-Control": "no-cache",
           "Content-Type": "application/json"
         },
-        next: { revalidate: 3600 } // Revalidate every hour
+        next: { revalidate: 60 } // Revalidate every hour
       }),
       fetch(`${baseUrl}/api/whychooseus/getAllWhyChooseUs`, {
         headers: {
           "Cache-Control": "no-cache",
           "Content-Type": "application/json"
         },
-        next: { revalidate: 3600 } // Revalidate every hour
+        next: { revalidate: 60 } // Revalidate every hour
       })
     ]);
 

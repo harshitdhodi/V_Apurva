@@ -37,8 +37,9 @@ export async function generateMetadata() {
 
 // --- Data fetching functions (copied from components) ---
 async function getBanners() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/getBannersBySectionAboutus`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/banner/getBannersBySectionAboutus`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
     const data = await response.json()
     return data.data || []
@@ -49,8 +50,9 @@ async function getBanners() {
 }
 
 async function getAboutUsData() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/aboutus/active`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/aboutus/active`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
     return await response.json()
   } catch (error) {
@@ -60,8 +62,9 @@ async function getAboutUsData() {
 }
 
 async function getHeadings() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pageHeading/heading?pageType=ourpeople`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/pageHeading/heading?pageType=ourpeople`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch headings")
     return await response.json()
   } catch (error) {
@@ -70,8 +73,9 @@ async function getHeadings() {
   }
 }
 async function getOurPeopleData() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ourpeople/getOurPeople`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/ourpeople/getOurPeople`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch our people data")
     const data = await response.json()
     return data.success && data.data.length > 0 ? data.data[0] : null
@@ -82,8 +86,9 @@ async function getOurPeopleData() {
 }
 
 async function getPackagingDetail() {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packagingdetail/getPackagingDetail`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/packagingdetail/getPackagingDetail`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch packaging detail")
     return await response.json()
   } catch (error) {
@@ -92,8 +97,9 @@ async function getPackagingDetail() {
   }
 }
 async function getPackagingPageHeadings() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pageHeading/heading?pageType=packagingType`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/pageHeading/heading?pageType=packagingType`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch page headings")
     return await response.json()
   } catch (error) {
@@ -102,8 +108,9 @@ async function getPackagingPageHeadings() {
   }
 }
 async function getPackagingTypes() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packaging-types`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/packaging-types`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch packaging types")
     const data = await response.json()
     return data.data || []
@@ -114,8 +121,9 @@ async function getPackagingTypes() {
 }
 
 async function getPartners() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/partners/getActivePartners`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/partners/getActivePartners`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch partners")
     const data = await response.json()
     return data.data || []
@@ -125,20 +133,33 @@ async function getPartners() {
   }
 }
 
+// app/about-us/page.jsx
 async function getMissionData() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mission/getAllActiveMissions`, { next: { revalidate: 0 } })
-    if (!response.ok) throw new Error("Failed to fetch mission data")
-    const data = await response.json()
-    return data.data || {}
+    const response = await fetch(`${apiUrl}/api/mission/getAllActiveMissions`, { 
+      next: { revalidate: 60 },
+      // Add timeout and error handling
+      signal: AbortSignal.timeout(5000) // 5 second timeout
+    });
+    
+    if (!response?.ok) {
+      console.warn('Failed to fetch mission data, using fallback');
+      return { video: null, title: '', description: '' }; // Return safe defaults
+    }
+    
+    const data = await response.json();
+    return data.data || { video: null, title: '', description: '' };
   } catch (error) {
-    console.error("Error fetching mission data:", error)
-    return {}
+    console.error('Error fetching mission data:', error);
+    return { video: null, title: '', description: '' }; // Return safe defaults
   }
 }
+
 async function getVisionData() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/vision/getAllActiveVisions`, { next: { revalidate: 0 } })
+    const response = await fetch(`${apiUrl}/api/vision/getAllActiveVisions`, { next: { revalidate: 60 } })
     if (!response.ok) throw new Error("Failed to fetch vision data")
     const data = await response.json()
     return data.data || {}
