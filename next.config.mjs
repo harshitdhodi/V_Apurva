@@ -17,13 +17,13 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3059',
+        port: '3023',
         pathname: '/api/image/**',
       },
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '3059',
+        port: '3023',
         pathname: '/api/logo/**',
       }
     ],
@@ -153,14 +153,14 @@ const nextConfig = {
         source: '/api/:path*',
         destination: process.env.NODE_ENV === 'production' 
           ? 'https://www.apurvachemicals.com/api/:path*' 
-          : 'http://localhost:3059/api/:path*',
+          : 'http://localhost:3023/api/:path*',
       },
     ];
   },
   
   // Set the default port for development
   env: {
-    PORT: '3059',
+    PORT: '3023',
   },
 };
 
