@@ -8,7 +8,7 @@ import Simple404Page from '../404/page';
 // Server-side data fetching functions
 async function fetchSlugs() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
     const response = await fetch(`${baseUrl}/api/dynamicSlug/getAllSlugs`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -62,7 +62,7 @@ async function determinePageType(slug) {
 
 async function fetchProductData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
     const response = await fetch(`${baseUrl}/api/product/getDataBySlug?slugs=${slug}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -83,7 +83,7 @@ async function fetchProductData(slug) {
 
 async function fetchRelatedProducts(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
     const response = await fetch(`${baseUrl}/api/product/getRelatedProducts?slugs=${slug}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -104,7 +104,7 @@ async function fetchRelatedProducts(slug) {
 
 async function fetchCategoryData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
     const response = await fetch(`${baseUrl}/api/product/getProductsByCategory?categorySlug=${slug}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -128,7 +128,7 @@ async function fetchCategoryData(slug) {
 
 async function fetchBlogData(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
     const response = await fetch(`${baseUrl}/api/news/getDataBySlug?slugs=${slug}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -168,7 +168,7 @@ async function fetchBlogData(slug) {
 
 async function fetchLatestNews() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
     const response = await fetch(`${baseUrl}/api/news/getLatestActiveNews`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },

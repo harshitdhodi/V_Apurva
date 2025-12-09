@@ -6,7 +6,7 @@ export async function GET() {
   try {
     // Make sure to use the correct API endpoint
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023'}/api/product/getProductsByCategory?categorySlug=dye-intermediate`,
+      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/product/getProductsByCategory?categorySlug=dye-intermediate`,
       {
         headers: {
           'Content-Type': 'application/json',
