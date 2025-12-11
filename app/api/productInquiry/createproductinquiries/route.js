@@ -98,7 +98,7 @@ export async function POST(request) {
 
     // Create and save the inquiry
     const newInquiry = new ProductInquiry(body);
-    await newInquiry.save();
+  
 
     // Prepare and send email
     const mailOptions = {
@@ -110,7 +110,8 @@ export async function POST(request) {
     };
 
     await transporter.sendMail(mailOptions);
-
+    console.log('Inquiry email sent successfully');
+  await newInquiry.save();
     return NextResponse.json(
       { success: true, data: newInquiry },
       { status: 201 }

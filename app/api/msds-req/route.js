@@ -211,7 +211,7 @@ Message: ${message || '—'}
 
     // Prefer admin email from body, then env vars
     const adminEmail = adminEmailFromBody || process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
-    const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+    const smtpHost = process.env.SMTP_HOST || 'smtppro.zoho.in';
     const smtpUser = process.env.EMAIL_USER;
     const smtpPass = process.env.EMAIL_PASS;
 
