@@ -276,7 +276,7 @@ const getPartialContent = (htmlContent = '', percent = 0.4) => {
                   dangerouslySetInnerHTML={
   showFullContent
     ? { __html: product.productData.details }
-    : getPartialContent(product.productData.details, 0.1) // ✅ 40%
+    : getPartialContent(product.productData.details, 0.6) // ✅ 40%
 }
   />
                   {product.productData.details.length > 300 && (
