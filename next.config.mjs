@@ -40,8 +40,7 @@ const nextConfig = {
   
   // Enable React's experimental features
   experimental: {
-    optimizePackageImports: ['lucide-react', 'react-icons'],
-    serverComponents: true,
+    optimizePackageImports: ['lucide-react', 'react-icons']
   },
 
   // Webpack configuration

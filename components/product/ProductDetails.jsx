@@ -35,33 +35,44 @@ console.log("product",initialProduct)
   };
 
   // Generate meta description from product details
-  const getMetaDescription = () => {
-    if (product?.productData?.details) {
-      const plainText = stripHtmlTags(product.productData.details);
-      return plainText.length > 155
-        ? plainText.substring(0, 155) + '...'
-        : plainText;
-    }
-    return `${product?.productData?.title || 'Product'} - High quality dye intermediate product`;
-  };
+const getMetaDescription = () => {
+  if (product?.productData?.details) {
+    const plainText = stripHtmlTags(product.productData.details);
+    const length30Percent = Math.floor(plainText.length * 0.5);
 
-  const getPartialContent = (htmlContent = '', maxLength = 300) => {
-    if (!htmlContent) return { __html: '' };
+    return plainText.substring(0, length30Percent) + '...';
+  }
 
-    // Strip HTML for length check, works on server and client
-    const plainText = htmlContent.replace(/<[^>]*>?/gm, '');
+  return `${product?.productData?.title || 'Product'} - High quality dye intermediate product`;
+};
 
-    if (plainText.length <= maxLength) {
-      return { __html: htmlContent };
-    }
 
-    // Find a good place to break the string
-    const truncatedText = plainText.substring(0, maxLength);
-    const lastSpace = truncatedText.lastIndexOf(' ');
-    const finalPreview = lastSpace > 0 ? truncatedText.substring(0, lastSpace) : truncatedText;
+const getPartialContent = (htmlContent = '', percent = 0.4) => {
+  if (!htmlContent) return { __html: '' };
 
-    return { __html: `${finalPreview}...` };
-  };
+  // Use the length of the HTML string for calculation
+  const maxLength = Math.floor(htmlContent.length * percent);
+
+  if (htmlContent.length <= maxLength) {
+    return { __html: htmlContent };
+  }
+
+  // Truncate the HTML string
+  let truncatedHtml = htmlContent.substring(0, maxLength);
+
+  // Avoid cutting in the middle of an HTML tag.
+  // Find the last closing tag to avoid breaking the structure.
+  const lastOpeningTagIndex = truncatedHtml.lastIndexOf('<');
+  const lastClosingTagIndex = truncatedHtml.lastIndexOf('>');
+
+  // If the last '<' is after the last '>', we're inside a tag.
+  if (lastOpeningTagIndex > lastClosingTagIndex) {
+    truncatedHtml = truncatedHtml.substring(0, lastOpeningTagIndex);
+  }
+
+  return { __html: `${truncatedHtml}...` };
+};
+
 
   // Format image URLs before passing to ProductImages
   const formatImageUrls = (images = []) => {
@@ -232,7 +243,7 @@ console.log("product",initialProduct)
               <h1 className="text-2xl border-b-2 w-fit border-red-700 font-bold text-[#bf2e2e] mb-6">
                 {product?.productData?.title}
               </h1>
-
+              <div dangerouslySetInnerHTML={{ __html: product?.productData?.shortDescription }} className='text-black mb-10'></div>
               {/* Product Details Table */}
               <div className="mb-8">
                 <ProductDetailsTable details={product?.productDetailData || {}} />
@@ -262,10 +273,12 @@ console.log("product",initialProduct)
                       WebkitOverflowScrolling: 'touch',
                       msOverflowStyle: '-ms-autohiding-scrollbar',
                     }}
-                    dangerouslySetInnerHTML={showFullContent
-                        ? { __html: product.productData.details }
-                        : getPartialContent(product.productData.details, 300)}
-                  />
+                  dangerouslySetInnerHTML={
+  showFullContent
+    ? { __html: product.productData.details }
+    : getPartialContent(product.productData.details, 0.6) // ✅ 40%
+}
+  />
                   {product.productData.details.length > 300 && (
                     <button
                       className="text-red-700 mt-2 hover:underline text-sm font-medium"

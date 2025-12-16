@@ -11,7 +11,7 @@ export async function GET() {
         headers: {
           'Content-Type': 'application/json',
         },
-        next: { revalidate: 3600 }, // Revalidate every hour
+        next: { revalidate: 60 }, // Revalidate every hour
       }
     );
 

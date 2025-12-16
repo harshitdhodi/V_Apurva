@@ -4,11 +4,11 @@ import BlogPageComponent from './BlogPage';
 import { getMetadataBySlug } from '../../lib/getMetadata';
 const meta = await getMetadataBySlug('blogs', true)
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 60; // Revalidate every hour
 
 async function getData() {
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3059';
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3023';
   if (!apiUrl) {
     console.error('NEXT_PUBLIC_API_URL is not set');
 

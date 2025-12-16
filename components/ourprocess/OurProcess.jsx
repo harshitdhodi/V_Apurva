@@ -4,7 +4,7 @@ import OurProcessClient from "./OurProcessClient"
 async function getMissionData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mission/getAllActiveMissions`, {
-      next: { revalidate: 0 },
+      next: { revalidate: 60 },
     })
     if (!response.ok) throw new Error("Failed to fetch mission data")
     const data = await response.json()
@@ -18,7 +18,7 @@ async function getMissionData() {
 async function getVisionData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/vision/getAllActiveVisions`, {
-      next: { revalidate: 0 },
+      next: { revalidate: 60 },
     })
     if (!response.ok) throw new Error("Failed to fetch vision data")
     const data = await response.json()

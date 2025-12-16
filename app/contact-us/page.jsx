@@ -6,7 +6,7 @@ import { getMetadataBySlug } from '@/lib/getMetadata';
 // Server-side data fetching functions
 async function fetchBannerData() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3023';
     const url = `https://admin.apurvachemicals.com/api/banner/getBannersBySectionContactus`;
     console.log("Fetching banners from:", url);
     const response = await fetch(url, {
@@ -31,7 +31,7 @@ async function fetchBannerData() {
 
 async function fetchContactData() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3023';
     const headerUrl = `${baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`}/api/header/getPhoneAndHours`;
     const footerUrl = `${baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`}/api/footer/getAddressAndLocation`;
     
