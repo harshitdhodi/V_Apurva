@@ -26,7 +26,7 @@ function FeatureCard({ icon, title, description }) {
           loading="lazy"
         /> */}
         <video className="w-[2.3cm] object-cover transition-all duration-1000"
-          src={`http://admin.apurvachemicals.com/api/image/video/${icon}`}
+          src={`https://admin.apurvachemicals.com/api/image/video/${icon}`}
           autoPlay
           muted
           loop ></video>
