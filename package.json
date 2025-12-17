@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.8.2",
+    "@reduxjs/toolkit": "^2.11.2",
     "@svgr/webpack": "^8.1.0",
     "@tiptap/extension-placeholder": "^2.24.2",
     "@tiptap/react": "^2.24.1",
