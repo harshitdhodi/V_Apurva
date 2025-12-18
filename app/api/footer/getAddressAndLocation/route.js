@@ -5,7 +5,7 @@ export async function GET() {
   try {
     await connectDB();
     
-    const footer = await Footer.findOne({}, 'address addresslink location');
+    const footer = await Footer.findOne();
     
     if (!footer) {
       return new Response(
@@ -27,4 +27,4 @@ export async function GET() {
   }
 }
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Disable caching

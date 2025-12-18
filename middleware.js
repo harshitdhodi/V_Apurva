@@ -5,6 +5,11 @@ import { NextResponse } from 'next/server';
 export function middleware(request) {
   const { pathname } = request.nextUrl;
   
+  // Redirect /terms-and-condition to /terms-and-conditions
+  if (pathname === '/terms-and-condition') {
+    return NextResponse.redirect(new URL('/terms-and-conditions', request.url));
+  }
+  
   // Remove trailing slashes
   if (pathname.endsWith('/') && pathname !== '/') {
     return NextResponse.redirect(new URL(pathname.slice(0, -1), request.url));

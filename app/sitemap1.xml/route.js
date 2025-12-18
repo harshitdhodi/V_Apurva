@@ -12,19 +12,13 @@ export async function GET() {
       priority: 1.0,
     },
     {
-      loc: `${baseUrl}/about`,
+      loc: `${baseUrl}/about-us`,
       lastmod: currentDate,
       changefreq: 'monthly',
       priority: 0.8,
     },
     {
-      loc: `${baseUrl}/products`,
-      lastmod: currentDate,
-      changefreq: 'weekly',
-      priority: 0.9,
-    },
-    {
-      loc: `${baseUrl}/contact`,
+      loc: `${baseUrl}/contact-us`,
       lastmod: currentDate,
       changefreq: 'monthly',
       priority: 0.7,
@@ -46,4 +40,4 @@ export async function GET() {
   return getServerSideSitemap(fields);
 }
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Disable caching

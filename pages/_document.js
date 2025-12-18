@@ -2,7 +2,7 @@ import { Html, Head, Main, NextScript } from 'next/document';
 
 export default function Document() {
   return (
-    <Html suppressHydrationWarning>
+    <Html lang="en" suppressHydrationWarning>
       <Head>
         {/* This script will remove bis_skin_checked attributes before React hydrates */}
         <script
@@ -35,7 +35,7 @@ export default function Document() {
           }}
         />
       </Head>
-      <body>
+      <body suppressHydrationWarning>
         <Main />
         <NextScript />
       </body>

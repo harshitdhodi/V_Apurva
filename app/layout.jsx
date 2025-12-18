@@ -4,41 +4,26 @@ import './globals.css';
 import ClientLayout from './client-layout';
 import Footer from "@/components/layout/Footer"
 import NavbarServer from "@/components/NavbarServer"
+import { getHomePageMetadata } from '@/lib/getMetadata';
+import Chatbot from '@/components/Chatbot';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export async function generateMetadata() {
-  const favicon = await getFaviconPath();
+  const meta = await getHomePageMetadata()  
   return {
-    title: 'Apurva Chemicals',
-    description: 'Apurva Chemicals is a trusted dye intermediate manufacturer. We offer high-purity products, bulk supply options, and consistent quality for global clients.',
+    title: "Loading..." || meta.title,
+    description: meta.description,
     metadataBase: new URL('https://www.apurvachemicals.com'),
     alternates: {
-      canonical: '/',
-    },
-    icons: {
-      icon: favicon || '/favicon.ico',
+      canonical: "https://www.apurvachemicals.com"||meta.canonical,
     },
     other: {
       'http-equiv': 'x-ua-compatible',
       content: 'ie=edge',
     },
-  };
+    ...meta,
 }
-
-async function getFaviconPath() {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/getfavicon`, {
-      next: { revalidate: 3600 },
-    });
-    if (!response.ok) throw new Error("Failed to fetch favicon");
-    const data = await response.json();
-    const filename = data?.photo;
-    return filename ? `/api/logo/download/${filename}` : null; 
-  } catch (error) {
-    console.error("Error fetching favicon:", error);
-    return null;
-  }
 }
 
 // Server-side data fetching functions (same as before)
@@ -46,7 +31,7 @@ async function getHeaderData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/header`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
     })  
     if (!response.ok) throw new Error("Failed to fetch header data")
     return await response.json()
@@ -60,7 +45,7 @@ async function getFooterData() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/footer`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
     })
     if (!response.ok) throw new Error("Failed to fetch footer data")
     return await response.json()
@@ -74,7 +59,7 @@ async function getMenuListings() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/menu/getMenulisting`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
     })
     if (!response.ok) throw new Error("Failed to fetch menu listings")
     const data = await response.json()
@@ -89,7 +74,7 @@ async function getProductCategories() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/product/getCategoryAndPhoto`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
     })
     if (!response.ok) throw new Error("Failed to fetch product categories")
     const data = await response.json()
@@ -104,7 +89,7 @@ async function getColorLogo() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/logo/header-color`, {
       
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
     })
     if (!response.ok) throw new Error("Failed to fetch color logo")
     return await response.json()
@@ -164,8 +149,9 @@ export default async function RootLayout({ children }) {
 
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="preconnect" href="https://www.apurvachemicals.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -173,20 +159,74 @@ export default async function RootLayout({ children }) {
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         <meta name="robots" content="index,follow" />
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-LD63FPNG0X"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <meta name="google-site-verification" content="CPbJU1xhTk_GLLM7xLgP2Zjr-U8tUu-XsGfCFB9g9HA" />
+        {/* Self-hosted GTM script with delayed loading */}
+        <Script id="gtm-script" strategy="lazyOnload">
           {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-LD63FPNG0X');
+            // Create a function to load GTM
+            function loadGTM() {
+              // Create GTM script
+              const gtmScript = document.createElement('script');
+              gtmScript.async = true;
+              gtmScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-LD63FPNG0X';
+              
+              // Add to document
+              document.head.appendChild(gtmScript);
+              
+              // Initialize dataLayer
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-LD63FPNG0X', {
+                'transport_type': 'beacon',
+                'anonymize_ip': true
+              });
+              
+              // Mark as loaded to prevent duplicate loading
+              window.gtmLoaded = true;
+            }
+            
+            // Load GTM after a delay or when the page is fully interactive
+            function handleLoad() {
+              // If GTM is already loaded, do nothing
+              if (window.gtmLoaded) return;
+              
+              // If the page is already interactive, load GTM immediately
+              if (document.readyState === 'interactive' || document.readyState === 'complete') {
+                loadGTM();
+              } else {
+                // Otherwise, wait for the page to be interactive
+                document.addEventListener('readystatechange', function() {
+                  if (document.readyState === 'interactive') {
+                    loadGTM();
+                  }
+                }, { once: true });
+              }
+            }
+            
+            // Start loading GTM after a 2-second delay
+            setTimeout(handleLoad, 2000);
+            
+            // Also load GTM if the user interacts with the page
+            const interactionEvents = ['scroll', 'mousemove', 'keydown', 'touchstart'];
+            const handleInteraction = () => {
+              if (!window.gtmLoaded) {
+                loadGTM();
+                // Remove event listeners after first interaction
+                interactionEvents.forEach(event => {
+                  window.removeEventListener(event, handleInteraction);
+                });
+              }
+            };
+            
+            // Add interaction event listeners
+            interactionEvents.forEach(event => {
+              window.addEventListener(event, handleInteraction, { once: true, passive: true });
+            });
           `}
         </Script>
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <NavbarServer
                 headerData={headerData}
                 footerData={footerData}
@@ -198,6 +238,7 @@ export default async function RootLayout({ children }) {
           {children}
         </ClientLayout>
         <Footer />
+        <Chatbot />
       </body>
     </html>
   );

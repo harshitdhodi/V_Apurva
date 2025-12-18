@@ -5,7 +5,7 @@ import AboutImgClient from "./AboutImgClient"
 async function getBanners() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/banner/getBannersBySectionAboutus`, {
-      next: { revalidate: 1800 },
+      next: { revalidate: 60 },
     })
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
     const data = await response.json()
@@ -26,6 +26,5 @@ export default async function AboutImg() {
       </div>
     )
   }
-
   return <AboutImgClient banners={banners} />
 }

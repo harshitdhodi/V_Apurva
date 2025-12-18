@@ -10,7 +10,7 @@ async function ProductGrid() {
     // Fetch products
     const productResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/product/getActiveProducts`, {
       credentials: "include",
-      cache: "no-store", // or 'force-cache' depending on your needs
+     next: { revalidate: 60 },
     })
 
     if (productResponse.ok) {
@@ -28,7 +28,7 @@ async function ProductGrid() {
       `${process.env.NEXT_PUBLIC_API_URL || ""}/api/pageHeading/heading?pageType=product`,
       {
         credentials: "include",
-        cache: "no-store",
+      next: { revalidate: 10 }
       },
     )
 

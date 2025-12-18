@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { X } from 'lucide-react';
-import img1 from './images/contact-01.svg';
-import img2 from './images/contact-02.svg';
-import img3 from './images/contact-03.svg';
+import { X, AlertCircle } from 'lucide-react';
 
 const ContactForm = () => {
     const [phoneNo, setPhoneNo] = useState("");
-    const [openingHours, setOpeningHours] = useState("");
-    const [address, setAddress] = useState("");
+    const [email2, setemail2] = useState("");
+    const[email1, setEmail1] = useState("");
+    const [CorporateAddress, setCorporateAddress] = useState("");
+    const [FactoryAddress, setFactoryAddress] = useState("");
+    const [SalesAddress, setSalesAddress] = useState("");
     const [addresslink, setAddresslink] = useState("");
     const [location, setLocation] = useState('');
     const [name, setName] = useState('');
@@ -25,10 +25,147 @@ const ContactForm = () => {
     const [isMapVisible, setIsMapVisible] = useState(false);
     const mapRef = useRef(null);
 
-    // Default Google Maps embed URL - replace with your actual location
+    // Validation errors state
+    const [validationErrors, setValidationErrors] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+    });
+
     const DEFAULT_MAP_URL = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.390259169117!2d77.22702231508336!3d28.61275098242474!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce2daa9eb4d0b%3A0x717971125923e5d!2sIndia%20Gate!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin';
 
-    // Fetch client IP and UTM parameters
+    // Validation functions
+    const validateName = (value) => {
+        const trimmedValue = value.trim();
+
+        if (!trimmedValue) {
+            return 'Name is required.';
+        }
+
+        // Check for only alphabets and spaces
+        const nameRegex = /^[a-zA-Z\s]+$/;
+        if (!nameRegex.test(trimmedValue)) {
+            return 'Please enter a valid name using letters only.';
+        }
+
+        if (trimmedValue.length > 50) {
+            return 'Name is too long. Please limit to 50 characters.';
+        }
+
+        if (trimmedValue.length < 2) {
+            return 'Name must be at least 2 characters.';
+        }
+
+        return '';
+    };
+
+    const validateEmail = (value) => {
+        const trimmedValue = value.trim();
+
+        if (!trimmedValue) {
+            return 'Email is required.';
+        }
+
+        // RFC 5322 compliant email regex
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+        if (!emailRegex.test(trimmedValue)) {
+            return 'Please enter a valid email address.';
+        }
+
+        return '';
+    };
+
+    const validatePhone = (value) => {
+        const trimmedValue = value.trim();
+
+        if (!trimmedValue) {
+            return 'Phone number is required.';
+        }
+
+        // Remove common phone number characters for validation
+        const cleanedPhone = trimmedValue.replace(/[\s\-\(\)]/g, '');
+
+        // Check if it contains only digits and optional + at the start
+        const phoneRegex = /^\+?\d+$/;
+        if (!phoneRegex.test(cleanedPhone)) {
+            return 'Phone number must contain digits only.';
+        }
+
+        // Check length (10-13 digits)
+        const digitsOnly = cleanedPhone.replace(/\+/g, '');
+        if (digitsOnly.length < 10 || digitsOnly.length > 13) {
+            return 'Please enter a valid phone number (10-13 digits).';
+        }
+
+        return '';
+    };
+
+    const validateMessage = (value) => {
+        const trimmedValue = value.trim();
+
+        if (!trimmedValue) {
+            return 'Message is required.';
+        }
+
+        if (trimmedValue.length < 10) {
+            return 'Message must be at least 10 characters.';
+        }
+
+        if (trimmedValue.length > 500) {
+            return 'Message is too long. Please limit to 500 characters.';
+        }
+
+        // Check for script tags and potentially malicious code
+        const dangerousPattern = /<script|javascript:|onerror=|onclick=|<iframe/i;
+        if (dangerousPattern.test(trimmedValue)) {
+            return 'Invalid characters detected. Please remove any HTML or script tags.';
+        }
+
+        return '';
+    };
+
+    // Real-time validation handlers
+    const handleNameChange = (e) => {
+        const value = e.target.value;
+        setName(value);
+        setValidationErrors(prev => ({ ...prev, name: '' }));
+    };
+
+    const handleEmailChange = (e) => {
+        const value = e.target.value;
+        setEmail(value);
+        setValidationErrors(prev => ({ ...prev, email: '' }));
+    };
+
+    const handlePhoneChange = (e) => {
+        const value = e.target.value;
+        setPhone(value);
+        setValidationErrors(prev => ({ ...prev, phone: '' }));
+    };
+
+    const handleMessageChange = (e) => {
+        const value = e.target.value;
+        setMessage(value);
+        setValidationErrors(prev => ({ ...prev, message: '' }));
+    };
+
+    // Validate all fields before submission
+    const validateForm = () => {
+        const errors = {
+            name: validateName(name),
+            email: validateEmail(email),
+            phone: validatePhone(phone),
+            message: validateMessage(message)
+        };
+
+        setValidationErrors(errors);
+
+        // Return true if no errors
+        return !Object.values(errors).some(error => error !== '');
+    };
+
     useEffect(() => {
         const fetchClientIp = async () => {
             try {
@@ -41,7 +178,6 @@ const ContactForm = () => {
 
         fetchClientIp();
 
-        // Only run on client side
         if (typeof window !== 'undefined') {
             const params = new URLSearchParams(window.location.search);
             setUtmParams({
@@ -57,14 +193,14 @@ const ContactForm = () => {
         }
     }, []);
 
-    // Fetch header and footer data
     useEffect(() => {
         const fetchHeader = async () => {
             try {
                 const response = await axios.get('/api/header/getPhoneAndHours', { withCredentials: true });
                 const header = response.data;
+                console.log("header",header);
                 setPhoneNo(header.phoneNo || "");
-                setOpeningHours(header.openingHours || "");
+                // setemail2(header.email2 || "");
             } catch (error) {
                 console.error('Error fetching header:', error);
             }
@@ -74,8 +210,13 @@ const ContactForm = () => {
             try {
                 const response = await axios.get('/api/footer/getAddressAndLocation', { withCredentials: true });
                 const footer = response.data;
-                setAddress(footer.address || "");
+                console.log("footer",footer);
+                setCorporateAddress(footer.CorporateAddress || "");
+                setFactoryAddress(footer.FactoryAddress || "");
+                setSalesAddress(footer.SalesAddress || "");
                 setAddresslink(footer.addresslink || "");
+                setemail2(footer.email2 || "");
+                setEmail1(footer.email || "");
                 setLocation(footer.location || DEFAULT_MAP_URL);
             } catch (error) {
                 console.error('Error fetching footer:', error);
@@ -90,17 +231,17 @@ const ContactForm = () => {
         if (!mapRef.current) return;
 
         const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) {
-              setIsMapVisible(true);
-              observer.disconnect();
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsMapVisible(true);
+                    observer.disconnect();
+                }
+            },
+            {
+                root: null,
+                rootMargin: '200px',
+                threshold: 0.1,
             }
-          },
-          {
-            root: null,
-            rootMargin: '200px',
-            threshold: 0.1,
-          }
         );
 
         observer.observe(mapRef.current);
@@ -109,24 +250,44 @@ const ContactForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
         setErrorMessage('');
+
+        // Validate all fields
+        if (!validateForm()) {
+            return;
+        }
+
+        setIsSubmitting(true);
 
         try {
             await axios.post('/api/inquiries/createInquiry', {
-                name,
-                email,
-                phone,
-                message,
+                name: name.trim(),
+                email: email.trim(),
+                phone: phone.trim(),
+                message: message.trim(),
                 ipaddress: clientIp,
                 ...utmParams,
             });
 
-            setModalIsOpen(true);
+            await axios.post('https://leads.rndtechnosoft.com/api/contactform/message', {
+                API_KEY: "791A8DCFBD042D46",
+                API_ID: "1QED",
+                name: name.trim(),
+                email: email.trim(),
+                phone: phone.trim(),
+                message: message.trim(),
+                path: window.location.href || "https://leads.rndtechnosoft.com"
+            });
+
+            // Reset form
             setName('');
             setEmail('');
             setPhone('');
             setMessage('');
+            setValidationErrors({ name: '', email: '', phone: '', message: '' });
+
+            // Redirect to thank you page
+            window.location.href = '/thankyou';
         } catch (error) {
             setErrorMessage(error.response?.data?.error || 'An error occurred. Please try again.');
             console.error('Error submitting form:', error);
@@ -135,46 +296,84 @@ const ContactForm = () => {
         }
     };
 
+    const InputError = ({ error }) => {
+        if (!error) return null;
+        return (
+            <div className="flex items-center gap-2 mt-2 text-red-600 text-sm">
+                <AlertCircle size={16} />
+                <span>{error}</span>
+            </div>
+        );
+    };
+
     return (
         <div className="flex flex-col md:flex-row justify-center lg:items-start items-center p-4 gap-8">
             {/* Left Column - Contact Info */}
             <div className="w-full md:w-1/3 lg:w-[25%] lg:mt-20 flex flex-col gap-8">
-                {/* Address Card */}
-                <div className="border shadow border-[#ECEEF3]  hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
-                    <div className="flex flex-col items-center  mb-4">
-                        <div className="w-16 h-16 flex items-center justify-center mb-4">
-                            <img src={img1.src} alt="Address" className="w-full h-full object-contain" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-800 text-center">Address</h3>
+                <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-8 transition-colors">
+                    <div className="flex items-center justify-center mb-6">
+                        <svg className="w-16 h-16 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                     </div>
-                    <p className="text-gray-700 text-center">
-                        {addresslink ? (
-                            <a 
-                                href={addresslink} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="hover:text-[#bf2e2e] transition-colors"
-                            >
-                                {address}
-                            </a>
-                        ) : (
-                            <span>{address || 'N/A'}</span>
-                        )}
-                    </p>
+                    <h3 className="text-xl font-bold text-gray-800 text-center mb-6">Our Offices</h3>
+                    <div className="space-y-6">
+                        {/* Corporate Office */}
+                        <div className="flex items-start">
+                            <div className="bg-red-50 p-2 rounded-full mr-3 mt-1">
+                                <svg className="w-5 h-5 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-gray-800">Corporate Office</h4>
+                                <p className="text-gray-700 whitespace-pre-line">{CorporateAddress || 'N/A'}</p>
+                            </div>
+                        </div>
+
+                        {/* Factory */}
+                        <div className="flex items-start">
+                            <div className="bg-red-50 p-2 rounded-full mr-3 mt-1">
+                                <svg className="w-5 h-5 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-gray-800">Factory</h4>
+                                <p className="text-gray-700 whitespace-pre-line">{FactoryAddress || 'N/A'}</p>
+                            </div>
+                        </div>
+
+                        {/* Sales Office */}
+                        <div className="flex items-start">
+                            <div className="bg-red-50 p-2 rounded-full mr-3 mt-1">
+                                <svg className="w-5 h-5 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold text-gray-800">Sales Office</h4>
+                                <p className="text-gray-700 whitespace-pre-line">{SalesAddress || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </div>
+                   
                 </div>
 
-                {/* Phone Card */}
                 <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
                     <div className="flex flex-col items-center mb-4">
                         <div className="w-16 h-16 flex items-center justify-center mb-4">
-                            <img src={img2.src} alt="Phone" className="w-full h-full object-contain" />
+                            <svg className="w-12 h-12 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
                         </div>
                         <h3 className="text-xl font-bold text-gray-800 text-center">Phone Number</h3>
                     </div>
                     <p className="text-gray-700 text-center">
                         {phoneNo ? (
-                            <a 
-                                href={`tel:${phoneNo}`} 
+                            <a
+                                href={`tel:${phoneNo}`}
                                 className="hover:text-[#bf2e2e] transition-colors"
                             >
                                 {phoneNo}
@@ -183,16 +382,18 @@ const ContactForm = () => {
                     </p>
                 </div>
 
-                {/* Email Card */}
                 <div className="border shadow border-[#ECEEF3] hover:border-[#bf2e2e] rounded-lg p-12 transition-colors">
                     <div className="flex flex-col items-center mb-4">
                         <div className="w-16 h-16 flex items-center justify-center mb-4">
-                            <img src={img3.src} alt="Email" className="w-full h-full object-contain" />
+                            <svg className="w-12 h-12 text-[#bf2e2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
                         </div>
                         <h3 className="text-xl font-bold text-gray-800 text-center">Email Address</h3>
                     </div>
+                    <p className="text-gray-700 text-center">{email1 || 'N/A'}</p>
                     <p className="text-gray-700 text-center">
-                        {openingHours || 'N/A'}
+                        {email2 || 'N/A'}
                     </p>
                 </div>
             </div>
@@ -200,7 +401,7 @@ const ContactForm = () => {
             {/* Right Column - Contact Form */}
             <div className="w-full md:w-2/3 bg-white p-6 rounded-lg">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h2>
-                
+
                 {errorMessage && (
                     <div className="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
                         <p>{errorMessage}</p>
@@ -208,26 +409,32 @@ const ContactForm = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 text-black md:grid-cols-2 gap-8">
                         <div>
                             <input
                                 type="text"
                                 placeholder="Enter your Name"
-                                className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                                className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${validationErrors.name
+                                        ? 'border-red-500 focus:ring-red-500'
+                                        : 'border-gray-200 hover:border-[#bf2e2e] focus:ring-[#bf2e2e] focus:border-transparent'
+                                    }`}
                                 value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                required
+                                onChange={handleNameChange}
                             />
+                            <InputError error={validationErrors.name} />
                         </div>
                         <div>
                             <input
                                 type="email"
                                 placeholder="Enter your Email address"
-                                className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                                className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${validationErrors.email
+                                        ? 'border-red-500 focus:ring-red-500'
+                                        : 'border-gray-200 hover:border-[#bf2e2e] focus:ring-[#bf2e2e] focus:border-transparent'
+                                    }`}
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
+                                onChange={handleEmailChange}
                             />
+                            <InputError error={validationErrors.email} />
                         </div>
                     </div>
 
@@ -235,37 +442,43 @@ const ContactForm = () => {
                         <input
                             type="tel"
                             placeholder="Enter your Phone number"
-                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                            className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${validationErrors.phone
+                                    ? 'border-red-500 focus:ring-red-500'
+                                    : 'border-gray-200 hover:border-[#bf2e2e] focus:ring-[#bf2e2e] focus:border-transparent'
+                                }`}
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            required
+                            onChange={handlePhoneChange}
+                            minLength={10}
+                            maxLength={10}
                         />
+                        <InputError error={validationErrors.phone} />
                     </div>
 
                     <div>
                         <textarea
                             placeholder="Type your message"
                             rows="5"
-                            className="w-full p-4 border border-gray-100 rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] hover:border-[#bf2e2e] focus:outline-none focus:ring-2 focus:ring-[#bf2e2e] focus:border-transparent placeholder-gray-400"
+                            className={`w-full p-4 border rounded-lg shadow-[0px_16px_24px_rgba(189,196,205,0.13)] focus:outline-none focus:ring-2 transition-colors text-gray-800 placeholder-gray-400 ${validationErrors.message
+                                    ? 'border-red-500 focus:ring-red-500'
+                                    : 'border-gray-200 hover:border-[#bf2e2e] focus:ring-[#bf2e2e] focus:border-transparent'
+                                }`}
                             value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            required
+                            onChange={handleMessageChange}
                         ></textarea>
+                        <InputError error={validationErrors.message} />
                     </div>
 
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`px-8 py-4 bg-[#bf2e2e] text-white font-medium rounded-lg hover:bg-[#a82626] transition-colors ${
-                            isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-                        }`}
+                        className={`px-8 py-4 bg-[#bf2e2e] text-white font-medium rounded-lg hover:bg-[#a82626] transition-colors ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                            }`}
                     >
                         {isSubmitting ? 'Sending...' : 'SEND MESSAGE'}
                     </button>
                 </form>
 
-                {/* Google Maps iframe */}
-                <div 
+                <div
                     ref={mapRef}
                     className="mt-12 rounded-lg overflow-hidden bg-gray-100 min-h-[300px] flex items-center justify-center"
                 >
@@ -289,7 +502,7 @@ const ContactForm = () => {
 
             {/* Success Modal */}
             {modalIsOpen && (
-                <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black bg-opacity-60 backdrop-blur-sm">
+                <div className="fixed inset-0 flex items-center justify-center p-4 z-50 bg-gray-500/30  ">
                     <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative">
                         <button
                             onClick={() => setModalIsOpen(false)}
@@ -298,7 +511,7 @@ const ContactForm = () => {
                         >
                             <X size={24} className="stroke-2" />
                         </button>
-                        
+
                         <div className="text-center">
                             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

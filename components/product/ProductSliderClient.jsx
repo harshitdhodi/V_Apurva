@@ -113,7 +113,7 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle }) {
           >
             <Icon className={`${colors.textColor} ${colors.hoverTextColor} transition duration-300 text-[18px]`} />
           </div>
-          <Link href={`/${slug}`} className={`text-[16px] md:text-[18px] font-bold text-gray-800`}>
+          <Link href={`/${slug}`} className={`text-[16px] md:text-[18px] font-sans font-bold text-gray-800`}>
             {title}
           </Link>
         </div>
@@ -200,7 +200,7 @@ function ProductSlider({ products, heading, subheading }) {
               <p className="text-primary text-[#bf2e2e] md:text-[20px] font-bold uppercase text-center md:text-left">{heading}</p>
             </div>
             <div className="py-4 lg:flex lg:items-center lg:justify-between gap-2">
-              <p className="text-3xl sm:text-4xl text-gray-800 font-daysOne font-semibold text-center md:text-left">{subheading}</p>
+              <p className="text-3xl sm:text-4xl text-gray-800 font-sans font-semibold text-center md:text-left">{subheading}</p>
               <p className="py-3 text-gray-500 font-semibold flex flex-wrap gap-2">
                 <Link href="/dye-intermediate" className="flex items-center gap-2 text-primary font-semibold text-[#bf2e2e]">
                   View all <FaArrowRight />

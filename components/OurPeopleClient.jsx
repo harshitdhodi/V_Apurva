@@ -16,7 +16,7 @@ function OurPeopleClient({ data }) {
   };
 
   return (
-    <div className="bg-white w-full relative -top-20">
+    <div className="bg-white w-full relative -top-20 sm:top-0">
       <div className="flex flex-col-reverse bg-white lg:flex-row w-[90%] justify-center items-center mx-auto py-16 gap-8">
         {/* Content Section - 60% width on large screens */}
         <div className="flex flex-col justify-center text-black lg:w-[65%] w-full">
@@ -36,7 +36,7 @@ function OurPeopleClient({ data }) {
           <div className="lg:w-[35%] w-full flex justify-center">
             <div className="relative w-full max-w-[500px] aspect-square">
               <Image
-                src={imageError ? '/images/placeholder-image.jpg' : `/api/logo/download/${currentPhoto}`}
+                src={imageError ? '/images/placeholder-image.jpg' : `https://admin.apurvachemicals.com/api/logo/download/${currentPhoto}`}
                 alt={imageError ? 'Placeholder image' : altText}
                 title={imageError ? 'Placeholder' : imgTitle}
                 className="w-full h-full object-contain rounded-lg"

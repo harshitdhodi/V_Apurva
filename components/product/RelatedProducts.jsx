@@ -87,10 +87,10 @@ export const RelatedProducts = ({ products = [], iconMap = [FileText, TestTube2,
   if (!products.length) return null;
 
   return (
-    <div className="my-16 mx-2 md:mx-auto max-w-8xl lg:mr-5">
-      <h2 className="text-2xl font-bold mb-4 text-black pb-2 inline-block">
+    <div className="my-16 mx-2 md:mx-auto sm:max-w-8xl lg:mr-5">
+      <h3 className="text-2xl font-bold mb-4 text-black pb-2 inline-block">
         __Related Products
-      </h2>
+      </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-8">
         {products.map((product, index) => (
           <ServiceCard
