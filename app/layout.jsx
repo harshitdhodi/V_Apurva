@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer"
 import NavbarServer from "@/components/NavbarServer"
 import { getHomePageMetadata } from '@/lib/getMetadata';
 import Chatbot from '@/components/Chatbot';
+import FloatingButtons from '@/components/FloatingButton';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -238,7 +239,8 @@ export default async function RootLayout({ children }) {
           {children}
         </ClientLayout>
         <Footer />
-        <Chatbot />
+        <Chatbot /> 
+        <FloatingButtons/>
       </body>
     </html>
   );

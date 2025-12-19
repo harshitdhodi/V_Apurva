@@ -517,6 +517,7 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categor
         <InquiryForm
           isOpen={isInquiryOpen}
           onClose={closeInquiry}
+          productTitle={title}
           productName={title}
           productSlug={slug}
         />
