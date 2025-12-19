@@ -63,7 +63,11 @@ export default function Footer() {
       }
     })
   }
-
+const redirectToMap = (address) => {
+  if (!address) return;
+  const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  window.open(mapUrl, "_blank");
+};
   // Track contact clicks
   const handleContactClick = (contactType, value) => {
     trackEvent('button_click', {
@@ -190,56 +194,81 @@ export default function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div className="col-span-2">
-            <h5 className="text-lg font-bold  text-gray-800 border-b w-fit xl:w-full pb-2">Our Offices</h5>
-            <div className="">
-              {/* Corporate Office */}
-              <div className="  py-4 rounded-lg  border border-gray-100">
-                <div className="flex items-center mb-2">
-                  <div className=" rounded-full mr-3">
-                    <MapPin className="h-5 w-5 text-[#bf2e2e]" />
-                  </div>
-                  <h6 className="font-bold text-[#bf2e2e] text-base">Corporate Office</h6>
-                </div>
-                <div className="pl-11">
-                  <address className="not-italic text-gray-700 leading-relaxed">
-                    <p className="font-medium">{footerData.CorporateAddress} </p>
-                  </address>
-                </div>
-              </div>
+        
+<div className="col-span-2">
+  <h5 className="text-lg font-bold text-gray-800 border-b w-fit xl:w-full pb-2">
+    Our Offices
+  </h5>
 
-              {/* Sales Office */}
-              <div className=" py-4 rounded-lg  border border-gray-100">
-                <div className="flex items-center mb-2">
-                  <div className=" rounded-full mr-3">
-                    <MapPin className="h-5 w-5 text-[#bf2e2e]" />
-                  </div>
-                  <h6 className="font-bold text-[#bf2e2e] text-base">Sales Office</h6>
-                </div>
-                <div className="pl-11">
-                  <address className="not-italic text-gray-700 leading-relaxed">
-                    <p className="font-medium">{footerData.SalesAddress}</p>
-                  </address>
-                </div>
-              </div>
+  <div>
+    {/* Corporate Office */}
+    <div className="py-4 rounded-lg border border-gray-100">
+      <div className="flex items-center mb-2">
+        <div className="rounded-full mr-3">
+          <MapPin className="h-5 w-5 text-[#bf2e2e]" />
+        </div>
+        <h6 className="font-bold text-[#bf2e2e] text-base">
+          Corporate Office
+        </h6>
+      </div>
 
-              {/* Factory Address */}
-              <div className=" py-4 rounded-lg  border border-gray-100">
-                <div className="flex items-center mb-2">
-                  <div className="  rounded-full mr-3">
-                    <MapPin className="h-5 w-5 text-[#bf2e2e]" />
-                  </div>
-                  <h6 className="font-bold text-[#bf2e2e] text-base">Factory</h6>
-                </div>
-                <div className="pl-11">
-                  <p className="text-gray-700 leading-relaxed">
-                    {footerData.FactoryAddress || "Company Address"}
-                  </p>
-                </div>
-              </div>
+      <div className="pl-11">
+        <address
+          onClick={() => redirectToMap(footerData.CorporateAddress)}
+          className="not-italic text-gray-700 leading-relaxed cursor-pointer hover:text-[#bf2e2e]"
+        >
+          <p className="font-medium">
+            {footerData.CorporateAddress}
+          </p>
+        </address>
+      </div>
+    </div>
 
-            </div>
-          </div>
+    {/* Sales Office */}
+    <div className="py-4 rounded-lg border border-gray-100">
+      <div className="flex items-center mb-2">
+        <div className="rounded-full mr-3">
+          <MapPin className="h-5 w-5 text-[#bf2e2e]" />
+        </div>
+        <h6 className="font-bold text-[#bf2e2e] text-base">
+          Sales Office
+        </h6>
+      </div>
+
+      <div className="pl-11">
+        <address
+          onClick={() => redirectToMap(footerData.SalesAddress)}
+          className="not-italic text-gray-700 leading-relaxed cursor-pointer hover:text-[#bf2e2e]"
+        >
+          <p className="font-medium">
+            {footerData.SalesAddress}
+          </p>
+        </address>
+      </div>
+    </div>
+
+    {/* Factory Address */}
+    <div className="py-4 rounded-lg border border-gray-100">
+      <div className="flex items-center mb-2">
+        <div className="rounded-full mr-3">
+          <MapPin className="h-5 w-5 text-[#bf2e2e]" />
+        </div>
+        <h6 className="font-bold text-[#bf2e2e] text-base">
+          Factory
+        </h6>
+      </div>
+
+      <div className="pl-11">
+        <p
+          onClick={() => redirectToMap(footerData.FactoryAddress)}
+          className="text-gray-700 leading-relaxed cursor-pointer hover:text-[#bf2e2e]"
+        >
+          {footerData.FactoryAddress || "Company Address"}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 
           {/* Location Map */}
           <div className="col-span-2">

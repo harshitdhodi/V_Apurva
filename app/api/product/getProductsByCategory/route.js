@@ -32,8 +32,8 @@ export async function GET(request) {
 
     // Define priority product titles
     const PRIORITY_PRODUCTS = [
-      'Resist Salt | 127-68-4',
-      'Metanilic Acid | 121-47-1',
+      'resist-salt',
+      'metanilic-acid',
     ];
 
     // Use aggregation to sort products with custom priority
@@ -48,11 +48,11 @@ export async function GET(request) {
         $addFields: {
           priority: {
             $cond: [
-              { $eq: ['$title', PRIORITY_PRODUCTS[0]] },
+              { $eq: ['$slug', PRIORITY_PRODUCTS[0]] },
               0,
               {
                 $cond: [
-                  { $eq: ['$title', PRIORITY_PRODUCTS[1]] },
+                  { $eq: ['$slug', PRIORITY_PRODUCTS[1]] },
                   1,
                   999, // all others get low priority
                 ],

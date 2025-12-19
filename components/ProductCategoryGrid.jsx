@@ -1,10 +1,13 @@
 "use client"
 import { useState } from 'react';
 import Link from 'next/link';
-import { FileText, TestTube, Microscope, Heart, Dna, FlaskConical, ArrowRight } from 'lucide-react';
+import { FileText, TestTube, Microscope, Heart, Dna, FlaskConical, ArrowRight, Mail, MessageCircle } from 'lucide-react';
 import { useClickTracking } from '@/lib/useClickTracking';
 import Image from 'next/image';
 import img from "../public/logo.png"
+ import InquiryForm from './product/InquiryForm';
+import { BsWhatsapp } from 'react-icons/bs';
+
 // Safe HTML content renderer with proper list styling
 const HTMLContent = ({ html, className = "" }) => {
   const cleanedHtml = (html || "").replace(/<p>(\s|&nbsp;)*<\/p>/gi, "");
@@ -368,7 +371,7 @@ const colorMap = {
 function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categoryName, trackEvent }) {
   const iconName = Icon?.displayName || Icon?.name || 'FileText';
   const colors = colorMap[iconName] || colorMap.FileText;
-
+  const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const handleProductImageClick = () => {
     trackEvent('button_click', {
       buttonName: 'product_image_click',
@@ -393,6 +396,35 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categor
     });
   };
 
+  const handleWhatsAppClick = () => {
+    trackEvent('button_click', {
+      buttonName: 'whatsapp_click',
+      metadata: {
+        productTitle: title,
+        productSlug: slug,
+        category: categoryName,
+        page: 'product_category_grid'
+      }
+    });
+  };
+
+  const handleEmailClick = () => {
+    trackEvent('button_click', {
+      buttonName: 'email_click',
+      metadata: {
+        productTitle: title,
+        productSlug: slug,
+        category: categoryName,
+        page: 'product_category_grid'
+      }
+    });
+    setIsInquiryOpen(true);
+  };
+
+  const closeInquiry = () => {
+    setIsInquiryOpen(false);
+  };
+
   const handleReadMoreClick = () => {
     trackEvent('button_click', {
       buttonName: 'product_read_more',
@@ -408,13 +440,34 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categor
 
   return (
     <div className="bg-white shadow-lg group h-auto overflow-hidden rounded-lg transition-transform duration-300 hover:shadow-xl">
-      <div className='overflow-hidden h-56'>
-        <Link href={`/${slug}`} className="block h-full" onClick={handleProductImageClick}>
+     
+      <div className='overflow-hidden h-56 relative'>
+      <div className="absolute top-0 left-0 w-full z-10 flex justify-between items-center gap-4 p-4">
+          
+            <a
+            href={`https://wa.me/+919913789309?text=${encodeURIComponent(`Hi, I am interested in ${title}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleWhatsAppClick}
+            className="text-green-600 hover:text-green-800 transition-colors"
+            aria-label="WhatsApp"
+          >
+            <BsWhatsapp className="w-6 h-6" />
+          </a>
+          <button
+              onClick={handleEmailClick}
+              className="flex items-center gap-2 text-red-600 hover:text-red-800 font-medium transition-colors"
+              aria-label="Send Email Inquiry"
+            >
+              <Mail className="w-6 h-6" />
+            </button>
+      </div>
+        <Link href={`/${slug}`} className="block h-full relative" onClick={handleProductImageClick}>
           <img
             src={imageSrc}
             alt={alt}
             title={imgTitle}
-            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full object-contain transform group-hover:scale-110 transition-transform duration-500"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = '/placeholder-product.jpg';
@@ -424,6 +477,7 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categor
       </div>
       <div className="p-5">
         <div className='flex items-center gap-4 mb-3'>
+          
           <div className={`flex-shrink-0 flex justify-center items-center bg-red-100 rounded-full p-3`}>
             {/* {Icon && <Icon className={`${colors.textColor} ${colors.hoverTextColor} transition-colors duration-300 text-lg`} />} */}
 
@@ -448,7 +502,8 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categor
             {title}
           </Link>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end items-center">
+          
           <Link
             href={`/${slug}`}
             className="inline-flex items-center text-red-600 hover:text-red-800 font-medium text-sm transition-colors"
@@ -456,8 +511,19 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categor
           >
             READ MORE <ArrowRight className="ml-1 w-4 h-4" />
           </Link>
+      
         </div>
       </div>
+       {/* ONLY render InquiryForm when isInquiryOpen is true */}
+      {isInquiryOpen && (
+        <InquiryForm
+          isOpen={isInquiryOpen}
+          onClose={closeInquiry}
+          productTitle={title}
+          productSlug={slug}
+        />
+      )}
+
     </div>
   );
 }

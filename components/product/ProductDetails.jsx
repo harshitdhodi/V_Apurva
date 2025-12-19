@@ -235,7 +235,15 @@ const getPartialContent = (htmlContent = '', percent = 0.4) => {
           <div className="flex flex-col md:flex-row gap-8 lg:gap-20">
             {/* Product Images */}
             <div className="md:w-1/3 w-full">
-              <ProductImages images={formatImageUrls(product?.productData?.photo)} />
+              <ProductImages images={formatImageUrls(product?.productData?.photo)} initialProduct={product} />
+                  {/* MSDS Section */}
+              <div className="mb-8">
+                <MSDSSection
+                  msds={product?.productData?.msds}
+                  name={product?.productData?.title}
+                  spec={product?.productData?.spec}
+                />
+              </div>
             </div>
 
             {/* Product Details */}
@@ -249,14 +257,7 @@ const getPartialContent = (htmlContent = '', percent = 0.4) => {
                 <ProductDetailsTable details={product?.productDetailData || {}} />
               </div>
 
-              {/* MSDS Section */}
-              <div className="mb-8">
-                <MSDSSection
-                  msds={product?.productData?.msds}
-                  name={product?.productData?.title}
-                  spec={product?.productData?.spec}
-                />
-              </div>
+          
             </div>
           </div>
 
