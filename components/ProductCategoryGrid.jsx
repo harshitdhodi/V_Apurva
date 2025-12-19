@@ -512,17 +512,17 @@ function ServiceCard({ imageSrc, icon: Icon, title, slug, alt, imgTitle, categor
             READ MORE <ArrowRight className="ml-1 w-4 h-4" />
           </Link>
       
-        </div>
-      </div>
        {/* ONLY render InquiryForm when isInquiryOpen is true */}
       {isInquiryOpen && (
         <InquiryForm
           isOpen={isInquiryOpen}
           onClose={closeInquiry}
-          productTitle={title}
+          productName={title}
           productSlug={slug}
         />
       )}
+      </div>
+        </div>
 
     </div>
   );

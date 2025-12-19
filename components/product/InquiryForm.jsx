@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 import { useClickTracking } from '@/lib/useClickTracking';
 
 function InquiryForm({ productName, onClose, initialName = '', initialEmail = '', initialPhone = '' }) {
+   console.log("Initial Name:", productName);
+   console.log("Initial Email:", initialEmail);
+   console.log("Initial Phone:", initialPhone);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
