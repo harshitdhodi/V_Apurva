@@ -7,6 +7,7 @@ import { RelatedProducts } from '@/components/product/RelatedProducts';
 import MSDSSection from '@/components/product/MSDSSection';
 import { FileText, TestTube2, Dna, HeartPulse, DnaOff, FlaskConical, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import FAQSection from '../FAQSection';
 
 const iconMap = [
   FileText,
@@ -21,9 +22,9 @@ const iconMap = [
 export default function ProductDetail({ initialProduct, initialRelatedProducts = [], slug }) {
   const [showFullContent, setShowFullContent] = useState(false);
   const descriptionRef = useRef(null);
-console.log("product",initialProduct)
   // Use the data passed from server-side
   const product = initialProduct;
+  console.log('Product Details:', product.productData._id);
   const relatedProducts = initialRelatedProducts;
 
   // Helper function to strip HTML tags for meta description
@@ -251,7 +252,7 @@ const getPartialContent = (htmlContent = '', percent = 0.4) => {
               <h1 className="text-2xl border-b-2 w-fit border-red-700 font-bold text-[#bf2e2e] mb-6">
                 {product?.productData?.title}
               </h1>
-              <div dangerouslySetInnerHTML={{ __html: product?.productData?.shortDescription }} className='text-black mb-10'></div>
+              <div dangerouslySetInnerHTML={{ __html: product?.productData?.shortDescription }} className='text-black mb-10 product-content'></div>
               {/* Product Details Table */}
               <div className="mb-8">
                 <ProductDetailsTable details={product?.productDetailData || {}} />
@@ -292,6 +293,9 @@ const getPartialContent = (htmlContent = '', percent = 0.4) => {
               </div>
             </div>
           )}
+
+          {/* FAQ Section */}
+          <FAQSection productId={product.productData._id} />
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (
