@@ -55,12 +55,12 @@ export default function FAQSection({ productId }) {
                 </div>
             </div>
         );
-    }
+    } 
+
 
     if (error || faqs.length === 0) {
         return null; // Don't show anything if there's an error or no FAQs
     }
-
     return (
         <div className="max-w-7xl pt-16">
             <h2 className="text-xl md:text-2xl font-bold text-left mb-4 text-gray-800">
