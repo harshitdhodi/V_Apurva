@@ -169,12 +169,12 @@ export default function SingleBlog({ initialBlogData, initialLatestNews, slug })
         .ql-editor h2 {
           font-size: 1.5rem;
           font-weight: 400;
-          margin: 0.8rem 0 0.4rem;
+          margin: 2rem 0 0.4rem;
           color: black;
         }
 
         .ql-editor h3 {
-          font-size: 1.5rem;
+          font-size: 1.2rem;
           font-weight: 400;
           margin: 0.6rem 0 0.3rem;
           color: black;
